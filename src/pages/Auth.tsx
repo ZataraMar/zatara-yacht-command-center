@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SecureAuthForm } from '@/components/auth/SecureAuthForm';
 
@@ -11,7 +12,7 @@ const Auth = () => {
             <img 
               src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
               alt="Zatara" 
-              className="h-32 sm:h-36 w-auto mx-auto hover:opacity-90 transition-opacity duration-300"
+              className="h-48 sm:h-54 w-auto mx-auto hover:opacity-90 transition-opacity duration-300"
             />
           </div>
           <div className="space-y-4">
