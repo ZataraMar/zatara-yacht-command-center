@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { RoleBasedRoute } from '@/components/auth/RoleBasedRoute';
+import { useAuth } from '@/contexts/SecureAuthContext';
+import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { isManagementOrOwner, isStaffOrHigher } from '@/utils/authSecurity';
@@ -139,7 +140,7 @@ const Index = () => {
         </div>
 
         {/* Role-based content sections */}
-        <RoleBasedRoute allowedRoles={['management', 'owners']}>
+        <SecureRoleBasedRoute allowedRoles={['management', 'owners']}>
           <div className="mt-8">
             <Card>
               <CardHeader>
@@ -151,7 +152,7 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
-        </RoleBasedRoute>
+        </SecureRoleBasedRoute>
       </main>
     </div>
   );
