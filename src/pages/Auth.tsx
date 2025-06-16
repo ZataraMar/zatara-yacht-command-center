@@ -1,26 +1,28 @@
+
 import React from 'react';
 import { SecureAuthForm } from '@/components/auth/SecureAuthForm';
+
 const Auth = () => {
-  return <div className="min-h-screen flex items-center justify-center gradient-mediterranean p-6">
-      <div className="w-full max-w-lg">
-        <div className="text-center mb-12 animate-fade-in">
-          {/* Larger Color Zatara Logo */}
-          <div className="mb-8">
-            <img src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" alt="Zatara" className="h-48 sm:h-54 w-auto mx-auto hover:opacity-90 transition-opacity duration-300 object-fill" />
-          </div>
-          <div className="space-y-4">
-            
-            
-            <div className="w-24 h-1 bg-gradient-zatara-gold mx-auto rounded-full"></div>
-            
-          </div>
-        </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center gradient-mediterranean p-6">
+      <div className="w-full max-w-md">
         <div className="animate-slide-up">
           <div className="bg-white/90 backdrop-blur-sm rounded-luxury shadow-elegant p-8 sm:p-10 border border-zatara-gold/20">
+            {/* Logo moved inside the box */}
+            <div className="text-center mb-8">
+              <img 
+                src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
+                alt="Zatara" 
+                className="h-32 w-auto mx-auto hover:opacity-90 transition-opacity duration-300 object-contain" 
+              />
+              <div className="w-16 h-1 bg-gradient-zatara-gold mx-auto rounded-full mt-4"></div>
+            </div>
             <SecureAuthForm />
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Auth;
