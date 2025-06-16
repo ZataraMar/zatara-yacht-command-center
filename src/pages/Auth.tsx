@@ -8,14 +8,20 @@ const Auth = () => {
       <div className="w-full max-w-md">
         <div className="animate-slide-up">
           <div className="bg-white/90 backdrop-blur-sm rounded-luxury shadow-elegant p-8 sm:p-10 border border-zatara-gold/20">
-            {/* Logo moved back inside the box with tighter crop */}
+            {/* Logo with tighter crop - removed padding and adjusted sizing */}
             <div className="text-center mb-8">
-              <img 
-                src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
-                alt="Zatara" 
-                className="h-56 w-auto mx-auto hover:opacity-90 transition-opacity duration-300 object-contain object-center" 
-                style={{ padding: '0', margin: '0 auto' }}
-              />
+              <div className="overflow-hidden inline-block">
+                <img 
+                  src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
+                  alt="Zatara" 
+                  className="h-56 w-auto mx-auto hover:opacity-90 transition-opacity duration-300 object-cover scale-110" 
+                  style={{ 
+                    padding: '0', 
+                    margin: '0 auto',
+                    clipPath: 'inset(10% 10% 10% 10%)'
+                  }}
+                />
+              </div>
               <div className="w-16 h-1 bg-gradient-zatara-gold mx-auto rounded-full mt-4"></div>
             </div>
             <SecureAuthForm />
