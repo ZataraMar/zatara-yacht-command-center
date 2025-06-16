@@ -1,10 +1,11 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Tw+Cen+MT:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Zatara Brand Design System - Updated */
+/* Zatara Luxury Brand Design System */
 
 @layer base {
   :root {
@@ -17,7 +18,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 212 84% 4.9%;
 
-    /* Zatara Brand Colors - Exact Brand Guidelines */
+    /* Zatara Brand Colors - Luxury Edition */
     --primary: 198 100% 45%; /* #00A3E4 Zatara Blue */
     --primary-foreground: 0 0% 98%;
 
@@ -27,7 +28,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 60 85% 50%; /* #CCCC33 Zatara Yellow/Lime */
+    --accent: 60 85% 50%; /* #CCCC33 Zatara Gold */
     --accent-foreground: 212 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -37,16 +38,18 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 198 100% 45%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Zatara Custom Brand Colors */
+    /* Zatara Luxury Color Palette */
     --zatara-blue: 198 100% 45%; /* #00A3E4 */
     --zatara-blue-dark: 198 100% 35%;
     --zatara-blue-light: 198 100% 92%;
-    --zatara-accent: 60 85% 50%; /* #CCCC33 */
-    --zatara-accent-dark: 60 85% 40%;
+    --zatara-gold: 60 85% 50%; /* #CCCC33 Luxury Gold */
+    --zatara-gold-dark: 60 85% 40%;
+    --zatara-gold-light: 60 85% 95%;
     --zatara-navy: 212 84% 4.9%;
     --zatara-cream: 43 33% 96%;
+    --zatara-pearl: 210 17% 95%;
   }
 
   .dark {
@@ -86,19 +89,27 @@
   }
 
   body {
-    @apply bg-background text-foreground font-tw-cen;
+    @apply bg-background text-foreground;
     font-family: 'Tw Cen MT', sans-serif;
   }
 
-  /* Typography Hierarchy - Brand Guidelines */
+  /* Luxury Typography Hierarchy */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Tw Cen MT', sans-serif;
+    font-family: 'Playfair Display', serif;
     font-weight: 600;
   }
 
   .zatara-script {
-    font-family: cursive; /* Fallback for Cosmoball-style script */
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
     font-weight: 400;
+  }
+
+  .zatara-luxury-script {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 0.02em;
   }
 
   /* Mobile-First Base Styles */
@@ -115,73 +126,98 @@
 }
 
 @layer utilities {
-  /* Zatara Brand Gradients */
+  /* Zatara Luxury Gradients */
   .gradient-zatara {
     background: linear-gradient(135deg, hsl(var(--zatara-blue)) 0%, hsl(var(--zatara-blue-dark)) 100%);
   }
   
-  .gradient-zatara-accent {
-    background: linear-gradient(135deg, hsl(var(--zatara-accent)) 0%, hsl(var(--zatara-accent-dark)) 100%);
+  .gradient-zatara-gold {
+    background: linear-gradient(135deg, hsl(var(--zatara-gold)) 0%, hsl(var(--zatara-gold-dark)) 100%);
   }
 
-  /* Brand Colors */
+  .gradient-luxury {
+    background: linear-gradient(135deg, hsl(var(--zatara-blue)) 0%, hsl(var(--zatara-gold)) 50%, hsl(var(--zatara-blue-dark)) 100%);
+  }
+
+  .gradient-mediterranean {
+    background: linear-gradient(135deg, hsl(var(--zatara-blue-light)) 0%, hsl(var(--zatara-pearl)) 50%, hsl(var(--zatara-cream)) 100%);
+  }
+
+  /* Luxury Brand Colors */
   .text-zatara-blue {
     color: hsl(var(--zatara-blue));
   }
 
-  .text-zatara-accent {
-    color: hsl(var(--zatara-accent));
+  .text-zatara-gold {
+    color: hsl(var(--zatara-gold));
+  }
+
+  .text-zatara-navy {
+    color: hsl(var(--zatara-navy));
   }
 
   .bg-zatara-blue {
     background-color: hsl(var(--zatara-blue));
   }
 
-  .bg-zatara-accent {
-    background-color: hsl(var(--zatara-accent));
+  .bg-zatara-gold {
+    background-color: hsl(var(--zatara-gold));
   }
 
   .bg-zatara-cream {
     background-color: hsl(var(--zatara-cream));
   }
 
-  /* Mobile-First Performance Optimizations */
-  .will-change-transform {
-    will-change: transform;
+  .bg-zatara-pearl {
+    background-color: hsl(var(--zatara-pearl));
   }
 
-  .hardware-accelerated {
-    transform: translateZ(0);
+  /* Luxury Shadows */
+  .shadow-luxury {
+    box-shadow: 0 10px 40px -10px rgba(0, 163, 228, 0.3), 0 4px 25px -5px rgba(0, 163, 228, 0.1);
   }
 
-  /* Touch-optimized components */
-  .touch-target {
-    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  .shadow-gold {
+    box-shadow: 0 10px 40px -10px rgba(204, 204, 51, 0.3), 0 4px 25px -5px rgba(204, 204, 51, 0.1);
   }
 
-  /* Responsive text sizing - mobile first */
-  .text-responsive-xs {
-    @apply text-sm sm:text-base;
-  }
-
-  .text-responsive-sm {
+  /* Responsive Luxury Text Sizing */
+  .text-luxury-xs {
     @apply text-base sm:text-lg;
   }
 
-  .text-responsive-md {
+  .text-luxury-sm {
     @apply text-lg sm:text-xl md:text-2xl;
   }
 
-  .text-responsive-lg {
-    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+  .text-luxury-md {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
   }
 
-  .text-responsive-xl {
-    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl;
+  .text-luxury-lg {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl;
+  }
+
+  .text-luxury-xl {
+    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl;
+  }
+
+  /* Touch-optimized luxury components */
+  .luxury-touch-target {
+    @apply min-h-[56px] min-w-[56px] flex items-center justify-center;
+  }
+
+  /* Luxury hover effects */
+  .luxury-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-luxury;
+  }
+
+  .gold-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-gold;
   }
 }
 
-/* Performance optimizations */
+/* Luxury Performance optimizations */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -190,12 +226,7 @@
   }
 }
 
-/* Offline capability indicators */
-.offline-indicator {
-  @apply fixed bottom-4 left-4 bg-yellow-500 text-black px-3 py-2 rounded-lg shadow-lg z-50;
-}
-
 /* Loading optimization */
-.skeleton {
-  @apply animate-pulse bg-gray-200 rounded;
+.luxury-skeleton {
+  @apply animate-pulse bg-zatara-pearl rounded-lg;
 }

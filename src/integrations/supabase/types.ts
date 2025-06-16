@@ -1296,41 +1296,22 @@ export type Database = {
       }
     }
     Views: {
-      charter_overview: {
+      charter_data: {
         Row: {
           boat: string | null
-          booking_source: string | null
-          booking_status: string | null
           charter_date: string | null
-          charter_total: number | null
-          end_time: string | null
           guest_name: string | null
-          guest_surname: string | null
           locator: string | null
-          phone: string | null
-          start_time: string | null
-          total_guests: number | null
+          status: string | null
         }
         Relationships: []
       }
-      operations_dashboard: {
+      operations_data: {
         Row: {
           boat: string | null
-          booking_status: string | null
           charter_datetime: string | null
           guest_name: string | null
           locator: string | null
-          service_total: number | null
-          status_category: string | null
-        }
-        Relationships: []
-      }
-      system_health: {
-        Row: {
-          component: string | null
-          last_check: string | null
-          status: string | null
-          total_records: number | null
         }
         Relationships: []
       }

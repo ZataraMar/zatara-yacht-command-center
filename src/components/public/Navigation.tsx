@@ -15,57 +15,70 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo - Using the plain Zatara script logo */}
-          <Link to="/" className="flex items-center">
+    <nav className="bg-white/95 backdrop-blur-sm shadow-elegant border-b border-zatara-gold/20 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="flex justify-between items-center py-6 sm:py-8">
+          {/* Luxury Logo Section */}
+          <Link to="/" className="flex items-center space-x-4 group">
             <img 
               src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
               alt="Zatara" 
-              className="h-8 w-auto"
+              className="h-16 sm:h-20 lg:h-24 w-auto transition-transform duration-300 group-hover:scale-105"
             />
+            <div className="hidden sm:block">
+              <div className="zatara-luxury-script text-luxury-lg text-zatara-navy">
+                Zatara Mar
+              </div>
+              <div className="text-sm font-medium text-zatara-blue tracking-wide">
+                LUXURY YACHT SERVICES
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-12">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-medium transition-colors ${
+                className={`luxury-text font-medium transition-all duration-300 hover:scale-105 ${
                   location.pathname === link.path
-                    ? 'text-zatara-blue font-semibold'
-                    : 'text-zatara-navy hover:text-zatara-blue'
+                    ? 'text-zatara-gold font-semibold border-b-2 border-zatara-gold pb-1'
+                    : 'text-zatara-navy hover:text-zatara-gold'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-            <Button asChild className="gradient-zatara hover:bg-zatara-blue-dark text-white font-medium">
-              <Link to="/auth">Login</Link>
+            <Button className="gradient-zatara-gold hover:shadow-gold text-zatara-navy font-semibold px-8 py-4 rounded-luxury transition-all duration-300 hover:scale-105">
+              <Link to="/auth">Client Portal</Link>
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <Button variant="outline" size="sm" asChild className="border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white">
-              <Link to="/auth">Login</Link>
+          <div className="lg:hidden">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              asChild 
+              className="border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy font-semibold px-6 py-3 rounded-luxury transition-all duration-300"
+            >
+              <Link to="/auth">Portal</Link>
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden pb-4">
-          <div className="flex flex-wrap gap-4">
+        <div className="lg:hidden pb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-center py-3 px-4 rounded-luxury font-medium transition-all duration-300 ${
                   location.pathname === link.path
-                    ? 'text-zatara-blue font-semibold'
-                    : 'text-zatara-navy hover:text-zatara-blue'
+                    ? 'bg-zatara-gold text-zatara-navy font-semibold shadow-gold'
+                    : 'text-zatara-navy hover:bg-zatara-pearl hover:text-zatara-gold'
                 }`}
               >
                 {link.label}
