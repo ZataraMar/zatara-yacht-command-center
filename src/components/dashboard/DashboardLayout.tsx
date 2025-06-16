@@ -15,7 +15,12 @@ import {
   Menu,
   LogOut,
   Activity,
-  MessageCircle
+  MessageCircle,
+  DollarSign,
+  UserCheck,
+  Shield,
+  Zap,
+  TrendingUp
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -42,14 +47,20 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       { icon: Calendar, label: 'My Bookings', href: '/dashboard/bookings', roles: ['charter_clients', 'boat_club_clients'] },
     ];
 
-    const teamItems = [
-      { icon: Calendar, label: 'Charter Management', href: '/dashboard/charters', roles: ['team', 'agency', 'management', 'owners', 'staff', 'skippers'] },
+    const operationalItems = [
       { icon: Anchor, label: 'Fleet Management', href: '/dashboard/fleet', roles: ['team', 'management', 'owners', 'staff', 'skippers'] },
       { icon: Users, label: 'Team Management', href: '/dashboard/team', roles: ['management', 'owners'] },
-      { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics', roles: ['management', 'owners', 'agency'] },
+      { icon: DollarSign, label: 'Financial Management', href: '/dashboard/financials', roles: ['management', 'owners', 'agency'] },
+      { icon: UserCheck, label: 'Guest Experience', href: '/dashboard/guests', roles: ['team', 'agency', 'management', 'owners', 'staff'] },
+      { icon: Shield, label: 'Operational Excellence', href: '/dashboard/operations-excellence', roles: ['team', 'management', 'owners', 'staff', 'skippers'] },
     ];
 
-    const allItems = [...baseItems, ...teamItems];
+    const analyticsItems = [
+      { icon: TrendingUp, label: 'Advanced Analytics', href: '/dashboard/analytics', roles: ['management', 'owners', 'agency'] },
+      { icon: Zap, label: 'Automation & Integration', href: '/dashboard/automation', roles: ['management', 'owners', 'agency'] },
+    ];
+
+    const allItems = [...baseItems, ...operationalItems, ...analyticsItems];
     
     return allItems.filter(item => 
       item.roles.includes('all') || item.roles.includes(userRole)
@@ -91,7 +102,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </Link>
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
           {navigationItems.map((item) => (
             <Link
               key={item.href}
@@ -100,7 +111,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               onClick={() => setSidebarOpen(false)}
             >
               <item.icon className="h-5 w-5" />
-              <span className="font-medium">{item.label}</span>
+              <span className="font-medium text-sm">{item.label}</span>
             </Link>
           ))}
         </nav>
