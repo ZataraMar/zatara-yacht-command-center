@@ -1036,6 +1036,54 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          active: boolean | null
+          boat_access: string[] | null
+          certifications: string[] | null
+          company: string | null
+          created_at: string | null
+          email: string | null
+          emergency_contact: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          boat_access?: string[] | null
+          certifications?: string[] | null
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          boat_access?: string[] | null
+          certifications?: string[] | null
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       raw_bookings: {
         Row: {
           andronautic_data: Json
@@ -1460,7 +1508,16 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      user_role:
+        | "staff"
+        | "skippers"
+        | "management"
+        | "owners"
+        | "casual_staff"
+        | "charter_brokers"
+        | "boat_owners"
+        | "charter_clients"
+        | "boat_club_clients"
     }
     CompositeTypes: {
       http_header: {
@@ -1591,6 +1648,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: [
+        "staff",
+        "skippers",
+        "management",
+        "owners",
+        "casual_staff",
+        "charter_brokers",
+        "boat_owners",
+        "charter_clients",
+        "boat_club_clients",
+      ],
+    },
   },
 } as const
