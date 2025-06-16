@@ -2,12 +2,13 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, EyeOff, AlertTriangle, MessageCircle, Mail, UserCheck } from 'lucide-react';
+import { AlertTriangle, UserCheck } from 'lucide-react';
 import { AuthFormData } from '@/hooks/useAuthForm';
+import { PersonalInfoFields } from './fields/PersonalInfoFields';
+import { PhoneFields } from './fields/PhoneFields';
+import { AccountTypeField } from './fields/AccountTypeField';
+import { PasswordFields } from './fields/PasswordFields';
 
 interface AuthFormFieldsProps {
   isLogin: boolean;
@@ -19,14 +20,6 @@ interface AuthFormFieldsProps {
   onTogglePassword: () => void;
   onToggleConfirmPassword: () => void;
 }
-
-const clientRoles = [{
-  value: 'charter_clients',
-  label: 'Charter Client'
-}, {
-  value: 'boat_club_clients',
-  label: 'Boat Club Member'
-}];
 
 export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
   isLogin,
@@ -45,115 +38,32 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
           <div className="text-sm text-blue-700 bg-blue-50 p-3 rounded flex items-start space-x-2 mb-4">
             <UserCheck className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
             <div>
-              <strong>Invite-Only Registration</strong>
-              <p className="text-blue-600 mt-1">This registration is by invitation only. Please ensure you have been provided with this link by Zatara staff.</p>
+              <strong>Registration Available</strong>
+              <p className="text-blue-600 mt-1">Create your account to access Zatara services. You'll receive an email confirmation after registration.</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
-              <Input 
-                id="firstName" 
-                type="text" 
-                value={formData.firstName} 
-                onChange={e => onInputChange('firstName', e.target.value)} 
-                className={errors.firstName ? 'border-red-500' : ''} 
-                required 
-              />
-              {errors.firstName && <p className="text-sm text-red-600">{errors.firstName}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
-              <Input 
-                id="lastName" 
-                type="text" 
-                value={formData.lastName} 
-                onChange={e => onInputChange('lastName', e.target.value)} 
-                className={errors.lastName ? 'border-red-500' : ''} 
-                required 
-              />
-              {errors.lastName && <p className="text-sm text-red-600">{errors.lastName}</p>}
-            </div>
-          </div>
+          <PersonalInfoFields
+            formData={formData}
+            errors={errors}
+            onInputChange={onInputChange}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number *</Label>
-            <Input 
-              id="phone" 
-              type="tel" 
-              placeholder="+34612345678"
-              value={formData.phone} 
-              onChange={e => onInputChange('phone', e.target.value)} 
-              className={errors.phone ? 'border-red-500' : ''} 
-              required 
-            />
-            {errors.phone && <p className="text-sm text-red-600">{errors.phone}</p>}
-            <p className="text-xs text-gray-600">
-              Enter your phone number in international format (e.g., +34612345678)
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Is this your WhatsApp number? *</Label>
-            <RadioGroup 
-              value={formData.whatsappEnabled.toString()} 
-              onValueChange={(value) => onInputChange('whatsappEnabled', value === 'true')}
-              className="flex flex-row space-x-6"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="true" id="whatsapp-yes" />
-                <Label htmlFor="whatsapp-yes" className="text-sm font-normal cursor-pointer">
-                  Yes
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="false" id="whatsapp-no" />
-                <Label htmlFor="whatsapp-no" className="text-sm font-normal cursor-pointer">
-                  No
-                </Label>
-              </div>
-            </RadioGroup>
-            
-            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-              <div className="flex items-start space-x-2 mb-2">
-                <MessageCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                <div className="text-sm">
-                  <strong className="text-blue-800">WhatsApp updates:</strong>
-                  <span className="text-blue-700"> ~5 minutes</span>
-                </div>
-              </div>
-              <div className="flex items-start space-x-2">
-                <Mail className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                <div className="text-sm">
-                  <strong className="text-blue-800">Email updates:</strong>
-                  <span className="text-blue-700"> up to 48 hours</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <PhoneFields
+            formData={formData}
+            errors={errors}
+            onInputChange={onInputChange}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="role">Account Type *</Label>
-            <Select value={formData.role} onValueChange={value => onInputChange('role', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your account type" />
-              </SelectTrigger>
-              <SelectContent>
-                {clientRoles.map(roleOption => (
-                  <SelectItem key={roleOption.value} value={roleOption.value}>
-                    {roleOption.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <AccountTypeField
+            formData={formData}
+            onInputChange={onInputChange}
+          />
           
           <div className="text-sm text-gray-600 bg-amber-50 p-3 rounded flex items-start space-x-2">
             <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
             <div>
-              <strong>Staff Access:</strong> Team members and management accounts are created through the admin panel. 
-              Contact your administrator for staff access.
+              <strong>After Registration:</strong> You'll receive an email confirmation. Once confirmed, if you selected WhatsApp, you'll need to verify your WhatsApp number in your profile settings.
             </div>
           </div>
         </>
@@ -172,60 +82,16 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
         {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
       </div>
       
-      <div className="space-y-2">
-        <Label htmlFor="password">Password *</Label>
-        <div className="relative">
-          <Input 
-            id="password" 
-            type={showPassword ? "text" : "password"} 
-            value={formData.password} 
-            onChange={e => onInputChange('password', e.target.value)} 
-            className={errors.password ? 'border-red-500 pr-10' : 'pr-10'} 
-            required 
-          />
-          <Button 
-            type="button" 
-            variant="ghost" 
-            size="sm" 
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-            onClick={onTogglePassword}
-          >
-            {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
-          </Button>
-        </div>
-        {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
-        {!isLogin && (
-          <p className="text-xs text-gray-600">
-            Password must be at least 8 characters with uppercase, lowercase, and number
-          </p>
-        )}
-      </div>
-      
-      {!isLogin && (
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password *</Label>
-          <div className="relative">
-            <Input 
-              id="confirmPassword" 
-              type={showConfirmPassword ? "text" : "password"} 
-              value={formData.confirmPassword} 
-              onChange={e => onInputChange('confirmPassword', e.target.value)} 
-              className={errors.confirmPassword ? 'border-red-500 pr-10' : 'pr-10'} 
-              required 
-            />
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="sm" 
-              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-              onClick={onToggleConfirmPassword}
-            >
-              {showConfirmPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
-            </Button>
-          </div>
-          {errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword}</p>}
-        </div>
-      )}
+      <PasswordFields
+        isLogin={isLogin}
+        formData={formData}
+        errors={errors}
+        showPassword={showPassword}
+        showConfirmPassword={showConfirmPassword}
+        onInputChange={onInputChange}
+        onTogglePassword={onTogglePassword}
+        onToggleConfirmPassword={onToggleConfirmPassword}
+      />
       
       {isLogin && (
         <div className="flex items-center space-x-2">

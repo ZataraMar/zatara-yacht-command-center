@@ -64,8 +64,8 @@ export const SecureAuthForm = () => {
           });
         } else {
           toast({
-            title: "Success!",
-            description: "Please check your email to confirm your account."
+            title: "Registration Successful!",
+            description: "Please check your email to confirm your account. Once confirmed, you can sign in and verify your WhatsApp number if applicable."
           });
         }
       }

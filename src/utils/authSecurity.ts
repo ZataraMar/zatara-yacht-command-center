@@ -54,15 +54,15 @@ export const secureSignIn = async (email: string, password: string) => {
   }
 };
 
-// Secure sign-up with proper role validation for invite-only system
+// Secure sign-up with proper role validation
 export const secureSignUp = async (email: string, password: string, userData: any) => {
   const redirectUrl = `${window.location.origin}/`;
   
-  // Validate role assignment - only allow client roles for invite-only registration
+  // Validate role assignment - allow all account types
   const requestedRole = userData.role;
-  const allowedClientRoles = ['charter_clients', 'boat_club_clients'];
+  const allowedRoles = ['charter_clients', 'boat_club_clients', 'agency', 'team'];
   
-  if (!allowedClientRoles.includes(requestedRole)) {
+  if (!allowedRoles.includes(requestedRole)) {
     userData.role = 'charter_clients'; // Default to charter clients
   }
   
@@ -111,9 +111,13 @@ export const isManagementOrOwner = (userRole: string | null): boolean => {
 };
 
 export const isStaffOrHigher = (userRole: string | null): boolean => {
-  return hasRole(userRole, ['staff', 'skippers', 'management', 'owners', 'casual_staff']);
+  return hasRole(userRole, ['staff', 'skippers', 'management', 'owners', 'casual_staff', 'team']);
 };
 
 export const isClientRole = (userRole: string | null): boolean => {
   return hasRole(userRole, ['charter_clients', 'boat_club_clients']);
+};
+
+export const isAgencyOrTeam = (userRole: string | null): boolean => {
+  return hasRole(userRole, ['agency', 'team']);
 };

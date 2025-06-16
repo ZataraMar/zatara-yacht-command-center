@@ -50,7 +50,7 @@ export const signUpSchema = z.object({
   lastName: nameSchema,
   phone: phoneSchema,
   whatsappEnabled: z.boolean(),
-  role: z.enum(['charter_clients', 'boat_club_clients'])
+  role: z.enum(['charter_clients', 'boat_club_clients', 'agency', 'team'])
 });
 
 // Sanitize input to prevent XSS
