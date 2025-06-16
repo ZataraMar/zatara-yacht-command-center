@@ -14,7 +14,7 @@ const Auth = () => {
                 <img 
                   src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
                   alt="Zatara" 
-                  className="h-16 w-auto mx-auto hover:opacity-90 transition-opacity duration-300 object-cover" 
+                  className="h-48 w-auto mx-auto hover:opacity-90 transition-opacity duration-300 object-cover" 
                   style={{ 
                     padding: '0', 
                     margin: '0 auto'
