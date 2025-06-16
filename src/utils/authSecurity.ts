@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced auth state cleanup to prevent limbo states
@@ -54,7 +53,7 @@ export const secureSignIn = async (email: string, password: string) => {
   }
 };
 
-// Secure sign-up with proper role validation
+// Secure sign-up with proper role validation and enhanced error handling
 export const secureSignUp = async (email: string, password: string, userData: any) => {
   const redirectUrl = `${window.location.origin}/`;
   
@@ -66,16 +65,39 @@ export const secureSignUp = async (email: string, password: string, userData: an
     userData.role = 'charter_clients'; // Default to charter clients
   }
   
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: redirectUrl,
-      data: userData
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: userData
+      }
+    });
+    
+    // Enhanced error handling for existing users
+    if (error) {
+      console.error('Signup error:', error.message);
+      
+      // Check for various user already exists scenarios
+      if (error.message.includes('already') || 
+          error.message.includes('registered') ||
+          error.message.includes('User already registered')) {
+        return { 
+          data: null, 
+          error: { 
+            ...error, 
+            message: 'User already registered' 
+          } 
+        };
+      }
     }
-  });
-  
-  return { data, error };
+    
+    return { data, error };
+  } catch (error: any) {
+    console.error('Signup exception:', error);
+    return { data: null, error };
+  }
 };
 
 // Secure sign-out with cleanup

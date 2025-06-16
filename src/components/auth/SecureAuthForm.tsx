@@ -54,9 +54,31 @@ export const SecureAuthForm = () => {
         });
         if (error) {
           let errorMessage = "Registration failed. Please try again.";
-          if (error.message?.includes('already registered')) {
-            errorMessage = "This email is already registered. Please sign in instead.";
+          
+          // Check for specific error types
+          if (error.message?.includes('already registered') || error.message?.includes('User already registered')) {
+            errorMessage = `This email address is already registered. Please sign in instead or use the "Forgot Password" option if you need to reset your password.`;
+            toast({
+              title: "Account Already Exists",
+              description: errorMessage,
+              variant: "destructive"
+            });
+            // Auto-switch to login mode
+            setTimeout(() => {
+              setIsLogin(true);
+              setFormData(prev => ({
+                ...prev,
+                password: '',
+                confirmPassword: ''
+              }));
+            }, 3000);
+            return;
           }
+          
+          if (error.message?.includes('phone') || error.message?.includes('Phone')) {
+            errorMessage = "This phone number is already associated with another account. Please use a different phone number or sign in to your existing account.";
+          }
+          
           toast({
             title: "Registration Failed",
             description: errorMessage,
@@ -65,14 +87,37 @@ export const SecureAuthForm = () => {
         } else {
           toast({
             title: "Registration Successful!",
-            description: "Please check your email to confirm your account. Once confirmed, you can sign in and verify your WhatsApp number if applicable."
+            description: "Please check your email to confirm your account. Once confirmed, you can sign in and verify your WhatsApp number if applicable.",
+            duration: 8000
           });
+          // Clear form and switch to login
+          setFormData(prev => ({
+            ...prev,
+            password: '',
+            confirmPassword: '',
+            firstName: '',
+            lastName: '',
+            phone: '',
+            whatsappEnabled: false,
+            role: 'charter_clients'
+          }));
+          setTimeout(() => setIsLogin(true), 2000);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Auth error:', error);
+      
+      // Handle network or unexpected errors
+      let errorMessage = "Something went wrong. Please try again.";
+      
+      if (error.message?.includes('already registered') || error.message?.includes('User already registered')) {
+        errorMessage = "This email address is already registered. Please sign in instead.";
+        setTimeout(() => setIsLogin(true), 3000);
+      }
+      
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -114,6 +159,13 @@ export const SecureAuthForm = () => {
           <Button type="button" variant="ghost" onClick={() => setIsLogin(!isLogin)} className="w-full">
             {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
           </Button>
+          {isLogin && (
+            <div className="text-center">
+              <Button type="button" variant="link" className="text-sm text-blue-600 hover:text-blue-800">
+                Forgot your password?
+              </Button>
+            </div>
+          )}
         </CardFooter>
       </form>
     </Card>
