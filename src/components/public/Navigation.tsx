@@ -21,9 +21,15 @@ export const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Anchor className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Zatara Mar</span>
+          <Link to="/" className="flex items-center space-x-3">
+            <div className="relative">
+              <Anchor className="h-8 w-8 text-zatara-blue" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-zatara-gold rounded-full"></div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-2xl font-playfair font-bold text-zatara-navy tracking-wide">Zatara</span>
+              <span className="text-xs text-zatara-blue font-medium -mt-1 tracking-wider">MALLORCA</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -34,21 +40,21 @@ export const Navigation = () => {
                 to={link.path}
                 className={`text-sm font-medium transition-colors ${
                   location.pathname === link.path
-                    ? 'text-blue-600'
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'text-zatara-blue font-semibold'
+                    : 'text-zatara-navy hover:text-zatara-blue'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-            <Button asChild>
+            <Button asChild className="gradient-zatara hover:bg-zatara-blue-dark text-white font-medium">
               <Link to="/dashboard">Team Access</Link>
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" size="sm" asChild className="border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white">
               <Link to="/dashboard">Team</Link>
             </Button>
           </div>
@@ -63,8 +69,8 @@ export const Navigation = () => {
                 to={link.path}
                 className={`text-sm font-medium transition-colors ${
                   location.pathname === link.path
-                    ? 'text-blue-600'
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'text-zatara-blue font-semibold'
+                    : 'text-zatara-navy hover:text-zatara-blue'
                 }`}
               >
                 {link.label}

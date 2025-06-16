@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,11 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'playfair': ['Playfair Display', 'serif'],
+				'inter': ['Inter', 'sans-serif'],
+				'sans': ['Inter', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,6 +67,16 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Zatara Brand Colors
+				zatara: {
+					blue: 'hsl(var(--zatara-blue))',
+					'blue-dark': 'hsl(var(--zatara-blue-dark))',
+					'blue-light': 'hsl(var(--zatara-blue-light))',
+					gold: 'hsl(var(--zatara-gold))',
+					'gold-dark': 'hsl(var(--zatara-gold-dark))',
+					navy: 'hsl(var(--zatara-navy))',
+					cream: 'hsl(var(--zatara-cream))',
 				}
 			},
 			borderRadius: {
