@@ -1,31 +1,18 @@
-
 import React from 'react';
 import { SecureAuthForm } from '@/components/auth/SecureAuthForm';
-
 const Auth = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center gradient-mediterranean p-6">
+  return <div className="min-h-screen flex items-center justify-center gradient-mediterranean p-6">
       <div className="w-full max-w-lg">
         <div className="text-center mb-12 animate-fade-in">
           {/* Larger Color Zatara Logo */}
           <div className="mb-8">
-            <img 
-              src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
-              alt="Zatara" 
-              className="h-48 sm:h-54 w-auto mx-auto hover:opacity-90 transition-opacity duration-300"
-            />
+            <img src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" alt="Zatara" className="h-48 sm:h-54 w-auto mx-auto hover:opacity-90 transition-opacity duration-300 object-fill" />
           </div>
           <div className="space-y-4">
-            <h1 className="zatara-luxury-script text-luxury-3xl text-zatara-navy">
-              Zatara Mar
-            </h1>
-            <div className="text-luxury-sm text-zatara-blue font-medium tracking-wide">
-              LUXURY MANAGEMENT PORTAL
-            </div>
+            
+            
             <div className="w-24 h-1 bg-gradient-zatara-gold mx-auto rounded-full"></div>
-            <p className="text-luxury-xs text-zatara-navy/70 max-w-md mx-auto leading-relaxed">
-              Exclusive access to your premium yacht services dashboard
-            </p>
+            
           </div>
         </div>
         <div className="animate-slide-up">
@@ -34,8 +21,6 @@ const Auth = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Auth;
