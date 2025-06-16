@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -51,7 +50,7 @@ export const PhoneFields: React.FC<PhoneFieldsProps> = ({
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="phone">Phone Number *</Label>
+        <Label htmlFor="phone">Phone Number (WhatsApp) *</Label>
         <div className="relative">
           <Input 
             id="phone" 
