@@ -8,16 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 
-const userRoles = [
-  { value: 'staff', label: 'Staff' },
-  { value: 'skippers', label: 'Skipper' },
-  { value: 'management', label: 'Management' },
-  { value: 'owners', label: 'Owner' },
-  { value: 'casual_staff', label: 'Casual Staff' },
-  { value: 'charter_brokers', label: 'Charter Broker' },
-  { value: 'boat_owners', label: 'Boat Owner' },
+// Restricted public roles only
+const publicUserRoles = [
   { value: 'charter_clients', label: 'Charter Client' },
   { value: 'boat_club_clients', label: 'Boat Club Client' },
+  { value: 'charter_brokers', label: 'Charter Broker' },
 ];
 
 export const AuthForm = () => {
@@ -26,7 +21,7 @@ export const AuthForm = () => {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [role, setRole] = useState('staff');
+  const [role, setRole] = useState('charter_clients');
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
 
@@ -119,13 +114,17 @@ export const AuthForm = () => {
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
-                    {userRoles.map((roleOption) => (
+                    {publicUserRoles.map((roleOption) => (
                       <SelectItem key={roleOption.value} value={roleOption.value}>
                         {roleOption.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded">
+                <strong>Note:</strong> Staff and management accounts require approval. 
+                Contact your administrator if you need elevated access.
               </div>
             </>
           )}
