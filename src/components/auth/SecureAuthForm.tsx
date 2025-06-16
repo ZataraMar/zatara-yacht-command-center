@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,9 +25,11 @@ const publicUserRoles = [{
 export const SecureAuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     firstName: '',
     lastName: '',
     role: 'charter_clients',
@@ -44,6 +47,13 @@ export const SecureAuthForm = () => {
       email: formData.email,
       password: formData.password
     } : formData;
+    
+    // Check password confirmation for signup
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      setErrors({ confirmPassword: 'Passwords do not match' });
+      return false;
+    }
+    
     try {
       schema.parse(dataToValidate);
       setErrors({});
@@ -77,6 +87,14 @@ export const SecureAuthForm = () => {
       setErrors(prev => ({
         ...prev,
         [field]: ''
+      }));
+    }
+    
+    // Clear confirm password error when either password field changes
+    if ((field === 'password' || field === 'confirmPassword') && errors.confirmPassword) {
+      setErrors(prev => ({
+        ...prev,
+        confirmPassword: ''
       }));
     }
   };
@@ -215,6 +233,16 @@ export const SecureAuthForm = () => {
                 Password must be at least 8 characters with uppercase, lowercase, and number
               </p>}
           </div>
+          {!isLogin && <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div className="relative">
+                <Input id="confirmPassword" type={showConfirmPassword ? "text" : "password"} value={formData.confirmPassword} onChange={e => handleInputChange('confirmPassword', e.target.value)} className={errors.confirmPassword ? 'border-red-500 pr-10' : 'pr-10'} required />
+                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                </Button>
+              </div>
+              {errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword}</p>}
+            </div>}
           {isLogin && <div className="flex items-center space-x-2">
               <Checkbox id="rememberMe" checked={formData.rememberMe} onCheckedChange={checked => handleInputChange('rememberMe', checked as boolean)} />
               <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">
