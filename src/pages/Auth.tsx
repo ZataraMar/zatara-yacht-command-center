@@ -8,7 +8,7 @@ const Auth = () => {
       <div className="w-full max-w-md">
         <div className="animate-slide-up">
           <div className="bg-white/90 backdrop-blur-sm rounded-luxury shadow-elegant p-8 sm:p-10 border border-zatara-gold/20">
-            {/* Logo with tighter crop - removed padding and adjusted sizing */}
+            {/* Logo with much tighter crop - doubled the padding removal */}
             <div className="text-center mb-8">
               <div className="overflow-hidden inline-block">
                 <img 
@@ -18,7 +18,7 @@ const Auth = () => {
                   style={{ 
                     padding: '0', 
                     margin: '0 auto',
-                    clipPath: 'inset(10% 10% 10% 10%)'
+                    clipPath: 'inset(20% 20% 20% 20%)'
                   }}
                 />
               </div>

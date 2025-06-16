@@ -13,15 +13,20 @@ export const Footer = () => {
     <footer className="bg-zatara-navy text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Company Info */}
+          {/* Company Info with tight cropped logo */}
           <div className="space-y-4">
             <div className="space-y-3">
-              <img 
-                src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
-                alt="Zatara" 
-                className="h-16 w-auto brightness-0 invert" // Increased from h-12
-              />
-              <div className="text-xl font-bold text-white"> {/* Increased from text-lg */}
+              <div className="overflow-hidden inline-block">
+                <img 
+                  src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
+                  alt="Zatara" 
+                  className="h-24 w-auto brightness-0 invert object-cover scale-110" 
+                  style={{ 
+                    clipPath: 'inset(20% 20% 20% 20%)'
+                  }}
+                />
+              </div>
+              <div className="text-xl font-bold text-white">
                 Zatara
               </div>
             </div>

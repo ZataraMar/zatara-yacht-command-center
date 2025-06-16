@@ -24,13 +24,18 @@ export const Navigation = () => {
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3">
-          {/* Logo Section */}
+          {/* Logo Section with tight cropping */}
           <Link to="/" className="flex items-center space-x-4">
-            <img 
-              src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
-              alt="Zatara" 
-              className="h-20 w-auto"
-            />
+            <div className="overflow-hidden inline-block">
+              <img 
+                src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
+                alt="Zatara" 
+                className="h-28 w-auto object-cover scale-110"
+                style={{ 
+                  clipPath: 'inset(20% 20% 20% 20%)'
+                }}
+              />
+            </div>
             <div className="hidden sm:block">
               <div className="text-3xl font-bold text-zatara-navy">
                 Zatara
