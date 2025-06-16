@@ -9,6 +9,12 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Homepage from "./pages/public/Homepage";
+import Charter from "./pages/public/Charter";
+import BoatClub from "./pages/public/BoatClub";
+import Sales from "./pages/public/Sales";
+import Management from "./pages/public/Management";
+import Guides from "./pages/public/Guides";
 
 const queryClient = new QueryClient();
 
@@ -20,13 +26,23 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Homepage />} />
+            <Route path="/charter" element={<Charter />} />
+            <Route path="/boat-club" element={<BoatClub />} />
+            <Route path="/sales" element={<Sales />} />
+            <Route path="/management" element={<Management />} />
+            <Route path="/guides" element={<Guides />} />
+            
+            {/* Protected Auth & Dashboard Routes */}
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={
+            <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Index />
               </ProtectedRoute>
             } />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            
+            {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

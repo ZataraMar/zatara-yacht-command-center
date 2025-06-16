@@ -1,10 +1,11 @@
-
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { RoleBasedRoute } from '@/components/auth/RoleBasedRoute';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { isManagementOrOwner, isStaffOrHigher } from '@/utils/authSecurity';
+import { Home } from 'lucide-react';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
@@ -18,9 +19,17 @@ const Index = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Zatara Mar Dashboard</h1>
-              <p className="text-gray-600">Management Platform</p>
+            <div className="flex items-center space-x-4">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/">
+                  <Home className="h-4 w-4 mr-2" />
+                  Public Site
+                </Link>
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Zatara Mar Dashboard</h1>
+                <p className="text-gray-600">Team Management Platform</p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
