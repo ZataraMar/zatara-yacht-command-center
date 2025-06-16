@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Anchor, Mail, Phone, MapPin } from 'lucide-react';
+import { MessageCircle, Mail, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export const Footer = () => {
   return (
@@ -10,16 +11,11 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="relative">
-                <Anchor className="h-6 w-6 text-zatara-gold" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-zatara-blue rounded-full"></div>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-playfair font-bold tracking-wide">Zatara</span>
-                <span className="text-xs text-zatara-gold font-medium -mt-1 tracking-wider">MALLORCA</span>
-              </div>
-            </div>
+            <img 
+              src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
+              alt="Zatara" 
+              className="h-8 w-auto mb-4 brightness-0 invert"
+            />
             <p className="text-gray-300 mb-4 leading-relaxed">
               Premium yacht services in the heart of the Mediterranean. Experience luxury charter, exclusive boat club memberships, and comprehensive yacht management in Mallorca.
             </p>
@@ -29,12 +25,8 @@ export const Footer = () => {
                 <span>Puerto Portals, Mallorca</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="h-4 w-4 text-zatara-gold" />
-                <span>cruise@zatara.es</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="h-4 w-4 text-zatara-gold" />
-                <span>+34 XXX XXX XXX</span>
+                <MessageCircle className="h-4 w-4 text-zatara-gold" />
+                <span>WhatsApp: +34 711 013 403</span>
               </div>
             </div>
           </div>
@@ -63,13 +55,14 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-playfair font-semibold mb-4 text-zatara-gold">Set Sail</h3>
+            <h3 className="text-lg font-playfair font-semibold mb-4 text-zatara-gold">Get In Touch</h3>
             <p className="text-gray-300 mb-6 leading-relaxed">
               Ready to discover the magic of the Balearic waters with Zatara?
             </p>
-            <button className="gradient-zatara-gold hover:bg-zatara-gold-dark text-zatara-navy px-6 py-3 rounded-lg transition-all duration-300 font-medium shadow-lg">
-              Contact Us Today
-            </button>
+            <Button className="gradient-zatara-gold hover:bg-zatara-gold-dark text-zatara-navy px-6 py-3 rounded-lg transition-all duration-300 font-medium shadow-lg w-full">
+              <MessageCircle className="mr-2 h-4 w-4" />
+              WhatsApp Us
+            </Button>
           </div>
         </div>
 
