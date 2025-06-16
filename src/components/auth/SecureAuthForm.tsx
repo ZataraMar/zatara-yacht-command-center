@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/SecureAuthContext';
 import { toast } from '@/hooks/use-toast';
 import { signInSchema, signUpSchema, sanitizeInput } from '@/utils/inputValidation';
 import { Shield, AlertTriangle } from 'lucide-react';
