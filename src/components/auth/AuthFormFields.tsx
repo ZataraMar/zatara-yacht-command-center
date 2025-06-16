@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, EyeOff, AlertTriangle, MessageCircle, Mail } from 'lucide-react';
+import { Eye, EyeOff, AlertTriangle, MessageCircle, Mail, UserCheck } from 'lucide-react';
 import { AuthFormData } from '@/hooks/useAuthForm';
 
 interface AuthFormFieldsProps {
@@ -20,15 +20,12 @@ interface AuthFormFieldsProps {
   onToggleConfirmPassword: () => void;
 }
 
-const publicUserRoles = [{
+const clientRoles = [{
   value: 'charter_clients',
   label: 'Charter Client'
 }, {
   value: 'boat_club_clients',
-  label: 'Boat Club Client'
-}, {
-  value: 'charter_brokers',
-  label: 'Charter Broker'
+  label: 'Boat Club Member'
 }];
 
 export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
@@ -45,6 +42,14 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
     <>
       {!isLogin && (
         <>
+          <div className="text-sm text-blue-700 bg-blue-50 p-3 rounded flex items-start space-x-2 mb-4">
+            <UserCheck className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <strong>Invite-Only Registration</strong>
+              <p className="text-blue-600 mt-1">This registration is by invitation only. Please ensure you have been provided with this link by Zatara staff.</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name *</Label>
@@ -129,13 +134,13 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="role">Role *</Label>
+            <Label htmlFor="role">Account Type *</Label>
             <Select value={formData.role} onValueChange={value => onInputChange('role', value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select your role" />
+                <SelectValue placeholder="Select your account type" />
               </SelectTrigger>
               <SelectContent>
-                {publicUserRoles.map(roleOption => (
+                {clientRoles.map(roleOption => (
                   <SelectItem key={roleOption.value} value={roleOption.value}>
                     {roleOption.label}
                   </SelectItem>
@@ -144,11 +149,11 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             </Select>
           </div>
           
-          <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded flex items-start space-x-2">
-            <AlertTriangle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-gray-600 bg-amber-50 p-3 rounded flex items-start space-x-2">
+            <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
             <div>
-              <strong>Note:</strong> Staff and management accounts require approval. 
-              Contact your administrator if you need elevated access.
+              <strong>Staff Access:</strong> Team members and management accounts are created through the admin panel. 
+              Contact your administrator for staff access.
             </div>
           </div>
         </>

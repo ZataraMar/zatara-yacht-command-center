@@ -54,16 +54,16 @@ export const secureSignIn = async (email: string, password: string) => {
   }
 };
 
-// Secure sign-up with proper role validation
+// Secure sign-up with proper role validation for invite-only system
 export const secureSignUp = async (email: string, password: string, userData: any) => {
   const redirectUrl = `${window.location.origin}/`;
   
-  // Validate role assignment - restrict management/owners roles
+  // Validate role assignment - only allow client roles for invite-only registration
   const requestedRole = userData.role;
-  const allowedPublicRoles = ['staff', 'charter_clients', 'boat_club_clients', 'charter_brokers'];
+  const allowedClientRoles = ['charter_clients', 'boat_club_clients'];
   
-  if (!allowedPublicRoles.includes(requestedRole)) {
-    userData.role = 'charter_clients'; // Default to safest role
+  if (!allowedClientRoles.includes(requestedRole)) {
+    userData.role = 'charter_clients'; // Default to charter clients
   }
   
   const { data, error } = await supabase.auth.signUp({
@@ -112,4 +112,8 @@ export const isManagementOrOwner = (userRole: string | null): boolean => {
 
 export const isStaffOrHigher = (userRole: string | null): boolean => {
   return hasRole(userRole, ['staff', 'skippers', 'management', 'owners', 'casual_staff']);
+};
+
+export const isClientRole = (userRole: string | null): boolean => {
+  return hasRole(userRole, ['charter_clients', 'boat_club_clients']);
 };
