@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AuthForm } from '@/components/auth/AuthForm';
+import { SecureAuthForm } from '@/components/auth/SecureAuthForm';
 
 const Auth = () => {
   return (
@@ -8,9 +8,9 @@ const Auth = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Zatara Mar</h1>
-          <p className="text-gray-600 mt-2">Management Dashboard</p>
+          <p className="text-gray-600 mt-2">Secure Management Dashboard</p>
         </div>
-        <AuthForm />
+        <SecureAuthForm />
       </div>
     </div>
   );
