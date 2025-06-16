@@ -7,8 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SecureAuthProvider } from "@/contexts/SecureAuthContext";
 import { SecureProtectedRoute } from "@/components/auth/SecureProtectedRoute";
 import { OfflineIndicator } from "@/components/common/OfflineIndicator";
-import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Homepage from "./pages/public/Homepage";
 import Charter from "./pages/public/Charter";
@@ -44,11 +44,13 @@ const App = () => (
             <Route path="/management" element={<Management />} />
             <Route path="/guides" element={<Guides />} />
             
-            {/* Protected Auth & Dashboard Routes */}
+            {/* Authentication Route */}
             <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={
+            
+            {/* Protected Dashboard Routes */}
+            <Route path="/dashboard/*" element={
               <SecureProtectedRoute>
-                <Index />
+                <Dashboard />
               </SecureProtectedRoute>
             } />
             

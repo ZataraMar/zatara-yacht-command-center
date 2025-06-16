@@ -2,7 +2,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { secureSignIn, secureSignUp, secureSignOut, cleanupAuthState } from '@/utils/authSecurity';
+import { 
+  enhancedSecureSignIn, 
+  enhancedSecureSignUp, 
+  enhancedSecureSignOut, 
+  enhancedCleanupAuthState 
+} from '@/utils/enhancedAuthSecurity';
 
 interface UserProfile {
   id: string;
@@ -11,8 +16,10 @@ interface UserProfile {
   email?: string;
   role?: string;
   phone?: string;
+  phone_number?: string;
   company?: string;
   active?: boolean;
+  whatsapp_enabled?: boolean;
 }
 
 interface AuthContextType {
@@ -52,14 +59,13 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         .single();
       
       if (error) {
-        // Log error securely without exposing sensitive info
-        console.warn('Profile fetch failed');
+        console.warn('Profile fetch failed:', error.message);
         return null;
       }
       
       return data;
     } catch (error) {
-      console.warn('Profile fetch error');
+      console.warn('Profile fetch error:', error);
       return null;
     }
   };
@@ -75,6 +81,8 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
+        
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -94,6 +102,8 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // THEN check for existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
+      
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -110,7 +120,7 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
-    const result = await secureSignIn(email, password);
+    const result = await enhancedSecureSignIn(email, password);
     if (result.error) {
       setLoading(false);
     }
@@ -119,18 +129,18 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const signUp = async (email: string, password: string, userData: any) => {
     setLoading(true);
-    const result = await secureSignUp(email, password, userData);
+    const result = await enhancedSecureSignUp(email, password, userData);
     setLoading(false);
     return result;
   };
 
   const signOut = async () => {
     setLoading(true);
-    cleanupAuthState();
+    enhancedCleanupAuthState();
     setUser(null);
     setSession(null);
     setProfile(null);
-    await secureSignOut();
+    await enhancedSecureSignOut();
   };
 
   const value = {
