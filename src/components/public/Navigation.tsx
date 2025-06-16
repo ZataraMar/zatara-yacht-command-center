@@ -15,43 +15,43 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className="bg-white/95 backdrop-blur-sm shadow-elegant border-b border-zatara-gold/20 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex justify-between items-center py-6 sm:py-8">
-          {/* Luxury Logo Section */}
-          <Link to="/" className="flex items-center space-x-4 group">
+    <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-4">
+          {/* Logo Section */}
+          <Link to="/" className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
               alt="Zatara" 
-              className="h-20 sm:h-24 lg:h-28 w-auto transition-transform duration-300 group-hover:scale-105"
+              className="h-12 w-auto"
             />
             <div className="hidden sm:block">
-              <div className="zatara-luxury-script text-luxury-2xl text-zatara-navy">
-                Zatara Mar
+              <div className="text-xl font-semibold text-zatara-navy">
+                Zatara
               </div>
-              <div className="text-luxury-xs font-medium text-zatara-blue tracking-wide">
+              <div className="text-xs text-zatara-blue tracking-wide">
                 LUXURY YACHT SERVICES
               </div>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-12">
+          <div className="hidden lg:flex items-center space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-luxury-sm font-medium transition-all duration-300 hover:scale-105 ${
+                className={`font-medium transition-colors ${
                   location.pathname === link.path
-                    ? 'text-zatara-gold font-semibold border-b-2 border-zatara-gold pb-1'
-                    : 'text-zatara-navy hover:text-zatara-gold'
+                    ? 'text-zatara-blue font-semibold'
+                    : 'text-gray-700 hover:text-zatara-blue'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-            <Button className="gradient-zatara-gold hover:shadow-gold text-zatara-navy font-semibold px-8 py-4 rounded-luxury transition-all duration-300 hover:scale-105 text-luxury-sm">
-              <Link to="/auth">Client Portal</Link>
+            <Button className="bg-zatara-blue hover:bg-zatara-blue-dark text-white">
+              <Link to="/auth">Login</Link>
             </Button>
           </div>
 
@@ -59,26 +59,25 @@ export const Navigation = () => {
           <div className="lg:hidden">
             <Button 
               variant="outline" 
-              size="lg" 
               asChild 
-              className="border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy font-semibold px-6 py-3 rounded-luxury transition-all duration-300 text-luxury-sm"
+              className="border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white"
             >
-              <Link to="/auth">Portal</Link>
+              <Link to="/auth">Login</Link>
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className="lg:hidden pb-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="lg:hidden pb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-center py-3 px-4 rounded-luxury font-medium transition-all duration-300 text-luxury-xs ${
+                className={`text-center py-2 px-3 rounded font-medium transition-colors text-sm ${
                   location.pathname === link.path
-                    ? 'bg-zatara-gold text-zatara-navy font-semibold shadow-gold'
-                    : 'text-zatara-navy hover:bg-zatara-pearl hover:text-zatara-gold'
+                    ? 'bg-zatara-blue text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 {link.label}
