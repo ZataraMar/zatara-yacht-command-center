@@ -24,30 +24,30 @@ export const Navigation = () => {
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3">
-          {/* Logo Section - Made larger */}
+          {/* Logo Section */}
           <Link to="/" className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
               alt="Zatara" 
-              className="h-16 w-auto" // Increased from h-12
+              className="h-20 w-auto"
             />
             <div className="hidden sm:block">
-              <div className="text-2xl font-bold text-zatara-navy"> {/* Increased from text-xl */}
+              <div className="text-3xl font-bold text-zatara-navy">
                 Zatara
               </div>
-              <div className="text-sm text-zatara-blue tracking-wide font-medium"> {/* Increased from text-xs */}
+              <div className="text-base text-zatara-blue tracking-wide font-medium">
                 LUXURY YACHT SERVICES
               </div>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-6"> {/* Reduced from space-x-8 */}
+          <div className="hidden lg:flex items-center space-x-5">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-base font-medium transition-colors ${  /* Increased from no specified size */}
+                className={`text-lg font-medium transition-colors ${
                   location.pathname === link.path
                     ? 'text-zatara-blue font-semibold'
                     : 'text-gray-700 hover:text-zatara-blue'
@@ -65,7 +65,7 @@ export const Navigation = () => {
               <MessageCircle className="h-4 w-4 mr-2" />
               WhatsApp
             </Button>
-            <Button className="bg-zatara-blue hover:bg-zatara-blue-dark text-white">
+            <Button asChild className="bg-zatara-blue hover:bg-zatara-blue-dark text-white">
               <Link to="/auth">Login</Link>
             </Button>
           </div>
