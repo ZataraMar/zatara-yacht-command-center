@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -40,15 +39,15 @@ export default {
 				'serif': ['Playfair Display', 'serif'],
 			},
 			fontSize: {
-				'luxury-xs': ['1rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],
-				'luxury-sm': ['1.125rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],
-				'luxury-base': ['1.25rem', { lineHeight: '1.6', letterSpacing: '0.01em' }],
-				'luxury-lg': ['1.5rem', { lineHeight: '1.4', letterSpacing: '0.01em' }],
-				'luxury-xl': ['1.875rem', { lineHeight: '1.3', letterSpacing: '0.01em' }],
-				'luxury-2xl': ['2.25rem', { lineHeight: '1.2', letterSpacing: '0.01em' }],
-				'luxury-3xl': ['3rem', { lineHeight: '1.1', letterSpacing: '0.01em' }],
-				'luxury-4xl': ['3.75rem', { lineHeight: '1', letterSpacing: '0.01em' }],
-				'luxury-5xl': ['4.5rem', { lineHeight: '1', letterSpacing: '0.01em' }],
+				'luxury-xs': ['1.125rem', { lineHeight: '1.6', letterSpacing: '0.01em' }],
+				'luxury-sm': ['1.25rem', { lineHeight: '1.6', letterSpacing: '0.01em' }],
+				'luxury-base': ['1.375rem', { lineHeight: '1.6', letterSpacing: '0.01em' }],
+				'luxury-lg': ['1.625rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],
+				'luxury-xl': ['2rem', { lineHeight: '1.4', letterSpacing: '0.01em' }],
+				'luxury-2xl': ['2.5rem', { lineHeight: '1.3', letterSpacing: '0.01em' }],
+				'luxury-3xl': ['3.25rem', { lineHeight: '1.2', letterSpacing: '0.01em' }],
+				'luxury-4xl': ['4rem', { lineHeight: '1.1', letterSpacing: '0.01em' }],
+				'luxury-5xl': ['5rem', { lineHeight: '1.1', letterSpacing: '0.01em' }],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

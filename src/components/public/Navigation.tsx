@@ -23,13 +23,13 @@ export const Navigation = () => {
             <img 
               src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
               alt="Zatara" 
-              className="h-16 sm:h-20 lg:h-24 w-auto transition-transform duration-300 group-hover:scale-105"
+              className="h-20 sm:h-24 lg:h-28 w-auto transition-transform duration-300 group-hover:scale-105"
             />
             <div className="hidden sm:block">
-              <div className="zatara-luxury-script text-luxury-lg text-zatara-navy">
+              <div className="zatara-luxury-script text-luxury-2xl text-zatara-navy">
                 Zatara Mar
               </div>
-              <div className="text-sm font-medium text-zatara-blue tracking-wide">
+              <div className="text-luxury-xs font-medium text-zatara-blue tracking-wide">
                 LUXURY YACHT SERVICES
               </div>
             </div>
@@ -41,7 +41,7 @@ export const Navigation = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`luxury-text font-medium transition-all duration-300 hover:scale-105 ${
+                className={`text-luxury-sm font-medium transition-all duration-300 hover:scale-105 ${
                   location.pathname === link.path
                     ? 'text-zatara-gold font-semibold border-b-2 border-zatara-gold pb-1'
                     : 'text-zatara-navy hover:text-zatara-gold'
@@ -50,7 +50,7 @@ export const Navigation = () => {
                 {link.label}
               </Link>
             ))}
-            <Button className="gradient-zatara-gold hover:shadow-gold text-zatara-navy font-semibold px-8 py-4 rounded-luxury transition-all duration-300 hover:scale-105">
+            <Button className="gradient-zatara-gold hover:shadow-gold text-zatara-navy font-semibold px-8 py-4 rounded-luxury transition-all duration-300 hover:scale-105 text-luxury-sm">
               <Link to="/auth">Client Portal</Link>
             </Button>
           </div>
@@ -61,7 +61,7 @@ export const Navigation = () => {
               variant="outline" 
               size="lg" 
               asChild 
-              className="border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy font-semibold px-6 py-3 rounded-luxury transition-all duration-300"
+              className="border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy font-semibold px-6 py-3 rounded-luxury transition-all duration-300 text-luxury-sm"
             >
               <Link to="/auth">Portal</Link>
             </Button>
@@ -75,7 +75,7 @@ export const Navigation = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-center py-3 px-4 rounded-luxury font-medium transition-all duration-300 ${
+                className={`text-center py-3 px-4 rounded-luxury font-medium transition-all duration-300 text-luxury-xs ${
                   location.pathname === link.path
                     ? 'bg-zatara-gold text-zatara-navy font-semibold shadow-gold'
                     : 'text-zatara-navy hover:bg-zatara-pearl hover:text-zatara-gold'

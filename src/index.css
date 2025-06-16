@@ -91,6 +91,8 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Tw Cen MT', sans-serif;
+    font-size: 1.125rem; /* Increased base font size */
+    line-height: 1.6;
   }
 
   /* Luxury Typography Hierarchy */
@@ -114,7 +116,7 @@
 
   /* Mobile-First Base Styles */
   html {
-    font-size: 16px;
+    font-size: 18px; /* Increased from 16px for larger base */
     scroll-behavior: smooth;
   }
 
@@ -181,25 +183,34 @@
     box-shadow: 0 10px 40px -10px rgba(204, 204, 51, 0.3), 0 4px 25px -5px rgba(204, 204, 51, 0.1);
   }
 
-  /* Responsive Luxury Text Sizing */
+  /* Enhanced Responsive Luxury Text Sizing */
   .text-luxury-xs {
-    @apply text-base sm:text-lg;
-  }
-
-  .text-luxury-sm {
     @apply text-lg sm:text-xl md:text-2xl;
   }
 
+  .text-luxury-sm {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
   .text-luxury-md {
-    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
   }
 
   .text-luxury-lg {
-    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl;
+    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl;
   }
 
   .text-luxury-xl {
-    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl;
+    @apply text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl;
+  }
+
+  /* Base text sizes */
+  .luxury-text {
+    @apply text-luxury-sm;
+  }
+
+  .luxury-text-large {
+    @apply text-luxury-lg;
   }
 
   /* Touch-optimized luxury components */
