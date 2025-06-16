@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SecureAuthForm } from '@/components/auth/SecureAuthForm';
 
@@ -7,12 +6,12 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center gradient-mediterranean p-6">
       <div className="w-full max-w-lg">
         <div className="text-center mb-12 animate-fade-in">
-          {/* Luxury Zatara Logo */}
+          {/* Larger Color Zatara Logo */}
           <div className="mb-8">
             <img 
               src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
               alt="Zatara" 
-              className="h-20 sm:h-24 w-auto mx-auto brightness-0 saturate-0 opacity-80 hover:opacity-100 transition-opacity duration-300"
+              className="h-32 sm:h-36 w-auto mx-auto hover:opacity-90 transition-opacity duration-300"
             />
           </div>
           <div className="space-y-4">
