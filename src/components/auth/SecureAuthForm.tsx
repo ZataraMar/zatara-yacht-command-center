@@ -48,6 +48,8 @@ export const SecureAuthForm = () => {
         const { error } = await signUp(formData.email, formData.password, {
           first_name: formData.firstName,
           last_name: formData.lastName,
+          phone_number: formData.phone,
+          whatsapp_enabled: formData.whatsappEnabled,
           role: formData.role
         });
         if (error) {

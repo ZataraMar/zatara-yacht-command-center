@@ -8,6 +8,8 @@ export interface AuthFormData {
   confirmPassword: string;
   firstName: string;
   lastName: string;
+  phone: string;
+  whatsappEnabled: boolean;
   role: string;
   rememberMe: boolean;
 }
@@ -19,6 +21,8 @@ export const useAuthForm = (isLogin: boolean) => {
     confirmPassword: '',
     firstName: '',
     lastName: '',
+    phone: '',
+    whatsappEnabled: false,
     role: 'charter_clients',
     rememberMe: false
   });

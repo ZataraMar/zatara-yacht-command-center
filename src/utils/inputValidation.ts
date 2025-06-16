@@ -19,18 +19,18 @@ export const nameSchema = z.string()
   .max(50, 'Name is too long')
   .regex(/^[a-zA-Z\s'-]+$/, 'Name can only contain letters, spaces, hyphens, and apostrophes');
 
-// Phone validation schema
+// Phone validation schema (international format)
 export const phoneSchema = z.string()
-  .regex(/^\+?[\d\s\-\(\)]+$/, 'Please enter a valid phone number')
+  .min(1, 'Phone number is required')
+  .regex(/^\+[1-9]\d{1,14}$/, 'Please enter a valid international phone number (e.g., +34612345678)')
   .min(8, 'Phone number is too short')
-  .max(20, 'Phone number is too long')
-  .optional();
+  .max(16, 'Phone number is too long');
 
 // Contact form validation schema
 export const contactFormSchema = z.object({
   name: nameSchema,
   email: emailSchema,
-  phone: phoneSchema,
+  phone: phoneSchema.optional(),
   message: z.string()
     .min(10, 'Message must be at least 10 characters')
     .max(1000, 'Message is too long'),
@@ -48,6 +48,8 @@ export const signUpSchema = z.object({
   password: passwordSchema,
   firstName: nameSchema,
   lastName: nameSchema,
+  phone: phoneSchema,
+  whatsappEnabled: z.boolean(),
   role: z.enum(['charter_clients', 'boat_club_clients', 'charter_brokers'])
 });
 

@@ -4,8 +4,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Eye, EyeOff, AlertTriangle, MessageCircle, Mail } from 'lucide-react';
 import { AuthFormData } from '@/hooks/useAuthForm';
 
 interface AuthFormFieldsProps {
@@ -46,7 +47,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
         <>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="firstName">First Name *</Label>
               <Input 
                 id="firstName" 
                 type="text" 
@@ -58,7 +59,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
               {errors.firstName && <p className="text-sm text-red-600">{errors.firstName}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="lastName">Last Name *</Label>
               <Input 
                 id="lastName" 
                 type="text" 
@@ -70,8 +71,65 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
               {errors.lastName && <p className="text-sm text-red-600">{errors.lastName}</p>}
             </div>
           </div>
+          
           <div className="space-y-2">
-            <Label htmlFor="role">Role</Label>
+            <Label htmlFor="phone">Phone Number *</Label>
+            <Input 
+              id="phone" 
+              type="tel" 
+              placeholder="+34612345678"
+              value={formData.phone} 
+              onChange={e => onInputChange('phone', e.target.value)} 
+              className={errors.phone ? 'border-red-500' : ''} 
+              required 
+            />
+            {errors.phone && <p className="text-sm text-red-600">{errors.phone}</p>}
+            <p className="text-xs text-gray-600">
+              Enter your phone number in international format (e.g., +34612345678)
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Is this your WhatsApp number? *</Label>
+            <RadioGroup 
+              value={formData.whatsappEnabled.toString()} 
+              onValueChange={(value) => onInputChange('whatsappEnabled', value === 'true')}
+              className="flex flex-row space-x-6"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="true" id="whatsapp-yes" />
+                <Label htmlFor="whatsapp-yes" className="text-sm font-normal cursor-pointer">
+                  Yes
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="false" id="whatsapp-no" />
+                <Label htmlFor="whatsapp-no" className="text-sm font-normal cursor-pointer">
+                  No
+                </Label>
+              </div>
+            </RadioGroup>
+            
+            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+              <div className="flex items-start space-x-2 mb-2">
+                <MessageCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div className="text-sm">
+                  <strong className="text-blue-800">WhatsApp updates:</strong>
+                  <span className="text-blue-700"> ~5 minutes</span>
+                </div>
+              </div>
+              <div className="flex items-start space-x-2">
+                <Mail className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div className="text-sm">
+                  <strong className="text-blue-800">Email updates:</strong>
+                  <span className="text-blue-700"> up to 48 hours</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="role">Role *</Label>
             <Select value={formData.role} onValueChange={value => onInputChange('role', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select your role" />
@@ -85,6 +143,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
               </SelectContent>
             </Select>
           </div>
+          
           <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded flex items-start space-x-2">
             <AlertTriangle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
             <div>
@@ -96,7 +155,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
       )}
       
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">Email *</Label>
         <Input 
           id="email" 
           type="email" 
@@ -109,7 +168,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">Password *</Label>
         <div className="relative">
           <Input 
             id="password" 
@@ -139,7 +198,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
       
       {!isLogin && (
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword">Confirm Password *</Label>
           <div className="relative">
             <Input 
               id="confirmPassword" 

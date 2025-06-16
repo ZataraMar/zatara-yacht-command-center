@@ -1042,6 +1042,7 @@ export type Database = {
           boat_access: string[] | null
           certifications: string[] | null
           company: string | null
+          contact_preferences: string | null
           created_at: string | null
           email: string | null
           emergency_contact: string | null
@@ -1049,14 +1050,17 @@ export type Database = {
           id: string
           last_name: string | null
           phone: string | null
+          phone_number: string | null
           role: Database["public"]["Enums"]["user_role"] | null
           updated_at: string | null
+          whatsapp_enabled: boolean
         }
         Insert: {
           active?: boolean | null
           boat_access?: string[] | null
           certifications?: string[] | null
           company?: string | null
+          contact_preferences?: string | null
           created_at?: string | null
           email?: string | null
           emergency_contact?: string | null
@@ -1064,14 +1068,17 @@ export type Database = {
           id: string
           last_name?: string | null
           phone?: string | null
+          phone_number?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string | null
+          whatsapp_enabled?: boolean
         }
         Update: {
           active?: boolean | null
           boat_access?: string[] | null
           certifications?: string[] | null
           company?: string | null
+          contact_preferences?: string | null
           created_at?: string | null
           email?: string | null
           emergency_contact?: string | null
@@ -1079,8 +1086,10 @@ export type Database = {
           id?: string
           last_name?: string | null
           phone?: string | null
+          phone_number?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string | null
+          whatsapp_enabled?: boolean
         }
         Relationships: []
       }
