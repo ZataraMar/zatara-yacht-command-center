@@ -13,7 +13,9 @@ import {
   Settings, 
   Bell,
   Menu,
-  LogOut
+  LogOut,
+  Activity,
+  MessageCircle
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -36,6 +38,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const getNavigationItems = () => {
     const baseItems = [
       { icon: Home, label: 'Overview', href: '/dashboard', roles: ['all'] },
+      { icon: Activity, label: 'Operations Center', href: '/dashboard/operations', roles: ['team', 'agency', 'management', 'owners', 'staff', 'skippers'] },
       { icon: Calendar, label: 'My Bookings', href: '/dashboard/bookings', roles: ['charter_clients', 'boat_club_clients'] },
     ];
 

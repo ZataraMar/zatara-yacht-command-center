@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { DashboardHome } from '@/components/dashboard/DashboardHome';
+import { DashboardOperations } from '@/components/dashboard/DashboardOperations';
 import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
 import { useAuth } from '@/contexts/SecureAuthContext';
 
@@ -35,6 +36,16 @@ const Dashboard = () => {
       <Routes>
         <Route path="/" element={<DashboardHome />} />
         
+        {/* Operations Center - Main Dashboard */}
+        <Route 
+          path="/operations" 
+          element={
+            <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owners', 'staff', 'skippers']}>
+              <DashboardOperations />
+            </SecureRoleBasedRoute>
+          } 
+        />
+        
         {/* Client Routes */}
         <Route 
           path="/bookings" 
@@ -53,10 +64,7 @@ const Dashboard = () => {
           path="/charters" 
           element={
             <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owners', 'staff', 'skippers']}>
-              <div className="text-center p-8">
-                <h2 className="text-2xl font-bold text-zatara-navy mb-4">Charter Management</h2>
-                <p className="text-zatara-blue">Charter management dashboard will be integrated here.</p>
-              </div>
+              <DashboardOperations />
             </SecureRoleBasedRoute>
           } 
         />

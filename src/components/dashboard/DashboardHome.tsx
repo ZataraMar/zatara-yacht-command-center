@@ -1,311 +1,292 @@
 
-import React from 'react';
-import { useAuth } from '@/contexts/SecureAuthContext';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Calendar, 
-  Anchor, 
-  Users, 
-  TrendingUp, 
-  MapPin, 
-  Phone,
-  CheckCircle,
-  AlertCircle,
-  Clock
-} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Users, DollarSign, Anchor, TrendingUp, AlertTriangle, Clock, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/SecureAuthContext';
 
 export const DashboardHome = () => {
   const { profile } = useAuth();
-  const userRole = profile?.role || '';
+  const [metrics, setMetrics] = useState({
+    todaysCharters: 0,
+    upcomingCharters: 0,
+    totalRevenue: 0,
+    outstandingPayments: 0,
+    pendingReconciliations: 0
+  });
+  const [loading, setLoading] = useState(true);
 
-  const isClientRole = ['charter_clients', 'boat_club_clients'].includes(userRole);
-  const isTeamRole = ['team', 'agency', 'management', 'owners', 'staff', 'skippers'].includes(userRole);
+  useEffect(() => {
+    fetchDashboardMetrics();
+  }, []);
 
-  const getWelcomeMessage = () => {
-    switch (userRole) {
-      case 'charter_clients':
-        return {
-          title: `Welcome back, ${profile?.first_name}!`,
-          subtitle: "Your luxury charter experiences await",
-          description: "Manage your bookings, explore new destinations, and connect with our team."
-        };
-      case 'boat_club_clients':
-        return {
-          title: `Welcome to the Club, ${profile?.first_name}!`,
-          subtitle: "Your boat club membership dashboard",
-          description: "Schedule your boat time, track usage, and connect with fellow members."
-        };
-      case 'agency':
-        return {
-          title: `Partner Dashboard - ${profile?.first_name}`,
-          subtitle: "Agency management portal",
-          description: "Manage client bookings, track commissions, and access promotional materials."
-        };
-      default:
-        return {
-          title: `Welcome back, ${profile?.first_name}!`,
-          subtitle: "Zatara Team Dashboard",
-          description: "Manage operations, track performance, and ensure exceptional guest experiences."
-        };
+  const fetchDashboardMetrics = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      // Today's charters
+      const { data: todayCharters } = await supabase
+        .from('bookings')
+        .select('id')
+        .gte('start_date', today)
+        .lt('start_date', today + 'T23:59:59');
+
+      // Upcoming charters
+      const { data: upcomingCharters } = await supabase
+        .from('bookings')
+        .select('id')
+        .gt('start_date', today + 'T23:59:59')
+        .lte('start_date', nextWeek);
+
+      // Revenue and payments
+      const { data: revenue } = await supabase
+        .from('bookings')
+        .select('charter_total, outstanding_amount')
+        .gte('start_date', '2024-01-01');
+
+      let totalRevenue = 0;
+      let outstandingPayments = 0;
+      
+      revenue?.forEach(booking => {
+        totalRevenue += booking.charter_total || 0;
+        outstandingPayments += booking.outstanding_amount || 0;
+      });
+
+      // Pending reconciliations
+      const { data: pendingRecon } = await supabase
+        .from('charter_reconciliation')
+        .select('id')
+        .eq('preparation_status', 'pending');
+
+      setMetrics({
+        todaysCharters: todayCharters?.length || 0,
+        upcomingCharters: upcomingCharters?.length || 0,
+        totalRevenue,
+        outstandingPayments,
+        pendingReconciliations: pendingRecon?.length || 0
+      });
+    } catch (error) {
+      console.error('Error fetching dashboard metrics:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const welcome = getWelcomeMessage();
-
-  // Sample data - in real implementation, fetch from your database
-  const clientStats = {
-    upcomingBookings: 2,
-    totalBookings: 12,
-    loyaltyPoints: 450,
-    memberSince: '2023'
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-EU', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(value);
   };
 
-  const teamStats = {
-    todayCharters: 8,
-    thisWeekBookings: 45,
-    fleetUtilization: 78,
-    pendingTasks: 3
-  };
-
-  if (isClientRole) {
-    return (
-      <div className="space-y-6">
-        {/* Welcome Section */}
-        <Card className="bg-gradient-to-r from-zatara-blue to-blue-600 text-white">
-          <CardHeader>
-            <CardTitle className="text-2xl">{welcome.title}</CardTitle>
-            <CardDescription className="text-blue-100">{welcome.subtitle}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-blue-50">{welcome.description}</p>
-          </CardContent>
-        </Card>
-
-        {/* Client Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm text-muted-foreground">Upcoming</CardTitle>
-                <Calendar className="h-4 w-4 text-zatara-blue" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-zatara-navy">{clientStats.upcomingBookings}</div>
-              <p className="text-xs text-muted-foreground">bookings scheduled</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm text-muted-foreground">Total Trips</CardTitle>
-                <Anchor className="h-4 w-4 text-zatara-gold" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-zatara-navy">{clientStats.totalBookings}</div>
-              <p className="text-xs text-muted-foreground">amazing experiences</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm text-muted-foreground">Loyalty Points</CardTitle>
-                <TrendingUp className="h-4 w-4 text-green-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-zatara-navy">{clientStats.loyaltyPoints}</div>
-              <p className="text-xs text-muted-foreground">points earned</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm text-muted-foreground">Member Since</CardTitle>
-                <Users className="h-4 w-4 text-zatara-blue" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-zatara-navy">{clientStats.memberSince}</div>
-              <p className="text-xs text-muted-foreground">valued member</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions for Clients */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Everything you need at your fingertips</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button className="h-20 flex-col gradient-zatara">
-                <Calendar className="h-6 w-6 mb-2" />
-                <span className="text-sm font-medium">Book Charter</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex-col border-2 border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white">
-                <MapPin className="h-6 w-6 mb-2" />
-                <span className="text-sm font-medium">Explore Destinations</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex-col border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy">
-                <Phone className="h-6 w-6 mb-2" />
-                <span className="text-sm font-medium">Contact Concierge</span>
-              </Button>
+  const MetricCard = ({ title, value, icon: Icon, color = "text-zatara-navy", description, href }: any) => (
+    <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+      <Link to={href || '/dashboard/operations'}>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">{title}</p>
+              <p className={`text-2xl font-bold ${color}`}>{value}</p>
+              {description && (
+                <p className="text-xs text-gray-500 mt-1">{description}</p>
+              )}
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+            <div className="p-3 bg-zatara-blue/10 rounded-full">
+              <Icon className="h-6 w-6 text-zatara-blue" />
+            </div>
+          </div>
+        </CardContent>
+      </Link>
+    </Card>
+  );
 
-  if (isTeamRole) {
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const userRole = profile?.role || '';
+  const isStaffOrHigher = ['team', 'agency', 'management', 'owners', 'staff', 'skippers'].includes(userRole);
+
+  if (loading) {
     return (
-      <div className="space-y-6">
-        {/* Welcome Section */}
-        <Card className="bg-gradient-to-r from-zatara-navy to-zatara-blue text-white">
-          <CardHeader>
-            <CardTitle className="text-2xl">{welcome.title}</CardTitle>
-            <CardDescription className="text-blue-100">{welcome.subtitle}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-blue-50">{welcome.description}</p>
-          </CardContent>
-        </Card>
-
-        {/* Team Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm text-muted-foreground">Today's Charters</CardTitle>
-                <Calendar className="h-4 w-4 text-zatara-blue" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-zatara-navy">{teamStats.todayCharters}</div>
-              <p className="text-xs text-muted-foreground">active bookings</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm text-muted-foreground">This Week</CardTitle>
-                <TrendingUp className="h-4 w-4 text-green-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-zatara-navy">{teamStats.thisWeekBookings}</div>
-              <p className="text-xs text-muted-foreground">total bookings</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm text-muted-foreground">Fleet Utilization</CardTitle>
-                <Anchor className="h-4 w-4 text-zatara-gold" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-zatara-navy">{teamStats.fleetUtilization}%</div>
-              <p className="text-xs text-muted-foreground">efficiency rate</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm text-muted-foreground">Pending Tasks</CardTitle>
-                <Clock className="h-4 w-4 text-amber-500" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-zatara-navy">{teamStats.pendingTasks}</div>
-              <p className="text-xs text-muted-foreground">require attention</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Latest updates and actions</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Charter ZAT-2024-156 completed</p>
-                  <p className="text-xs text-muted-foreground">2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <AlertCircle className="h-5 w-5 text-amber-500" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">PuraVida maintenance scheduled</p>
-                  <p className="text-xs text-muted-foreground">4 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">New booking confirmed: ZAT-2024-157</p>
-                  <p className="text-xs text-muted-foreground">6 hours ago</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>Common operations and tools</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <Button className="h-16 flex-col gradient-zatara">
-                  <Calendar className="h-5 w-5 mb-1" />
-                  <span className="text-xs">View Charters</span>
-                </Button>
-                <Button variant="outline" className="h-16 flex-col">
-                  <Anchor className="h-5 w-5 mb-1" />
-                  <span className="text-xs">Fleet Status</span>
-                </Button>
-                <Button variant="outline" className="h-16 flex-col">
-                  <Users className="h-5 w-5 mb-1" />
-                  <span className="text-xs">Team View</span>
-                </Button>
-                <Button variant="outline" className="h-16 flex-col">
-                  <TrendingUp className="h-5 w-5 mb-1" />
-                  <span className="text-xs">Analytics</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zatara-blue"></div>
       </div>
     );
   }
 
-  // Default view for other roles
   return (
     <div className="space-y-6">
+      {/* Welcome Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-zatara-navy">
+          {getGreeting()}, {profile?.first_name}!
+        </h1>
+        <p className="text-zatara-blue mt-2">
+          {isStaffOrHigher ? 
+            'Here\'s your operations overview for today' : 
+            'Welcome to your Zatara Mar dashboard'
+          }
+        </p>
+      </div>
+
+      {/* Key Metrics for Staff */}
+      {isStaffOrHigher && (
+        <div>
+          <h2 className="text-xl font-semibold text-zatara-navy mb-4">Operations Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <MetricCard
+              title="Today's Charters"
+              value={metrics.todaysCharters}
+              icon={Calendar}
+              description="Scheduled for today"
+              href="/dashboard/operations"
+            />
+            <MetricCard
+              title="Upcoming Charters"
+              value={metrics.upcomingCharters}
+              icon={Anchor}
+              description="Next 7 days"
+              href="/dashboard/operations"
+            />
+            <MetricCard
+              title="Total Revenue (YTD)"
+              value={formatCurrency(metrics.totalRevenue)}
+              icon={DollarSign}
+              href="/dashboard/operations?tab=analytics"
+            />
+            <MetricCard
+              title="Outstanding Payments"
+              value={formatCurrency(metrics.outstandingPayments)}
+              icon={AlertTriangle}
+              color="text-red-600"
+              href="/dashboard/operations?tab=reconciliation"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions */}
+      <div>
+        <h2 className="text-xl font-semibold text-zatara-navy mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {isStaffOrHigher ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center space-x-2">
+                    <Clock className="h-5 w-5 text-blue-600" />
+                    <span>Live Charter Board</span>
+                  </CardTitle>
+                  <CardDescription>View today's charters and real-time status</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Link to="/dashboard/operations">
+                    <Button className="w-full">View Live Board</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center space-x-2">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span>Charter Reconciliation</span>
+                  </CardTitle>
+                  <CardDescription>Pre-departure checklist and preparation</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm text-gray-600">Pending items</span>
+                    <Badge variant="outline">{metrics.pendingReconciliations}</Badge>
+                  </div>
+                  <Link to="/dashboard/operations?tab=reconciliation">
+                    <Button variant="outline" className="w-full">Manage Reconciliation</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center space-x-2">
+                    <TrendingUp className="h-5 w-5 text-purple-600" />
+                    <span>Business Analytics</span>
+                  </CardTitle>
+                  <CardDescription>Revenue trends and performance metrics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Link to="/dashboard/operations?tab=analytics">
+                    <Button variant="outline" className="w-full">View Analytics</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center space-x-2">
+                    <Calendar className="h-5 w-5 text-blue-600" />
+                    <span>My Bookings</span>
+                  </CardTitle>
+                  <CardDescription>View and manage your charter bookings</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Link to="/dashboard/bookings">
+                    <Button className="w-full">View Bookings</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center space-x-2">
+                    <Users className="h-5 w-5 text-green-600" />
+                    <span>Account Settings</span>
+                  </CardTitle>
+                  <CardDescription>Update your profile and preferences</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Link to="/dashboard/settings">
+                    <Button variant="outline" className="w-full">Manage Account</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* System Status */}
       <Card>
         <CardHeader>
-          <CardTitle>{welcome.title}</CardTitle>
-          <CardDescription>{welcome.subtitle}</CardDescription>
+          <CardTitle className="text-lg flex items-center space-x-2">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <span>System Status</span>
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">{welcome.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm">Database Connection</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm">Real-time Updates</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm">Communication System</span>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
