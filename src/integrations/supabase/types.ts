@@ -1296,148 +1296,41 @@ export type Database = {
       }
     }
     Views: {
-      business_intelligence: {
-        Row: {
-          avg_charter_value: number | null
-          month: string | null
-          puravida_charters: number | null
-          total_charter_hours: number | null
-          total_charters: number | null
-          total_revenue: number | null
-          unique_sources: number | null
-          zatara_charters: number | null
-        }
-        Relationships: []
-      }
       charter_overview: {
         Row: {
           boat: string | null
           booking_source: string | null
+          booking_status: string | null
           charter_date: string | null
           charter_total: number | null
-          duration_hours: number | null
-          end_date: string | null
-          end_hour: number | null
+          end_time: string | null
           guest_name: string | null
-          guest_phone: string | null
-          id: number | null
-          imported_at: string | null
+          guest_surname: string | null
           locator: string | null
-          start_hour: number | null
-          status: string | null
+          phone: string | null
+          start_time: string | null
           total_guests: number | null
-        }
-        Insert: {
-          boat?: never
-          booking_source?: never
-          charter_date?: never
-          charter_total?: never
-          duration_hours?: never
-          end_date?: never
-          end_hour?: never
-          guest_name?: never
-          guest_phone?: never
-          id?: number | null
-          imported_at?: string | null
-          locator?: never
-          start_hour?: never
-          status?: never
-          total_guests?: never
-        }
-        Update: {
-          boat?: never
-          booking_source?: never
-          charter_date?: never
-          charter_total?: never
-          duration_hours?: never
-          end_date?: never
-          end_hour?: never
-          guest_name?: never
-          guest_phone?: never
-          id?: number | null
-          imported_at?: string | null
-          locator?: never
-          start_hour?: never
-          status?: never
-          total_guests?: never
-        }
-        Relationships: []
-      }
-      financial_overview: {
-        Row: {
-          boat: string | null
-          booking_source: string | null
-          charter_date: string | null
-          charter_total: number | null
-          guest_name: string | null
-          invoice_total: string | null
-          locator: string | null
-          outstanding_amount: string | null
-          paid_amount: string | null
-          payment_status: string | null
         }
         Relationships: []
       }
       operations_dashboard: {
         Row: {
           boat: string | null
-          charter_date: string | null
-          charter_notes: string | null
-          cleared_for_departure: boolean | null
-          duration_hours: number | null
+          booking_status: string | null
+          charter_datetime: string | null
           guest_name: string | null
-          guest_phone: string | null
           locator: string | null
-          pre_departure_checks: boolean | null
-          skipper_assigned: string | null
-          status: string | null
-          time_category: string | null
-          total_guests: number | null
+          service_total: number | null
+          status_category: string | null
         }
         Relationships: []
       }
       system_health: {
         Row: {
           component: string | null
-          last_update: string | null
-          record_count: number | null
+          last_check: string | null
           status: string | null
-        }
-        Relationships: []
-      }
-      team_workflow: {
-        Row: {
-          boat: string | null
-          charter_date: string | null
-          cleared_for_departure: boolean | null
-          duration_hours: number | null
-          equipment_check_complete: boolean | null
-          fuel_level_confirmed: boolean | null
-          guest_briefing_completed: boolean | null
-          guest_name: string | null
-          guest_phone: string | null
-          locator: string | null
-          pre_departure_safety_check: boolean | null
-          priority: string | null
-          skipper_notes: string | null
-          start_time: string | null
-          status: string | null
-          total_guests: number | null
-          weather_conditions: string | null
-        }
-        Relationships: []
-      }
-      yearly_performance: {
-        Row: {
-          avg_charter_value: number | null
-          puravida_charters: number | null
-          total_charter_hours: number | null
-          total_charters: number | null
-          total_guests: number | null
-          total_revenue: number | null
-          unique_sources: number | null
-          year: number | null
-          zatara_charters: number | null
+          total_records: number | null
         }
         Relationships: []
       }

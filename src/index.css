@@ -1,10 +1,10 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tw+Cen+MT:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Zatara Brand Design System */
+/* Zatara Brand Design System - Updated */
 
 @layer base {
   :root {
@@ -17,8 +17,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 212 84% 4.9%;
 
-    /* Zatara Primary Blues */
-    --primary: 210 100% 45%; /* Zatara Blue */
+    /* Zatara Brand Colors - Exact Brand Guidelines */
+    --primary: 198 100% 45%; /* #00A3E4 Zatara Blue */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -27,7 +27,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 43 96% 56%; /* Zatara Gold */
+    --accent: 60 85% 50%; /* #CCCC33 Zatara Yellow/Lime */
     --accent-foreground: 212 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -35,16 +35,16 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 210 100% 45%;
+    --ring: 198 100% 45%;
 
     --radius: 0.75rem;
 
-    /* Zatara Custom Colors */
-    --zatara-blue: 210 100% 45%;
-    --zatara-blue-dark: 210 100% 35%;
-    --zatara-blue-light: 210 100% 92%;
-    --zatara-gold: 43 96% 56%;
-    --zatara-gold-dark: 43 96% 46%;
+    /* Zatara Custom Brand Colors */
+    --zatara-blue: 198 100% 45%; /* #00A3E4 */
+    --zatara-blue-dark: 198 100% 35%;
+    --zatara-blue-light: 198 100% 92%;
+    --zatara-accent: 60 85% 50%; /* #CCCC33 */
+    --zatara-accent-dark: 60 85% 40%;
     --zatara-navy: 212 84% 4.9%;
     --zatara-cream: 43 33% 96%;
   }
@@ -59,7 +59,7 @@
     --popover: 212 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 100% 55%;
+    --primary: 198 100% 55%;
     --primary-foreground: 212 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -68,7 +68,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 43 96% 56%;
+    --accent: 60 85% 50%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -76,7 +76,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 210 100% 55%;
+    --ring: 198 100% 55%;
   }
 }
 
@@ -86,40 +86,116 @@
   }
 
   body {
-    @apply bg-background text-foreground font-inter;
+    @apply bg-background text-foreground font-tw-cen;
+    font-family: 'Tw Cen MT', sans-serif;
   }
 
+  /* Typography Hierarchy - Brand Guidelines */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-playfair;
+    font-family: 'Tw Cen MT', sans-serif;
+    font-weight: 600;
+  }
+
+  .zatara-script {
+    font-family: cursive; /* Fallback for Cosmoball-style script */
+    font-weight: 400;
+  }
+
+  /* Mobile-First Base Styles */
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  /* Touch-friendly interactive elements */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
 @layer utilities {
+  /* Zatara Brand Gradients */
   .gradient-zatara {
     background: linear-gradient(135deg, hsl(var(--zatara-blue)) 0%, hsl(var(--zatara-blue-dark)) 100%);
   }
   
-  .gradient-zatara-gold {
-    background: linear-gradient(135deg, hsl(var(--zatara-gold)) 0%, hsl(var(--zatara-gold-dark)) 100%);
+  .gradient-zatara-accent {
+    background: linear-gradient(135deg, hsl(var(--zatara-accent)) 0%, hsl(var(--zatara-accent-dark)) 100%);
   }
 
+  /* Brand Colors */
   .text-zatara-blue {
     color: hsl(var(--zatara-blue));
   }
 
-  .text-zatara-gold {
-    color: hsl(var(--zatara-gold));
+  .text-zatara-accent {
+    color: hsl(var(--zatara-accent));
   }
 
   .bg-zatara-blue {
     background-color: hsl(var(--zatara-blue));
   }
 
-  .bg-zatara-gold {
-    background-color: hsl(var(--zatara-gold));
+  .bg-zatara-accent {
+    background-color: hsl(var(--zatara-accent));
   }
 
   .bg-zatara-cream {
     background-color: hsl(var(--zatara-cream));
   }
+
+  /* Mobile-First Performance Optimizations */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .hardware-accelerated {
+    transform: translateZ(0);
+  }
+
+  /* Touch-optimized components */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  /* Responsive text sizing - mobile first */
+  .text-responsive-xs {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-responsive-sm {
+    @apply text-base sm:text-lg;
+  }
+
+  .text-responsive-md {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+
+  .text-responsive-lg {
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  .text-responsive-xl {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl;
+  }
+}
+
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Offline capability indicators */
+.offline-indicator {
+  @apply fixed bottom-4 left-4 bg-yellow-500 text-black px-3 py-2 rounded-lg shadow-lg z-50;
+}
+
+/* Loading optimization */
+.skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
 }

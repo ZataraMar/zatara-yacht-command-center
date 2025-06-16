@@ -13,16 +13,28 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: {
+				DEFAULT: '1rem',
+				sm: '1.5rem',
+				lg: '2rem',
+			},
 			screens: {
 				'2xl': '1400px'
 			}
 		},
+		screens: {
+			'xs': '375px',
+			'sm': '640px',
+			'md': '768px',
+			'lg': '1024px',
+			'xl': '1280px',
+			'2xl': '1536px',
+		},
 		extend: {
 			fontFamily: {
-				'playfair': ['Playfair Display', 'serif'],
-				'inter': ['Inter', 'sans-serif'],
-				'sans': ['Inter', 'sans-serif'],
+				'tw-cen': ['Tw Cen MT', 'sans-serif'],
+				'script': ['cursive'], // Fallback for Cosmoball-style script
+				'sans': ['Tw Cen MT', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -68,13 +80,13 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Zatara Brand Colors
+				// Zatara Brand Colors - Exact Brand Guidelines
 				zatara: {
-					blue: 'hsl(var(--zatara-blue))',
+					blue: 'hsl(var(--zatara-blue))', // #00A3E4
 					'blue-dark': 'hsl(var(--zatara-blue-dark))',
 					'blue-light': 'hsl(var(--zatara-blue-light))',
-					gold: 'hsl(var(--zatara-gold))',
-					'gold-dark': 'hsl(var(--zatara-gold-dark))',
+					accent: 'hsl(var(--zatara-accent))', // #CCCC33
+					'accent-dark': 'hsl(var(--zatara-accent-dark))',
 					navy: 'hsl(var(--zatara-navy))',
 					cream: 'hsl(var(--zatara-cream))',
 				}
@@ -100,11 +112,39 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'slide-up': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'slide-up': 'slide-up 0.4s ease-out'
+			},
+			spacing: {
+				'safe-top': 'env(safe-area-inset-top)',
+				'safe-bottom': 'env(safe-area-inset-bottom)',
+				'safe-left': 'env(safe-area-inset-left)',
+				'safe-right': 'env(safe-area-inset-right)',
 			}
 		}
 	},

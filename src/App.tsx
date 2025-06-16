@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SecureAuthProvider } from "@/contexts/SecureAuthContext";
 import { SecureProtectedRoute } from "@/components/auth/SecureProtectedRoute";
+import { OfflineIndicator } from "@/components/common/OfflineIndicator";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -16,7 +17,16 @@ import Sales from "./pages/public/Sales";
 import Management from "./pages/public/Management";
 import Guides from "./pages/public/Guides";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 10 * 60 * 1000, // 10 minutes
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -45,6 +55,7 @@ const App = () => (
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <OfflineIndicator />
         </BrowserRouter>
       </SecureAuthProvider>
     </TooltipProvider>
