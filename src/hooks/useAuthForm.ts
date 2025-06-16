@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { signInSchema, signUpSchema, sanitizeInput } from '@/utils/inputValidation';
 
@@ -38,6 +39,15 @@ export const useAuthForm = (isLogin: boolean) => {
     if (!isLogin && formData.password !== formData.confirmPassword) {
       setErrors({ confirmPassword: 'Passwords do not match' });
       return false;
+    }
+    
+    // Additional real-time phone validation for signup
+    if (!isLogin) {
+      const phoneRegex = /^\+[1-9]\d{1,14}$/;
+      if (!phoneRegex.test(formData.phone)) {
+        setErrors({ phone: 'Please enter a valid international phone number' });
+        return false;
+      }
     }
     
     try {

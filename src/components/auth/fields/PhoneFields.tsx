@@ -3,7 +3,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { MessageCircle, Mail } from 'lucide-react';
+import { MessageCircle, Mail, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface PhoneFieldsProps {
   formData: {
@@ -14,25 +14,78 @@ interface PhoneFieldsProps {
   onInputChange: (field: string, value: string | boolean) => void;
 }
 
+const validatePhoneFormat = (phone: string): { isValid: boolean; message: string } => {
+  if (!phone) return { isValid: false, message: 'Phone number is required' };
+  
+  // Remove any spaces or dashes for validation
+  const cleanPhone = phone.replace(/[\s-]/g, '');
+  
+  // Must start with + followed by country code and number
+  if (!cleanPhone.startsWith('+')) {
+    return { isValid: false, message: 'Phone must start with country code (e.g., +34)' };
+  }
+  
+  // Check if it matches international format: +[1-9][0-9]{1,14}
+  const phoneRegex = /^\+[1-9]\d{1,14}$/;
+  if (!phoneRegex.test(cleanPhone)) {
+    if (cleanPhone.length < 8) {
+      return { isValid: false, message: 'Phone number is too short' };
+    }
+    if (cleanPhone.length > 16) {
+      return { isValid: false, message: 'Phone number is too long' };
+    }
+    return { isValid: false, message: 'Invalid phone number format' };
+  }
+  
+  return { isValid: true, message: 'Valid phone number' };
+};
+
 export const PhoneFields: React.FC<PhoneFieldsProps> = ({
   formData,
   errors,
   onInputChange
 }) => {
+  const phoneValidation = validatePhoneFormat(formData.phone);
+  const showValidation = formData.phone.length > 0;
+
   return (
     <>
       <div className="space-y-2">
         <Label htmlFor="phone">Phone Number *</Label>
-        <Input 
-          id="phone" 
-          type="tel" 
-          placeholder="+34612345678"
-          value={formData.phone} 
-          onChange={e => onInputChange('phone', e.target.value)} 
-          className={errors.phone ? 'border-red-500' : ''} 
-          required 
-        />
+        <div className="relative">
+          <Input 
+            id="phone" 
+            type="tel" 
+            placeholder="+34612345678"
+            value={formData.phone} 
+            onChange={e => onInputChange('phone', e.target.value)} 
+            className={`${errors.phone || (!phoneValidation.isValid && showValidation) ? 'border-red-500' : showValidation && phoneValidation.isValid ? 'border-green-500' : ''}`}
+            required 
+          />
+          {showValidation && (
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              {phoneValidation.isValid ? (
+                <CheckCircle className="h-4 w-4 text-green-500" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-red-500" />
+              )}
+            </div>
+          )}
+        </div>
+        
+        {showValidation && (
+          <div className={`text-xs flex items-center space-x-1 ${phoneValidation.isValid ? 'text-green-600' : 'text-red-600'}`}>
+            {phoneValidation.isValid ? (
+              <CheckCircle className="h-3 w-3" />
+            ) : (
+              <AlertCircle className="h-3 w-3" />
+            )}
+            <span>{phoneValidation.message}</span>
+          </div>
+        )}
+        
         {errors.phone && <p className="text-sm text-red-600">{errors.phone}</p>}
+        
         <p className="text-xs text-gray-600">
           Enter your phone number in international format (e.g., +34612345678)
         </p>
