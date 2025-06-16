@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/SecureAuthContext';
 import { toast } from '@/hooks/use-toast';
 import { signInSchema, signUpSchema, sanitizeInput } from '@/utils/inputValidation';
-import { Shield, AlertTriangle } from 'lucide-react';
+import { Shield, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 
 // Restricted public roles only - security enhanced
 const publicUserRoles = [
@@ -19,12 +20,14 @@ const publicUserRoles = [
 
 export const SecureAuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     firstName: '',
     lastName: '',
-    role: 'charter_clients'
+    role: 'charter_clients',
+    rememberMe: false
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -50,10 +53,14 @@ export const SecureAuthForm = () => {
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    // Sanitize input to prevent XSS
-    const sanitizedValue = sanitizeInput(value);
-    setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
+  const handleInputChange = (field: string, value: string | boolean) => {
+    if (typeof value === 'string') {
+      // Sanitize input to prevent XSS
+      const sanitizedValue = sanitizeInput(value);
+      setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
     
     // Clear field error when user starts typing
     if (errors[field]) {
@@ -85,6 +92,13 @@ export const SecureAuthForm = () => {
             description: "Invalid email or password. Please try again.",
             variant: "destructive",
           });
+        } else {
+          // Store remember me preference
+          if (formData.rememberMe) {
+            localStorage.setItem('zatara_remember_email', formData.email);
+          } else {
+            localStorage.removeItem('zatara_remember_email');
+          }
         }
       } else {
         const { error } = await signUp(formData.email, formData.password, {
@@ -122,6 +136,14 @@ export const SecureAuthForm = () => {
       setLoading(false);
     }
   };
+
+  // Load remembered email on component mount
+  React.useEffect(() => {
+    const rememberedEmail = localStorage.getItem('zatara_remember_email');
+    if (rememberedEmail) {
+      setFormData(prev => ({ ...prev, email: rememberedEmail, rememberMe: true }));
+    }
+  }, []);
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -211,14 +233,29 @@ export const SecureAuthForm = () => {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
-              className={errors.password ? 'border-red-500' : ''}
-              required
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                required
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-gray-400" />
+                ) : (
+                  <Eye className="h-4 w-4 text-gray-400" />
+                )}
+              </Button>
+            </div>
             {errors.password && (
               <p className="text-sm text-red-600">{errors.password}</p>
             )}
@@ -228,6 +265,21 @@ export const SecureAuthForm = () => {
               </p>
             )}
           </div>
+          {isLogin && (
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="rememberMe"
+                checked={formData.rememberMe}
+                onCheckedChange={(checked) => handleInputChange('rememberMe', checked as boolean)}
+              />
+              <Label 
+                htmlFor="rememberMe" 
+                className="text-sm font-normal cursor-pointer"
+              >
+                Remember me
+              </Label>
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full gradient-zatara" disabled={loading}>
