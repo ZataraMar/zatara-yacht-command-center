@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 export const Footer = () => {
   const handleWhatsAppClick = () => {
-    window.open('https://wa.me/34711013403', '_blank');
+    window.open('https://wa.me/34711013403?text=Hello%20Zatara,%20I%20would%20like%20to%20inquire%20about%20your%20services', '_blank');
   };
 
   return (
@@ -19,23 +19,28 @@ export const Footer = () => {
               <img 
                 src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
                 alt="Zatara" 
-                className="h-12 w-auto brightness-0 invert"
+                className="h-16 w-auto brightness-0 invert" // Increased from h-12
               />
-              <div className="text-lg font-semibold text-white">
+              <div className="text-xl font-bold text-white"> {/* Increased from text-lg */}
                 Zatara
               </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Premium yacht services in the heart of the Mediterranean. Experience luxury charter, exclusive boat club memberships, and comprehensive yacht management in Mallorca.
+              Small family-run business operating to super yacht standards with a focus on quality service and a love of the sea. Experience luxury charter and exclusive boat club memberships in Mallorca.
             </p>
             <div className="space-y-3 text-sm text-gray-300">
               <div className="flex items-center space-x-3">
                 <MapPin className="h-4 w-4 text-zatara-blue flex-shrink-0" />
-                <span>Puerto Portals, Mallorca</span>
+                <span>Panteon House, Palma 07014</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MessageCircle className="h-4 w-4 text-zatara-blue flex-shrink-0" />
-                <span>WhatsApp: +34 711 013 403</span>
+                <button 
+                  onClick={handleWhatsAppClick}
+                  className="hover:text-white transition-colors underline"
+                >
+                  WhatsApp: +34 711 013 403
+                </button>
               </div>
             </div>
           </div>
@@ -51,14 +56,14 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Information */}
+          {/* Fleet Information */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Explore</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">Our Fleet</h3>
             <ul className="space-y-3 text-gray-300 text-sm">
+              <li>Zatara - Naviera Balear</li>
+              <li>PuraVida - Club de Mar</li>
               <li><Link to="/guides" className="hover:text-white transition-colors">Mallorca Guides</Link></li>
-              <li><a href="#" className="hover:text-white transition-colors">Safety First</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Safety Protocols</a></li>
             </ul>
           </div>
 
