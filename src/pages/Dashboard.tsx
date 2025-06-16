@@ -1,11 +1,35 @@
 
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { DashboardHome } from '@/components/dashboard/DashboardHome';
 import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
+import { useAuth } from '@/contexts/SecureAuthContext';
 
 const Dashboard = () => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  // Handle users arriving from email verification
+  useEffect(() => {
+    // Check if user arrived from email verification (hash fragment present)
+    if (location.hash && user && !loading) {
+      // Clear the hash and ensure they're on the dashboard
+      window.history.replaceState(null, '', '/dashboard');
+    }
+  }, [user, loading, location.hash]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zatara-blue mx-auto"></div>
+          <p className="text-zatara-navy mt-4">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DashboardLayout>
       <Routes>

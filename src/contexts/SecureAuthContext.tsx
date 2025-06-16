@@ -86,12 +86,18 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Defer profile fetching to prevent deadlocks
-        if (session?.user && event === 'SIGNED_IN') {
+        // Handle email verification and token refresh events
+        if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+          // Defer profile fetching to prevent deadlocks
           setTimeout(async () => {
             const profileData = await fetchProfile(session.user.id);
             setProfile(profileData);
             setLoading(false);
+            
+            // If user just verified email and is on auth page, redirect to dashboard
+            if (event === 'TOKEN_REFRESHED' && window.location.pathname === '/auth') {
+              window.location.href = '/dashboard';
+            }
           }, 0);
         } else {
           setProfile(null);

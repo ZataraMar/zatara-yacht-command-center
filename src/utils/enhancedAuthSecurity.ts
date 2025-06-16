@@ -48,9 +48,8 @@ export const enhancedSecureSignIn = async (email: string, password: string) => {
     if (error) throw error;
     
     if (data.user) {
-      // Redirect to appropriate URL based on environment
-      const redirectUrl = AUTH_CONFIG.getEmailRedirectUrl();
-      window.location.href = redirectUrl;
+      // Redirect to dashboard after successful login
+      window.location.href = '/dashboard';
     }
     
     return { error: null };
