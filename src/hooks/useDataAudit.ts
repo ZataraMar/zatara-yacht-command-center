@@ -16,8 +16,9 @@ export const useDataAudit = () => {
 
   const auditTable = async (tableName: string): Promise<DataAuditResult> => {
     try {
+      // Use type assertion to fix TypeScript error
       const { data, error, count } = await supabase
-        .from(tableName)
+        .from(tableName as any)
         .select('*', { count: 'exact' })
         .limit(1);
 

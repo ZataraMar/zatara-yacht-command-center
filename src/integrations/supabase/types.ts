@@ -459,6 +459,7 @@ export type Database = {
           children_details: string | null
           contract_signed: boolean | null
           created_at: string | null
+          data_source: string | null
           deposit_amount: number | null
           end_date: string | null
           extras_total: number | null
@@ -490,6 +491,7 @@ export type Database = {
           children_details?: string | null
           contract_signed?: boolean | null
           created_at?: string | null
+          data_source?: string | null
           deposit_amount?: number | null
           end_date?: string | null
           extras_total?: number | null
@@ -521,6 +523,7 @@ export type Database = {
           children_details?: string | null
           contract_signed?: boolean | null
           created_at?: string | null
+          data_source?: string | null
           deposit_amount?: number | null
           end_date?: string | null
           extras_total?: number | null
@@ -1789,6 +1792,7 @@ export type Database = {
           client_messaging_status: string | null
           created_at: string | null
           custom_message: string | null
+          data_source: string | null
           id: number
           locator: string | null
           message_template_used: string | null
@@ -1802,6 +1806,7 @@ export type Database = {
           client_messaging_status?: string | null
           created_at?: string | null
           custom_message?: string | null
+          data_source?: string | null
           id?: number
           locator?: string | null
           message_template_used?: string | null
@@ -1815,6 +1820,7 @@ export type Database = {
           client_messaging_status?: string | null
           created_at?: string | null
           custom_message?: string | null
+          data_source?: string | null
           id?: number
           locator?: string | null
           message_template_used?: string | null
@@ -2200,6 +2206,7 @@ export type Database = {
           customer_key: string
           customer_lifetime_value: number | null
           customer_status: string | null
+          data_source: string | null
           email_primary: string | null
           email_secondary: string | null
           first_name: string | null
@@ -2226,6 +2233,7 @@ export type Database = {
           customer_key: string
           customer_lifetime_value?: number | null
           customer_status?: string | null
+          data_source?: string | null
           email_primary?: string | null
           email_secondary?: string | null
           first_name?: string | null
@@ -2252,6 +2260,7 @@ export type Database = {
           customer_key?: string
           customer_lifetime_value?: number | null
           customer_status?: string | null
+          data_source?: string | null
           email_primary?: string | null
           email_secondary?: string | null
           first_name?: string | null
@@ -2957,6 +2966,7 @@ export type Database = {
           charter_notes: string | null
           cleared_for_departure: boolean | null
           created_at: string | null
+          data_source: string | null
           extra_staff_count: number | null
           fuel_route: string | null
           gps_coordinates: string | null
@@ -2977,6 +2987,7 @@ export type Database = {
           charter_notes?: string | null
           cleared_for_departure?: boolean | null
           created_at?: string | null
+          data_source?: string | null
           extra_staff_count?: number | null
           fuel_route?: string | null
           gps_coordinates?: string | null
@@ -2997,6 +3008,7 @@ export type Database = {
           charter_notes?: string | null
           cleared_for_departure?: boolean | null
           created_at?: string | null
+          data_source?: string | null
           extra_staff_count?: number | null
           fuel_route?: string | null
           gps_coordinates?: string | null
@@ -4301,6 +4313,16 @@ export type Database = {
         }
         Relationships: []
       }
+      data_audit_summary: {
+        Row: {
+          data_source: string | null
+          earliest_record: string | null
+          latest_record: string | null
+          record_count: number | null
+          table_name: string | null
+        }
+        Relationships: []
+      }
       financial_overview_extended: {
         Row: {
           avg_booking_value: number | null
@@ -4572,6 +4594,15 @@ export type Database = {
         Args: { curlopt: string; value: string }
         Returns: boolean
       }
+      identify_test_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          table_name: string
+          record_id: string
+          confidence_score: number
+          indicators: string[]
+        }[]
+      }
       is_management_or_owner: {
         Args: Record<PropertyKey, never>
         Returns: boolean
@@ -4580,9 +4611,24 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      mark_andronautic_data_as_real: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      mark_as_test_data: {
+        Args: { confidence_threshold?: number }
+        Returns: number
+      }
       migrate_bookings_to_customers: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      remove_test_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          table_cleaned: string
+          records_removed: number
+        }[]
       }
       system_health_check: {
         Args: Record<PropertyKey, never>
