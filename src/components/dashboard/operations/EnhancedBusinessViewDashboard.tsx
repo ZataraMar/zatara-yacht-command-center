@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { EnhancedViewFilters } from './views/EnhancedViewFilters';
 import { WhatsAppGenerator } from '../communications/WhatsAppGenerator';
 import { EnhancedOperationsInput } from './views/EnhancedOperationsInput';
@@ -11,6 +12,7 @@ import { useBookingFilters } from '@/hooks/useBookingFilters';
 import { QuickActions } from './components/QuickActions';
 import { FilterPresets } from './components/FilterPresets';
 import { BookingStats } from './components/BookingStats';
+import { DataDrillDown } from './components/DataDrillDown';
 import { 
   transformToBusinessView, 
   transformToFinanceView, 
@@ -23,6 +25,11 @@ export const EnhancedBusinessViewDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState('operations');
   const [selectedCharter, setSelectedCharter] = useState<any>(null);
+  const [drillDownData, setDrillDownData] = useState<{
+    dataSource: string;
+    data: any[];
+    filters: any;
+  } | null>(null);
 
   const { bookings, loading, error, refetch } = useRealTimeBookings();
 
@@ -55,10 +62,18 @@ export const EnhancedBusinessViewDashboard = () => {
     if (preset.filters.viewMode) setViewMode(preset.filters.viewMode);
   };
 
+  const handleDataDrillDown = (dataSource: string, data: any[], filters: any) => {
+    setDrillDownData({ dataSource, data, filters });
+  };
+
   const handleQuickActions = {
     onRefresh: refetch,
     onNewBooking: () => console.log('New booking action'),
-    onExportData: () => console.log('Export data action'),
+    onExportData: () => {
+      // Use the enhanced export with current data
+      const csvContent = generateCSVExport(transformedData);
+      downloadCSV(csvContent, 'current-view-data.csv');
+    },
     onOpenCalendar: () => console.log('Open calendar action'),
     onBulkMessage: () => console.log('Bulk message action'),
     onOpenSettings: () => console.log('Open settings action')
@@ -116,14 +131,22 @@ export const EnhancedBusinessViewDashboard = () => {
           
           {!selectedCharter && (
             <>
-              <BookingStats data={transformedData} timeFilter={timeFilter} />
+              <BookingStats 
+                data={transformedData} 
+                timeFilter={timeFilter}
+                onDrillDown={handleDataDrillDown}
+              />
               
               <FilterPresets 
                 onApplyPreset={handleApplyPreset}
                 currentFilters={{ timeFilter, boatFilter, statusFilter, viewMode }}
+                bookingData={transformedData}
               />
               
-              <QuickActions {...handleQuickActions} />
+              <QuickActions 
+                {...handleQuickActions} 
+                bookingData={transformedData}
+              />
               
               <Card>
                 <CardHeader>
@@ -142,6 +165,46 @@ export const EnhancedBusinessViewDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Data Drill Down Dialog */}
+      <Dialog open={!!drillDownData} onOpenChange={() => setDrillDownData(null)}>
+        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
+          {drillDownData && (
+            <DataDrillDown
+              dataSource={drillDownData.dataSource}
+              data={drillDownData.data}
+              filters={drillDownData.filters}
+              onClose={() => setDrillDownData(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
+};
+
+// Helper functions for CSV export
+const generateCSVExport = (data: any[]): string => {
+  if (!data.length) return '';
+  
+  const headers = Object.keys(data[0]).join(',');
+  const rows = data.map(row => 
+    Object.values(row).map(value => 
+      typeof value === 'string' ? `"${value}"` : value
+    ).join(',')
+  ).join('\n');
+  
+  return `${headers}\n${rows}`;
+};
+
+const downloadCSV = (content: string, filename: string) => {
+  const blob = new Blob([content], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
 };
