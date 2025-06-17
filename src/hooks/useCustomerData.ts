@@ -34,6 +34,11 @@ interface Customer {
   referral_source?: string;
   marketing_consent?: boolean;
   data_source?: string;
+  // Additional optional fields for completeness
+  dietary_restrictions?: string;
+  favorite_boat?: string;
+  last_contact_date?: string;
+  last_contact_method?: string;
 }
 
 interface CustomerHistory {
@@ -96,7 +101,11 @@ export const useCustomerData = (customerId?: number) => {
           acquisition_date: fallbackData.created_at,
           average_booking_value: 0,
           average_review_rating: 0,
-          avg_satisfaction_score: 0
+          avg_satisfaction_score: 0,
+          dietary_restrictions: '',
+          favorite_boat: '',
+          last_contact_date: '',
+          last_contact_method: ''
         };
       }
 
@@ -163,8 +172,12 @@ export const useCustomerData = (customerId?: number) => {
           acquisition_date: customer.created_at,
           average_booking_value: 0,
           average_review_rating: 0,
-          avg_satisfaction_score: 0
-        })) || [];
+          avg_satisfaction_score: 0,
+          dietary_restrictions: '',
+          favorite_boat: '',
+          last_contact_date: '',
+          last_contact_method: ''
+        } as Customer)) || [];
       }
 
       setCustomers(customersData as Customer[]);

@@ -2188,6 +2188,13 @@ export type Database = {
             foreignKeyName: "customer_communications_log_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "customer_communications_log_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
@@ -2275,6 +2282,13 @@ export type Database = {
             foreignKeyName: "customer_history_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "customer_history_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
@@ -2324,6 +2338,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customer_360_view"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_preferences_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
           },
           {
             foreignKeyName: "customer_preferences_customer_id_fkey"
@@ -2420,6 +2441,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customer_360_view"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
           },
           {
             foreignKeyName: "customer_reviews_customer_id_fkey"
@@ -4156,6 +4184,13 @@ export type Database = {
             foreignKeyName: "service_contracts_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "service_contracts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
@@ -4428,6 +4463,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customer_360_view"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
           },
           {
             foreignKeyName: "service_requests_customer_id_fkey"
@@ -5306,6 +5348,22 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_service_usage: {
+        Row: {
+          active_contracts: number | null
+          avg_service_rating: number | null
+          customer_id: number | null
+          customer_type: string | null
+          full_name: string | null
+          last_service_date: string | null
+          monthly_contract_value: number | null
+          phone_primary: string | null
+          services_used: string[] | null
+          total_service_requests: number | null
+          total_service_spending: number | null
+        }
+        Relationships: []
+      }
       data_audit_summary: {
         Row: {
           data_source: string | null
@@ -5380,6 +5438,31 @@ export type Database = {
           three_month_moving_avg: number | null
           trend_direction: string | null
           trend_month: string | null
+        }
+        Relationships: []
+      }
+      service_dashboard: {
+        Row: {
+          active_contracts: number | null
+          avg_satisfaction_30d: number | null
+          emergency_responses_week: number | null
+          monthly_service_revenue: number | null
+          pending_requests: number | null
+          todays_services: number | null
+        }
+        Relationships: []
+      }
+      service_performance_by_category: {
+        Row: {
+          avg_duration: number | null
+          avg_price: number | null
+          avg_rating: number | null
+          category_description: string | null
+          category_name: string | null
+          completed_requests: number | null
+          completion_rate_percent: number | null
+          total_requests: number | null
+          total_revenue: number | null
         }
         Relationships: []
       }
@@ -5492,6 +5575,26 @@ export type Database = {
           records_removed: number
         }[]
       }
+      create_guardiennage_contract: {
+        Args: {
+          p_customer_id: number
+          p_boat_id: number
+          p_monthly_fee: number
+          p_start_date: string
+          p_services_included?: string[]
+        }
+        Returns: string
+      }
+      create_service_request: {
+        Args: {
+          p_customer_id: number
+          p_boat_id: number
+          p_service_offering_id: number
+          p_requested_date: string
+          p_special_requirements?: string
+        }
+        Returns: string
+      }
       detect_booking_conflicts: {
         Args: {
           boat_name_param: string
@@ -5530,6 +5633,18 @@ export type Database = {
           hourly_rate: number
           daily_rate: number
           owner_approval_required: boolean
+        }[]
+      }
+      get_available_services: {
+        Args: { p_boat_id: number; p_service_date?: string }
+        Returns: {
+          service_id: number
+          service_name: string
+          service_description: string
+          base_price: number
+          duration_hours: number
+          category_name: string
+          requires_specialist: boolean
         }[]
       }
       get_available_views: {
