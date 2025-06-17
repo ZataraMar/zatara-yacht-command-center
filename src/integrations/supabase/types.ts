@@ -1330,6 +1330,10 @@ export type Database = {
         Args: { data: string }
         Returns: string
       }
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       http: {
         Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
@@ -1381,6 +1385,14 @@ export type Database = {
         Args: { curlopt: string; value: string }
         Returns: boolean
       }
+      is_management_or_owner: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_staff_or_higher: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       text_to_bytea: {
         Args: { data: string }
         Returns: string
@@ -1395,7 +1407,7 @@ export type Database = {
         | "staff"
         | "skippers"
         | "management"
-        | "owners"
+        | "owner"
         | "casual_staff"
         | "charter_brokers"
         | "boat_owners"
@@ -1536,7 +1548,7 @@ export const Constants = {
         "staff",
         "skippers",
         "management",
-        "owners",
+        "owner",
         "casual_staff",
         "charter_brokers",
         "boat_owners",
