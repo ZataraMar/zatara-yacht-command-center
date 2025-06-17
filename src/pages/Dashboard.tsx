@@ -12,6 +12,7 @@ import { OperationalExcellence } from '@/components/dashboard/operations/Operati
 import { AdvancedReporting } from '@/components/dashboard/analytics/AdvancedReporting';
 import { AutomationWorkflows } from '@/components/dashboard/integration/AutomationWorkflows';
 import { UserManagement } from '@/components/dashboard/admin/UserManagement';
+import { Phase2Dashboard } from '@/components/dashboard/Phase2Dashboard';
 import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
 import { useAuth } from '@/contexts/SecureAuthContext';
 import { isClientRole, isOwner, isSkipper, canAccessOperations, canAccessFinancials, canManageFleet } from '@/utils/authSecurity';
@@ -162,6 +163,16 @@ const Dashboard = () => {
           element={
             <AccessControlRoute accessCheck={isOwner}>
               <AutomationWorkflows />
+            </AccessControlRoute>
+          } 
+        />
+        
+        {/* Phase 2 Management - Owner only */}
+        <Route 
+          path="/phase2" 
+          element={
+            <AccessControlRoute accessCheck={isOwner}>
+              <Phase2Dashboard />
             </AccessControlRoute>
           } 
         />

@@ -276,6 +276,83 @@ export type Database = {
         }
         Relationships: []
       }
+      boat_assignments: {
+        Row: {
+          additional_costs: number | null
+          assigned_by: string | null
+          assigned_date: string | null
+          assignment_type: string | null
+          boat_id: number | null
+          booking_locator: string
+          confirmed_date: string | null
+          created_at: string | null
+          crew_assigned: string[] | null
+          estimated_costs: Json | null
+          fuel_estimate: number | null
+          id: number
+          owner_notified: boolean | null
+          owner_payout: number | null
+          partner_commission: number | null
+          partner_notified: boolean | null
+          preparation_status: string | null
+          skipper_assigned: string | null
+          updated_at: string | null
+          zatara_commission: number | null
+        }
+        Insert: {
+          additional_costs?: number | null
+          assigned_by?: string | null
+          assigned_date?: string | null
+          assignment_type?: string | null
+          boat_id?: number | null
+          booking_locator: string
+          confirmed_date?: string | null
+          created_at?: string | null
+          crew_assigned?: string[] | null
+          estimated_costs?: Json | null
+          fuel_estimate?: number | null
+          id?: number
+          owner_notified?: boolean | null
+          owner_payout?: number | null
+          partner_commission?: number | null
+          partner_notified?: boolean | null
+          preparation_status?: string | null
+          skipper_assigned?: string | null
+          updated_at?: string | null
+          zatara_commission?: number | null
+        }
+        Update: {
+          additional_costs?: number | null
+          assigned_by?: string | null
+          assigned_date?: string | null
+          assignment_type?: string | null
+          boat_id?: number | null
+          booking_locator?: string
+          confirmed_date?: string | null
+          created_at?: string | null
+          crew_assigned?: string[] | null
+          estimated_costs?: Json | null
+          fuel_estimate?: number | null
+          id?: number
+          owner_notified?: boolean | null
+          owner_payout?: number | null
+          partner_commission?: number | null
+          partner_notified?: boolean | null
+          preparation_status?: string | null
+          skipper_assigned?: string | null
+          updated_at?: string | null
+          zatara_commission?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boat_assignments_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       boat_availability: {
         Row: {
           availability_date: string
@@ -357,6 +434,162 @@ export type Database = {
           time_slot_start?: string
           updated_at?: string | null
           weather_dependent?: boolean | null
+        }
+        Relationships: []
+      }
+      boat_registry: {
+        Row: {
+          advance_booking_days: number | null
+          available_extras: string[] | null
+          blocked_dates: Json | null
+          boat_category: string | null
+          boat_name: string
+          boat_type: string
+          cancellation_policy: string | null
+          cleaning_fee: number | null
+          cost_structure: string | null
+          created_at: string | null
+          crew_required: number | null
+          daily_rate_base: number | null
+          deposit_amount: number | null
+          equipment_included: string[] | null
+          external_calendar_url: string | null
+          fuel_consumption_per_hour: number | null
+          home_port: string | null
+          hourly_rate_base: number | null
+          id: number
+          insurance_expiry: string | null
+          insurance_provider: string | null
+          last_charter_date: string | null
+          length_meters: number | null
+          license_requirements: string[] | null
+          maintenance_due_date: string | null
+          make_model: string | null
+          management_contract_end: string | null
+          management_contract_start: string | null
+          max_passengers: number | null
+          maximum_charter_hours: number | null
+          minimum_charter_hours: number | null
+          owner_commission_percentage: number | null
+          owner_contact: string | null
+          owner_name: string | null
+          ownership_status: string | null
+          partner_booking_system: string | null
+          partner_commission_percentage: number | null
+          partner_company: string | null
+          registration_number: string | null
+          seasonal_availability: Json | null
+          special_features: string[] | null
+          survey_due_date: string | null
+          sync_with_andronautic: boolean | null
+          total_charters: number | null
+          total_revenue: number | null
+          updated_at: string | null
+          weekly_rate_base: number | null
+          year_built: number | null
+          zatara_commission_percentage: number | null
+        }
+        Insert: {
+          advance_booking_days?: number | null
+          available_extras?: string[] | null
+          blocked_dates?: Json | null
+          boat_category?: string | null
+          boat_name: string
+          boat_type: string
+          cancellation_policy?: string | null
+          cleaning_fee?: number | null
+          cost_structure?: string | null
+          created_at?: string | null
+          crew_required?: number | null
+          daily_rate_base?: number | null
+          deposit_amount?: number | null
+          equipment_included?: string[] | null
+          external_calendar_url?: string | null
+          fuel_consumption_per_hour?: number | null
+          home_port?: string | null
+          hourly_rate_base?: number | null
+          id?: number
+          insurance_expiry?: string | null
+          insurance_provider?: string | null
+          last_charter_date?: string | null
+          length_meters?: number | null
+          license_requirements?: string[] | null
+          maintenance_due_date?: string | null
+          make_model?: string | null
+          management_contract_end?: string | null
+          management_contract_start?: string | null
+          max_passengers?: number | null
+          maximum_charter_hours?: number | null
+          minimum_charter_hours?: number | null
+          owner_commission_percentage?: number | null
+          owner_contact?: string | null
+          owner_name?: string | null
+          ownership_status?: string | null
+          partner_booking_system?: string | null
+          partner_commission_percentage?: number | null
+          partner_company?: string | null
+          registration_number?: string | null
+          seasonal_availability?: Json | null
+          special_features?: string[] | null
+          survey_due_date?: string | null
+          sync_with_andronautic?: boolean | null
+          total_charters?: number | null
+          total_revenue?: number | null
+          updated_at?: string | null
+          weekly_rate_base?: number | null
+          year_built?: number | null
+          zatara_commission_percentage?: number | null
+        }
+        Update: {
+          advance_booking_days?: number | null
+          available_extras?: string[] | null
+          blocked_dates?: Json | null
+          boat_category?: string | null
+          boat_name?: string
+          boat_type?: string
+          cancellation_policy?: string | null
+          cleaning_fee?: number | null
+          cost_structure?: string | null
+          created_at?: string | null
+          crew_required?: number | null
+          daily_rate_base?: number | null
+          deposit_amount?: number | null
+          equipment_included?: string[] | null
+          external_calendar_url?: string | null
+          fuel_consumption_per_hour?: number | null
+          home_port?: string | null
+          hourly_rate_base?: number | null
+          id?: number
+          insurance_expiry?: string | null
+          insurance_provider?: string | null
+          last_charter_date?: string | null
+          length_meters?: number | null
+          license_requirements?: string[] | null
+          maintenance_due_date?: string | null
+          make_model?: string | null
+          management_contract_end?: string | null
+          management_contract_start?: string | null
+          max_passengers?: number | null
+          maximum_charter_hours?: number | null
+          minimum_charter_hours?: number | null
+          owner_commission_percentage?: number | null
+          owner_contact?: string | null
+          owner_name?: string | null
+          ownership_status?: string | null
+          partner_booking_system?: string | null
+          partner_commission_percentage?: number | null
+          partner_company?: string | null
+          registration_number?: string | null
+          seasonal_availability?: Json | null
+          special_features?: string[] | null
+          survey_due_date?: string | null
+          sync_with_andronautic?: boolean | null
+          total_charters?: number | null
+          total_revenue?: number | null
+          updated_at?: string | null
+          weekly_rate_base?: number | null
+          year_built?: number | null
+          zatara_commission_percentage?: number | null
         }
         Relationships: []
       }
@@ -2608,6 +2841,83 @@ export type Database = {
         }
         Relationships: []
       }
+      enhanced_boat_availability: {
+        Row: {
+          afternoon_available: boolean | null
+          availability_date: string
+          availability_type: string | null
+          blocked_reason: string | null
+          boat_id: number | null
+          created_at: string | null
+          daily_rate: number | null
+          evening_available: boolean | null
+          full_day_available: boolean | null
+          hourly_rate: number | null
+          id: number
+          maximum_passengers: number | null
+          minimum_charter_hours: number | null
+          morning_available: boolean | null
+          owner_approval_required: boolean | null
+          partner_approval_required: boolean | null
+          peak_season_multiplier: number | null
+          requires_advance_booking: boolean | null
+          updated_at: string | null
+          weather_dependent: boolean | null
+        }
+        Insert: {
+          afternoon_available?: boolean | null
+          availability_date: string
+          availability_type?: string | null
+          blocked_reason?: string | null
+          boat_id?: number | null
+          created_at?: string | null
+          daily_rate?: number | null
+          evening_available?: boolean | null
+          full_day_available?: boolean | null
+          hourly_rate?: number | null
+          id?: number
+          maximum_passengers?: number | null
+          minimum_charter_hours?: number | null
+          morning_available?: boolean | null
+          owner_approval_required?: boolean | null
+          partner_approval_required?: boolean | null
+          peak_season_multiplier?: number | null
+          requires_advance_booking?: boolean | null
+          updated_at?: string | null
+          weather_dependent?: boolean | null
+        }
+        Update: {
+          afternoon_available?: boolean | null
+          availability_date?: string
+          availability_type?: string | null
+          blocked_reason?: string | null
+          boat_id?: number | null
+          created_at?: string | null
+          daily_rate?: number | null
+          evening_available?: boolean | null
+          full_day_available?: boolean | null
+          hourly_rate?: number | null
+          id?: number
+          maximum_passengers?: number | null
+          minimum_charter_hours?: number | null
+          morning_available?: boolean | null
+          owner_approval_required?: boolean | null
+          partner_approval_required?: boolean | null
+          peak_season_multiplier?: number | null
+          requires_advance_booking?: boolean | null
+          updated_at?: string | null
+          weather_dependent?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enhanced_boat_availability_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       historical_charters: {
         Row: {
           boat: string | null
@@ -3067,6 +3377,96 @@ export type Database = {
             referencedColumns: ["locator"]
           },
         ]
+      }
+      partner_companies: {
+        Row: {
+          address: string | null
+          api_endpoint: string | null
+          auto_renew: boolean | null
+          average_booking_value: number | null
+          boats_provided: number | null
+          booking_system_integration: boolean | null
+          booking_volume_annual: number | null
+          calendar_sync_enabled: boolean | null
+          company_name: string
+          contact_person: string | null
+          contract_end_date: string | null
+          contract_start_date: string | null
+          created_at: string | null
+          currency_preference: string | null
+          customer_satisfaction_score: number | null
+          default_commission_rate: number | null
+          email: string | null
+          id: number
+          insurance_coverage: string | null
+          partnership_status: string | null
+          partnership_type: string
+          payment_terms: string | null
+          phone: string | null
+          quality_rating: number | null
+          termination_notice_days: number | null
+          total_revenue_generated: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          api_endpoint?: string | null
+          auto_renew?: boolean | null
+          average_booking_value?: number | null
+          boats_provided?: number | null
+          booking_system_integration?: boolean | null
+          booking_volume_annual?: number | null
+          calendar_sync_enabled?: boolean | null
+          company_name: string
+          contact_person?: string | null
+          contract_end_date?: string | null
+          contract_start_date?: string | null
+          created_at?: string | null
+          currency_preference?: string | null
+          customer_satisfaction_score?: number | null
+          default_commission_rate?: number | null
+          email?: string | null
+          id?: number
+          insurance_coverage?: string | null
+          partnership_status?: string | null
+          partnership_type: string
+          payment_terms?: string | null
+          phone?: string | null
+          quality_rating?: number | null
+          termination_notice_days?: number | null
+          total_revenue_generated?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          api_endpoint?: string | null
+          auto_renew?: boolean | null
+          average_booking_value?: number | null
+          boats_provided?: number | null
+          booking_system_integration?: boolean | null
+          booking_volume_annual?: number | null
+          calendar_sync_enabled?: boolean | null
+          company_name?: string
+          contact_person?: string | null
+          contract_end_date?: string | null
+          contract_start_date?: string | null
+          created_at?: string | null
+          currency_preference?: string | null
+          customer_satisfaction_score?: number | null
+          default_commission_rate?: number | null
+          email?: string | null
+          id?: number
+          insurance_coverage?: string | null
+          partnership_status?: string | null
+          partnership_type?: string
+          payment_terms?: string | null
+          phone?: string | null
+          quality_rating?: number | null
+          termination_notice_days?: number | null
+          total_revenue_generated?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       performance_metrics: {
         Row: {
@@ -4346,6 +4746,25 @@ export type Database = {
         }
         Relationships: []
       }
+      fleet_overview: {
+        Row: {
+          available_days_30: number | null
+          avg_charter_value: number | null
+          boat_name: string | null
+          boat_type: string | null
+          insurance_expiry: string | null
+          last_charter_date: string | null
+          maintenance_due_date: string | null
+          max_passengers: number | null
+          owner_commission_percentage: number | null
+          ownership_status: string | null
+          partner_company: string | null
+          total_charters: number | null
+          total_revenue: number | null
+          zatara_commission_percentage: number | null
+        }
+        Relationships: []
+      }
       operations_data: {
         Row: {
           boat: string | null
@@ -4371,6 +4790,54 @@ export type Database = {
         }
         Relationships: []
       }
+      sync_monitoring_dashboard: {
+        Row: {
+          bookings_imported_24h: number | null
+          bookings_processed_24h: number | null
+          consecutive_failures: number | null
+          error_count: number | null
+          health_status: string | null
+          last_successful_sync: string | null
+          minutes_since_last_sync: number | null
+          next_sync_due: string | null
+          platform_name: string | null
+          records_synced_last_run: number | null
+          sync_status: string | null
+          sync_type: string | null
+          total_records_synced: number | null
+        }
+        Insert: {
+          bookings_imported_24h?: never
+          bookings_processed_24h?: never
+          consecutive_failures?: number | null
+          error_count?: number | null
+          health_status?: never
+          last_successful_sync?: string | null
+          minutes_since_last_sync?: never
+          next_sync_due?: never
+          platform_name?: string | null
+          records_synced_last_run?: number | null
+          sync_status?: string | null
+          sync_type?: string | null
+          total_records_synced?: number | null
+        }
+        Update: {
+          bookings_imported_24h?: never
+          bookings_processed_24h?: never
+          consecutive_failures?: number | null
+          error_count?: number | null
+          health_status?: never
+          last_successful_sync?: string | null
+          minutes_since_last_sync?: never
+          next_sync_due?: never
+          platform_name?: string | null
+          records_synced_last_run?: number | null
+          sync_status?: string | null
+          sync_type?: string | null
+          total_records_synced?: number | null
+        }
+        Relationships: []
+      }
       system_performance_monitor: {
         Row: {
           description: string | null
@@ -4381,6 +4848,16 @@ export type Database = {
       }
     }
     Functions: {
+      add_boat_to_fleet: {
+        Args: {
+          p_boat_name: string
+          p_boat_type: string
+          p_max_passengers?: number
+          p_partner_company?: string
+          p_owner_commission?: number
+        }
+        Returns: number
+      }
       assign_optimal_crew: {
         Args: {
           booking_locator_param: string
@@ -4390,6 +4867,14 @@ export type Database = {
           boat_name_param: string
         }
         Returns: string
+      }
+      auto_migrate_andronautic_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          bookings_migrated: number
+          customers_created: number
+          operations_created: number
+        }[]
       }
       bytea_to_text: {
         Args: { data: string }
@@ -4441,6 +4926,18 @@ export type Database = {
       generate_whatsapp_message: {
         Args: { charter_locator: string; template_name_param: string }
         Returns: string
+      }
+      get_available_boats: {
+        Args: { charter_date: string; charter_hours?: number }
+        Returns: {
+          boat_id: number
+          boat_name: string
+          boat_type: string
+          max_passengers: number
+          hourly_rate: number
+          daily_rate: number
+          owner_approval_required: boolean
+        }[]
       }
       get_available_views: {
         Args: { user_role?: string }
@@ -4630,6 +5127,15 @@ export type Database = {
           records_removed: number
         }[]
       }
+      sync_health_check: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          component: string
+          status: string
+          details: string
+          action_required: boolean
+        }[]
+      }
       system_health_check: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -4642,6 +5148,13 @@ export type Database = {
       text_to_bytea: {
         Args: { data: string }
         Returns: string
+      }
+      trigger_manual_sync: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          sync_result: string
+          details: string
+        }[]
       }
       urlencode: {
         Args: { data: Json } | { string: string } | { string: string }

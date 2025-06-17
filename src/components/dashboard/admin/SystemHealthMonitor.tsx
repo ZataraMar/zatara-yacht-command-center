@@ -13,7 +13,10 @@ import {
   Server,
   Users,
   Calendar,
-  DollarSign
+  DollarSign,
+  Sync,
+  Clock,
+  AlertCircle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -33,16 +36,45 @@ interface SystemPerformance {
   last_updated: string;
 }
 
+interface SyncStatus {
+  platform_name: string;
+  sync_status: string;
+  last_successful_sync: string;
+  records_synced_last_run: number;
+  next_scheduled_sync: string;
+  consecutive_failures: number;
+}
+
+interface ImportLog {
+  import_session_id: string;
+  platform_source: string;
+  import_status: string;
+  records_successful: number;
+  import_trigger: string;
+  created_at: string;
+}
+
 export const SystemHealthMonitor = () => {
   const [healthChecks, setHealthChecks] = useState<SystemHealth[]>([]);
   const [performance, setPerformance] = useState<SystemPerformance | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus[]>([]);
+  const [importLogs, setImportLogs] = useState<ImportLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [syncingManually, setSyncingManually] = useState(false);
 
   useEffect(() => {
-    fetchSystemHealth();
-    fetchSystemPerformance();
+    fetchAllSystemData();
   }, []);
+
+  const fetchAllSystemData = async () => {
+    await Promise.all([
+      fetchSystemHealth(),
+      fetchSystemPerformance(),
+      fetchSyncStatus(),
+      fetchImportLogs()
+    ]);
+  };
 
   const fetchSystemHealth = async () => {
     try {
@@ -94,12 +126,68 @@ export const SystemHealthMonitor = () => {
     }
   };
 
+  const fetchSyncStatus = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('api_sync_status')
+        .select('*')
+        .order('last_successful_sync', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching sync status:', error);
+        return;
+      }
+
+      setSyncStatus(data || []);
+    } catch (error) {
+      console.error('Error fetching sync status:', error);
+    }
+  };
+
+  const fetchImportLogs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('data_import_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Error fetching import logs:', error);
+        return;
+      }
+
+      setImportLogs(data || []);
+    } catch (error) {
+      console.error('Error fetching import logs:', error);
+    }
+  };
+
+  const triggerManualSync = async () => {
+    try {
+      setSyncingManually(true);
+      const { data, error } = await supabase.rpc('trigger_manual_sync');
+      
+      if (error) {
+        console.error('Manual sync failed:', error);
+        return;
+      }
+
+      console.log('Manual sync result:', data);
+      
+      // Refresh all data after sync
+      await fetchAllSystemData();
+      
+    } catch (error) {
+      console.error('Error triggering manual sync:', error);
+    } finally {
+      setSyncingManually(false);
+    }
+  };
+
   const refreshHealth = async () => {
     setRefreshing(true);
-    await Promise.all([
-      fetchSystemHealth(),
-      fetchSystemPerformance()
-    ]);
+    await fetchAllSystemData();
     setRefreshing(false);
   };
 
@@ -119,13 +207,30 @@ export const SystemHealthMonitor = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'healthy':
+      case 'active':
         return 'bg-green-100 text-green-800';
       case 'warning':
         return 'bg-yellow-100 text-yellow-800';
       case 'action_required':
+      case 'error':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getSyncStatusIcon = (status: string, consecutiveFailures: number) => {
+    if (consecutiveFailures > 0) {
+      return <AlertCircle className="h-5 w-5 text-red-600" />;
+    }
+    
+    switch (status) {
+      case 'active':
+        return <CheckCircle2 className="h-5 w-5 text-green-600" />;
+      case 'syncing':
+        return <Sync className="h-5 w-5 text-blue-600 animate-spin" />;
+      default:
+        return <Clock className="h-5 w-5 text-gray-600" />;
     }
   };
 
@@ -144,11 +249,107 @@ export const SystemHealthMonitor = () => {
           <h2 className="text-2xl font-bold text-zatara-navy">System Health Monitor</h2>
           <p className="text-zatara-blue">Real-time system status and performance metrics</p>
         </div>
-        <Button onClick={refreshHealth} disabled={refreshing}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={triggerManualSync} disabled={syncingManually} variant="outline">
+            <Sync className={`h-4 w-4 mr-2 ${syncingManually ? 'animate-spin' : ''}`} />
+            Manual Sync
+          </Button>
+          <Button onClick={refreshHealth} disabled={refreshing}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
       </div>
+
+      {/* Auto-Sync Status Overview */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Sync className="h-5 w-5" />
+            <span>Andronautic Auto-Sync Status</span>
+          </CardTitle>
+          <CardDescription>
+            Real-time data integration monitoring
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {syncStatus.length > 0 ? (
+            <div className="space-y-4">
+              {syncStatus.map((sync, index) => (
+                <div key={index} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      {getSyncStatusIcon(sync.sync_status, sync.consecutive_failures)}
+                      <div>
+                        <h3 className="font-medium capitalize">
+                          {sync.platform_name} Integration
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Last sync: {sync.records_synced_last_run} records
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge className={getStatusColor(sync.sync_status)}>
+                        {sync.sync_status}
+                      </Badge>
+                      <span className="text-xs text-gray-500">
+                        {sync.last_successful_sync ? new Date(sync.last_successful_sync).toLocaleString() : 'Never'}
+                      </span>
+                    </div>
+                  </div>
+                  {sync.consecutive_failures > 0 && (
+                    <div className="mt-2 p-2 bg-red-50 rounded text-red-700 text-sm">
+                      ⚠️ {sync.consecutive_failures} consecutive sync failures detected
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 py-8">
+              <Sync className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p>No sync configurations found</p>
+              <p className="text-sm">Auto-sync may not be configured</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Recent Import Activity */}
+      {importLogs.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Database className="h-5 w-5" />
+              <span>Recent Import Activity</span>
+            </CardTitle>
+            <CardDescription>
+              Latest data synchronization operations
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {importLogs.map((log, index) => (
+                <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-2 h-2 rounded-full ${log.import_status === 'completed' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                    <div>
+                      <span className="font-medium">{log.platform_source}</span>
+                      <span className="text-sm text-gray-600 ml-2">
+                        {log.records_successful} records • {log.import_trigger}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {new Date(log.created_at).toLocaleString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* System Performance Overview */}
       {performance && (
@@ -338,6 +539,10 @@ export const SystemHealthMonitor = () => {
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="h-4 w-4 text-green-600" />
                   <span>Customer lifecycle management</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <span>Andronautic auto-sync</span>
                 </div>
               </div>
             </div>
