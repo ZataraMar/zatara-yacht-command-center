@@ -338,13 +338,13 @@ export const YearOverYearAnalytics = () => {
                 <div className="space-y-4">
                   {years.map(year => {
                     const sources = yearlyMetrics[year]?.sourceBreakdown || {};
-                    const total = Object.values(sources).reduce((sum: number, count: any) => sum + Number(count), 0);
+                    const total = Object.values(sources).reduce((sum: number, count) => sum + Number(count), 0);
                     
                     return (
                       <div key={year} className="border rounded-lg p-3">
                         <h4 className="font-medium mb-2">{year} ({total} bookings)</h4>
                         <div className="space-y-1">
-                          {Object.entries(sources).map(([source, count]: [string, any]) => (
+                          {Object.entries(sources).map(([source, count]) => (
                             <div key={source} className="flex items-center justify-between text-sm">
                               <span>{source}</span>
                               <div className="flex items-center space-x-2">
@@ -372,13 +372,13 @@ export const YearOverYearAnalytics = () => {
                 <div className="space-y-4">
                   {years.map(year => {
                     const boats = yearlyMetrics[year]?.boatBreakdown || {};
-                    const total = Object.values(boats).reduce((sum: number, count: any) => sum + Number(count), 0);
+                    const total = Object.values(boats).reduce((sum: number, count) => sum + Number(count), 0);
                     
                     return (
                       <div key={year} className="border rounded-lg p-3">
                         <h4 className="font-medium mb-2">{year} ({total} bookings)</h4>
                         <div className="space-y-1">
-                          {Object.entries(boats).map(([boat, count]: [string, any]) => (
+                          {Object.entries(boats).map(([boat, count]) => (
                             <div key={boat} className="flex items-center justify-between text-sm">
                               <span>{boat}</span>
                               <div className="flex items-center space-x-2">
