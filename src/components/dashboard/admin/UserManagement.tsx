@@ -69,38 +69,57 @@ export const UserManagement = () => {
 
   const handleAddUser = async () => {
     try {
-      // Create the profile entry
-      const profileData: UserProfileInsert = {
-        first_name: newUser.first_name,
-        last_name: newUser.last_name,
+      // Generate a UUID for the new profile
+      const { data: { user }, error: createError } = await supabase.auth.admin.createUser({
         email: newUser.email,
-        role: newUser.role,
-        company: newUser.company,
-        phone: newUser.phone,
-        active: false // Set to false until they complete registration
-      };
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert(profileData);
-
-      if (error) throw error;
-
-      toast({
-        title: "User Added",
-        description: `${newUser.first_name} ${newUser.last_name} has been added. They will need to complete registration.`,
+        email_confirm: true,
+        user_metadata: {
+          first_name: newUser.first_name,
+          last_name: newUser.last_name,
+          role: newUser.role,
+          company: newUser.company,
+          phone: newUser.phone
+        }
       });
 
-      setNewUser({
-        first_name: '',
-        last_name: '',
-        email: '',
-        role: 'staff',
-        company: 'Zatara Mar',
-        phone: ''
-      });
-      setIsAddDialogOpen(false);
-      fetchUsers();
+      if (createError) throw createError;
+
+      if (user) {
+        // Create the profile entry with the user ID
+        const profileData: UserProfileInsert = {
+          id: user.id,
+          first_name: newUser.first_name,
+          last_name: newUser.last_name,
+          email: newUser.email,
+          role: newUser.role,
+          company: newUser.company,
+          phone: newUser.phone,
+          active: true,
+          whatsapp_enabled: false
+        };
+
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert(profileData);
+
+        if (profileError) throw profileError;
+
+        toast({
+          title: "User Added",
+          description: `${newUser.first_name} ${newUser.last_name} has been added successfully.`,
+        });
+
+        setNewUser({
+          first_name: '',
+          last_name: '',
+          email: '',
+          role: 'staff',
+          company: 'Zatara Mar',
+          phone: ''
+        });
+        setIsAddDialogOpen(false);
+        fetchUsers();
+      }
     } catch (error: any) {
       console.error('Error adding user:', error);
       toast({
@@ -198,7 +217,7 @@ export const UserManagement = () => {
             <DialogHeader>
               <DialogTitle>Add New User</DialogTitle>
               <DialogDescription>
-                Create a new user account. They will need to complete registration to activate their account.
+                Create a new user account. They will receive their login credentials via email.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
