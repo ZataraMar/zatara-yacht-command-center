@@ -47,15 +47,6 @@ export const StaffInvitation = () => {
 
       if (error) throw error;
 
-      // Create pending invitation record (optional - for tracking)
-      await supabase.from('profiles').insert({
-        email: formData.email,
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        role: formData.role,
-        active: false // Will be activated when they sign up
-      });
-
       toast({
         title: "Invitation Sent!",
         description: `Invitation email sent to ${formData.email}`,
