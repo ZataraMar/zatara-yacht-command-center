@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Users, Anchor, Calendar, Target, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Users, Anchor, Calendar, Target, AlertTriangle, Filter } from 'lucide-react';
 import { useComprehensiveBookings } from '@/hooks/useComprehensiveBookings';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -40,6 +41,10 @@ interface TargetData {
 
 export const BusinessIntelligence = () => {
   const { bookings, loading } = useComprehensiveBookings();
+  const [selectedYear, setSelectedYear] = useState<string>('all');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
+  const [comparisonYear, setComparisonYear] = useState<string>('');
+  
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
   const [boatPerformance, setBoatPerformance] = useState<BoatPerformance[]>([]);
   const [forecastData, setForecastData] = useState<ForecastData[]>([]);
@@ -54,16 +59,39 @@ export const BusinessIntelligence = () => {
   });
   const [error, setError] = useState<string | null>(null);
 
+  // Get available years from bookings data
+  const availableYears = useMemo(() => {
+    if (!bookings || bookings.length === 0) return [];
+    const years = [...new Set(bookings.map(booking => new Date(booking.start_date).getFullYear()))];
+    return years.sort((a, b) => b - a);
+  }, [bookings]);
+
+  // Filter bookings based on selected year and month
+  const filteredBookings = useMemo(() => {
+    if (!bookings) return [];
+    
+    return bookings.filter(booking => {
+      const date = new Date(booking.start_date);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      
+      if (selectedYear !== 'all' && year !== parseInt(selectedYear)) return false;
+      if (selectedMonth !== 'all' && month !== parseInt(selectedMonth)) return false;
+      
+      return true;
+    });
+  }, [bookings, selectedYear, selectedMonth]);
+
   useEffect(() => {
-    if (bookings && bookings.length > 0) {
-      processAnalyticsData(bookings);
+    if (filteredBookings && filteredBookings.length > 0) {
+      processAnalyticsData(filteredBookings);
       fetchForecastingData();
       fetchTargetsData();
     }
-  }, [bookings]);
+  }, [filteredBookings]);
 
   const processAnalyticsData = (bookingsData: any[]) => {
-    // Process monthly revenue data with year separation
+    // Process monthly revenue data
     const monthlyData: { [key: string]: RevenueData } = {};
     let totalRevenue = 0;
     let totalCharters = bookingsData.length;
@@ -92,7 +120,11 @@ export const BusinessIntelligence = () => {
       totalOutstanding += outstanding;
     });
 
-    setRevenueData(Object.values(monthlyData).sort((a, b) => a.year - b.year));
+    setRevenueData(Object.values(monthlyData).sort((a, b) => {
+      const dateA = new Date(`${a.month.split(' ')[0]} 1, ${a.year}`);
+      const dateB = new Date(`${b.month.split(' ')[0]} 1, ${b.year}`);
+      return dateA.getTime() - dateB.getTime();
+    }));
 
     // Process boat performance
     const boatData: { [key: string]: BoatPerformance } = {};
@@ -114,6 +146,13 @@ export const BusinessIntelligence = () => {
 
     setBoatPerformance(Object.values(boatData));
 
+    // Calculate actual conversion rate from data
+    const confirmedBookings = bookingsData.filter(b => 
+      b.booking_status?.toLowerCase().includes('confirmed') || 
+      b.booking_status?.toLowerCase().includes('booked')
+    ).length;
+    const actualConversionRate = totalCharters > 0 ? (confirmedBookings / totalCharters) * 100 : 0;
+
     // Set KPIs
     setKpis({
       totalRevenue,
@@ -121,7 +160,7 @@ export const BusinessIntelligence = () => {
       totalGuests,
       avgCharterValue: totalCharters > 0 ? totalRevenue / totalCharters : 0,
       outstandingPayments: totalOutstanding,
-      conversionRate: 85 // This would need proper calculation with lead data
+      conversionRate: actualConversionRate
     });
   };
 
@@ -139,12 +178,23 @@ export const BusinessIntelligence = () => {
       }
 
       if (forecasts && forecasts.length > 0) {
-        const forecastChartData = forecasts.map(forecast => ({
-          month: `${forecast.forecast_month}/${forecast.forecast_year}`,
-          forecast: forecast.total_revenue_forecast || 0,
-          actual: 0, // Would be calculated from actual bookings
-          target: forecast.charter_revenue_forecast || 0
-        }));
+        const forecastChartData = forecasts.map(forecast => {
+          // Calculate actual revenue for this month/year from bookings
+          const actualRevenue = filteredBookings
+            .filter(booking => {
+              const date = new Date(booking.start_date);
+              return date.getFullYear() === forecast.forecast_year && 
+                     date.getMonth() + 1 === forecast.forecast_month;
+            })
+            .reduce((sum, booking) => sum + (booking.charter_total || 0), 0);
+
+          return {
+            month: `${forecast.forecast_month}/${forecast.forecast_year}`,
+            forecast: forecast.total_revenue_forecast || 0,
+            actual: actualRevenue,
+            target: forecast.charter_revenue_forecast || 0
+          };
+        });
         setForecastData(forecastChartData);
       }
     } catch (error) {
@@ -157,7 +207,7 @@ export const BusinessIntelligence = () => {
       const { data: targets, error } = await supabase
         .from('business_targets')
         .select('*')
-        .eq('target_year', new Date().getFullYear())
+        .eq('target_year', selectedYear !== 'all' ? parseInt(selectedYear) : new Date().getFullYear())
         .order('target_period', { ascending: true });
 
       if (error) {
@@ -169,7 +219,7 @@ export const BusinessIntelligence = () => {
         const targetMetrics = targets.map(target => ({
           metric: `${target.target_period} Revenue`,
           target: target.total_revenue_target || 0,
-          actual: kpis.totalRevenue, // Would be calculated properly per period
+          actual: kpis.totalRevenue,
           progress: target.total_revenue_target > 0 ? (kpis.totalRevenue / target.total_revenue_target) * 100 : 0
         }));
         setTargetData(targetMetrics);
@@ -186,6 +236,15 @@ export const BusinessIntelligence = () => {
     }).format(value);
   };
 
+  const calculateTrend = (current: number, previous: number) => {
+    if (previous === 0) return { trend: 'neutral', value: '0%' };
+    const change = ((current - previous) / previous) * 100;
+    return {
+      trend: change > 0 ? 'up' : change < 0 ? 'down' : 'neutral',
+      value: `${change > 0 ? '+' : ''}${change.toFixed(1)}%`
+    };
+  };
+
   const KPICard = ({ title, value, icon: Icon, trend, trendValue, color = "text-zatara-navy" }: any) => (
     <Card>
       <CardContent className="p-6">
@@ -194,8 +253,8 @@ export const BusinessIntelligence = () => {
             <p className="text-sm font-medium text-gray-600">{title}</p>
             <p className={`text-2xl font-bold ${color}`}>{value}</p>
             {trend && (
-              <div className={`flex items-center space-x-1 text-sm ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                {trend === 'up' ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+              <div className={`flex items-center space-x-1 text-sm ${trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-gray-600'}`}>
+                {trend === 'up' ? <TrendingUp className="h-3 w-3" /> : trend === 'down' ? <TrendingDown className="h-3 w-3" /> : null}
                 <span>{trendValue}</span>
               </div>
             )}
@@ -207,6 +266,12 @@ export const BusinessIntelligence = () => {
       </CardContent>
     </Card>
   );
+
+  const clearFilters = () => {
+    setSelectedYear('all');
+    setSelectedMonth('all');
+    setComparisonYear('');
+  };
 
   if (loading) {
     return (
@@ -232,52 +297,83 @@ export const BusinessIntelligence = () => {
 
   return (
     <div className="space-y-6">
-      {/* KPI Overview */}
-      <div>
-        <h2 className="text-2xl font-bold text-zatara-navy mb-6">Business Intelligence Dashboard</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <KPICard
-            title="Total Revenue"
-            value={formatCurrency(kpis.totalRevenue)}
-            icon={DollarSign}
-            trend="up"
-            trendValue="+12%"
-          />
-          <KPICard
-            title="Total Charters"
-            value={kpis.totalCharters.toLocaleString()}
-            icon={Anchor}
-            trend="up"
-            trendValue="+8%"
-          />
-          <KPICard
-            title="Total Guests"
-            value={kpis.totalGuests.toLocaleString()}
-            icon={Users}
-            trend="up"
-            trendValue="+15%"
-          />
-          <KPICard
-            title="Avg Charter Value"
-            value={formatCurrency(kpis.avgCharterValue)}
-            icon={Target}
-            trend="up"
-            trendValue="+5%"
-          />
-          <KPICard
-            title="Outstanding"
-            value={formatCurrency(kpis.outstandingPayments)}
-            icon={AlertTriangle}
-            color="text-red-600"
-          />
-          <KPICard
-            title="Conversion Rate"
-            value={`${kpis.conversionRate}%`}
-            icon={TrendingUp}
-            trend="up"
-            trendValue="+2%"
-          />
+      {/* Filters and Controls */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-zatara-navy">Business Intelligence Dashboard</h2>
+          <p className="text-gray-600">
+            Showing data for {selectedYear === 'all' ? 'All Years' : selectedYear}
+            {selectedMonth !== 'all' && ` - ${new Date(2023, parseInt(selectedMonth) - 1).toLocaleDateString('en', { month: 'long' })}`}
+          </p>
         </div>
+        
+        <div className="flex items-center space-x-4">
+          <Select value={selectedYear} onValueChange={setSelectedYear}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Years</SelectItem>
+              {availableYears.map(year => (
+                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Month" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Months</SelectItem>
+              {Array.from({ length: 12 }, (_, i) => (
+                <SelectItem key={i + 1} value={(i + 1).toString()}>
+                  {new Date(2023, i).toLocaleDateString('en', { month: 'long' })}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Button variant="outline" onClick={clearFilters} size="sm">
+            <Filter className="h-4 w-4 mr-2" />
+            Clear Filters
+          </Button>
+        </div>
+      </div>
+
+      {/* KPI Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <KPICard
+          title="Total Revenue"
+          value={formatCurrency(kpis.totalRevenue)}
+          icon={DollarSign}
+        />
+        <KPICard
+          title="Total Charters"
+          value={kpis.totalCharters.toLocaleString()}
+          icon={Anchor}
+        />
+        <KPICard
+          title="Total Guests"
+          value={kpis.totalGuests.toLocaleString()}
+          icon={Users}
+        />
+        <KPICard
+          title="Avg Charter Value"
+          value={formatCurrency(kpis.avgCharterValue)}
+          icon={Target}
+        />
+        <KPICard
+          title="Outstanding"
+          value={formatCurrency(kpis.outstandingPayments)}
+          icon={AlertTriangle}
+          color="text-red-600"
+        />
+        <KPICard
+          title="Conversion Rate"
+          value={`${kpis.conversionRate.toFixed(1)}%`}
+          icon={TrendingUp}
+        />
       </div>
 
       {/* Charts and Analytics */}
@@ -292,8 +388,10 @@ export const BusinessIntelligence = () => {
         <TabsContent value="revenue" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Multi-Year Revenue Trend</CardTitle>
-              <CardDescription>Revenue and charter count across all years</CardDescription>
+              <CardTitle>Revenue Trend</CardTitle>
+              <CardDescription>
+                Monthly revenue and charter count for filtered period ({filteredBookings.length} bookings)
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {revenueData.length > 0 ? (
@@ -314,7 +412,7 @@ export const BusinessIntelligence = () => {
                 </ResponsiveContainer>
               ) : (
                 <div className="text-center text-gray-500 py-8">
-                  No revenue data available
+                  No revenue data available for selected filters
                 </div>
               )}
             </CardContent>
@@ -326,7 +424,7 @@ export const BusinessIntelligence = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Boat Performance</CardTitle>
-                <CardDescription>Revenue by boat across all years</CardDescription>
+                <CardDescription>Revenue by boat for filtered period</CardDescription>
               </CardHeader>
               <CardContent>
                 {boatPerformance.length > 0 ? (
@@ -349,8 +447,8 @@ export const BusinessIntelligence = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Average Charter Value</CardTitle>
-                <CardDescription>By boat</CardDescription>
+                <CardTitle>Average Charter Value by Boat</CardTitle>
+                <CardDescription>Performance metrics</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -381,7 +479,7 @@ export const BusinessIntelligence = () => {
         <TabsContent value="forecasting" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Revenue Forecasting</CardTitle>
+              <CardTitle>Revenue Forecasting vs Actual</CardTitle>
               <CardDescription>Forecasted vs actual revenue trends</CardDescription>
             </CardHeader>
             <CardContent>
@@ -393,15 +491,15 @@ export const BusinessIntelligence = () => {
                     <YAxis />
                     <Tooltip formatter={(value) => formatCurrency(value as number)} />
                     <Legend />
-                    <Line type="monotone" dataKey="forecast" stroke="#1e40af" name="Forecast" />
-                    <Line type="monotone" dataKey="actual" stroke="#10b981" name="Actual" />
-                    <Line type="monotone" dataKey="target" stroke="#f59e0b" name="Target" />
+                    <Line type="monotone" dataKey="forecast" stroke="#1e40af" name="Forecast" strokeWidth={2} />
+                    <Line type="monotone" dataKey="actual" stroke="#10b981" name="Actual" strokeWidth={2} />
+                    <Line type="monotone" dataKey="target" stroke="#f59e0b" name="Target" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="text-center text-gray-500 py-8">
                   <p className="mb-4">No forecasting data available</p>
-                  <p className="text-sm">Forecasts will be loaded from the business_forecasting table</p>
+                  <p className="text-sm">Add forecasts in the business_forecasting table to see comparisons</p>
                 </div>
               )}
             </CardContent>
@@ -412,7 +510,9 @@ export const BusinessIntelligence = () => {
           <Card>
             <CardHeader>
               <CardTitle>Business Targets Progress</CardTitle>
-              <CardDescription>Track progress against {new Date().getFullYear()} business goals</CardDescription>
+              <CardDescription>
+                Progress against {selectedYear !== 'all' ? selectedYear : new Date().getFullYear()} business goals
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {targetData.length > 0 ? (
@@ -441,7 +541,7 @@ export const BusinessIntelligence = () => {
               ) : (
                 <div className="text-center text-gray-500 py-8">
                   <p className="mb-4">No targets data available</p>
-                  <p className="text-sm">Targets will be loaded from the business_targets table</p>
+                  <p className="text-sm">Add targets in the business_targets table to track progress</p>
                 </div>
               )}
             </CardContent>
