@@ -36,7 +36,7 @@ export const StaffSearchFilter: React.FC<StaffSearchFilterProps> = ({
         <option value="management">Management</option>
         <option value="skippers">Skippers</option>
         <option value="staff">Staff</option>
-        <option value="owners">Owners</option>
+        <option value="owner">Owner</option>
       </select>
     </div>
   );

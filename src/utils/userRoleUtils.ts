@@ -4,7 +4,7 @@ import type { Database } from '@/integrations/supabase/types';
 type UserRole = Database['public']['Enums']['user_role'];
 
 export const roleOptions = [
-  { value: 'owners' as UserRole, label: 'Owner', description: 'Full system access' },
+  { value: 'owner' as UserRole, label: 'Owner', description: 'Full system access' },
   { value: 'management' as UserRole, label: 'Management', description: 'Business operations and team oversight' },
   { value: 'boat_owners' as UserRole, label: 'Boat Owner', description: 'Fleet and boat management' },
   { value: 'skippers' as UserRole, label: 'Skipper', description: 'Boat operations and guest service' },
@@ -17,7 +17,7 @@ export const roleOptions = [
 
 export const getRoleBadgeColor = (role: string) => {
   switch (role) {
-    case 'owners': return 'bg-purple-600 text-white';
+    case 'owner': return 'bg-purple-600 text-white';
     case 'management': return 'bg-purple-500 text-white';
     case 'boat_owners': return 'bg-blue-600 text-white';
     case 'skippers': return 'bg-blue-500 text-white';

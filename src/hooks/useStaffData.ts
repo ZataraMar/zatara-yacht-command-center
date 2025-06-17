@@ -36,7 +36,7 @@ export const useStaffData = () => {
   const getOverviewMetrics = (): StaffOverviewMetrics => {
     const totalStaff = staff.length;
     const activeSkippers = staff.filter(s => s.role === 'skippers').length;
-    const managementCount = staff.filter(s => ['management', 'owners'].includes(s.role)).length;
+    const managementCount = staff.filter(s => ['management', 'owner'].includes(s.role)).length;
     
     return {
       totalStaff,

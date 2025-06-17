@@ -112,7 +112,7 @@ export const DashboardHome = () => {
   };
 
   const userRole = profile?.role || '';
-  const isStaffOrHigher = ['team', 'agency', 'management', 'owners', 'staff', 'skippers'].includes(userRole);
+  const isStaffOrHigher = ['team', 'agency', 'management', 'owner', 'staff', 'skippers'].includes(userRole);
 
   if (loading) {
     return (

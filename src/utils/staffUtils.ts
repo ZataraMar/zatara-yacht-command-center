@@ -1,7 +1,7 @@
 
 export const getRoleColor = (role: string) => {
   switch (role) {
-    case 'owners':
+    case 'owner':
       return 'bg-purple-600';
     case 'management':
       return 'bg-purple-500';
@@ -18,7 +18,7 @@ export const getRoleColor = (role: string) => {
 
 export const getRoleBadgeVariant = (role: string) => {
   switch (role) {
-    case 'owners':
+    case 'owner':
       return 'default'; // Purple theme
     case 'management':
       return 'secondary';
@@ -34,7 +34,7 @@ export const getRoleBadgeVariant = (role: string) => {
 
 export const getRoleDisplayName = (role: string) => {
   switch (role) {
-    case 'owners':
+    case 'owner':
       return 'Owner';
     case 'management':
       return 'Management';
@@ -62,6 +62,6 @@ export const enrichStaffData = (data: any[]) => {
     last_shift: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     hours_this_week: Math.floor(Math.random() * 35) + 15,
     certifications: member.certifications || (member.role === 'skippers' ? ['RYA Day Skipper', 'VHF Radio'] : []),
-    boat_access: member.boat_access || (member.role === 'owners' ? ['Zatara', 'PuraVida'] : ['PuraVida'])
+    boat_access: member.boat_access || (member.role === 'owner' ? ['Zatara', 'PuraVida'] : ['PuraVida'])
   })) || [];
 };
