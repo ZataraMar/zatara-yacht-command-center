@@ -9,27 +9,29 @@ import { Calendar, Clock, Users, Phone, MapPin, Euro, Anchor, AlertCircle, Check
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/SecureAuthContext';
 
-interface OperationsView {
+interface BusinessViewRow {
   locator: string;
   charter_date: string;
-  guest_full_name: string;
+  guest_name: string;
   booking_source: string;
   start_time: string;
   end_time: string;
   boat: string;
-  booking_status: string;
+  status: string;
   charter_total: number;
-  fnb_items: string;
-  crew: string;
-  fuel: string;
-  cleaning: string;
-  equipment: string;
-  supplier_needs: string;
-  extras_categories: string;
-  extras_total: number;
+  fnb_details: string;
+  crew_required: string;
+  equipment_required: string;
+  charter_notes: string;
+  pre_departure_checks: boolean;
+  cleared_for_departure: boolean;
+  gps_coordinates: string;
+  total_guests: number;
+  paid_amount: number;
+  outstanding_amount: number;
 }
 
-interface FinanceView {
+interface FinanceViewRow {
   locator: string;
   charter_date: string;
   guest_full_name: string;
@@ -43,7 +45,7 @@ interface FinanceView {
   payment_status: string;
 }
 
-interface SkipperView {
+interface SkipperViewRow {
   locator: string;
   charter_date: string;
   guest_full_name: string;
@@ -62,10 +64,10 @@ interface SkipperView {
 
 export const BusinessViewDashboard = () => {
   const { profile } = useAuth();
-  const [operationsData, setOperationsData] = useState<OperationsView[]>([]);
-  const [financeData, setFinanceData] = useState<FinanceView[]>([]);
-  const [zataraData, setZataraData] = useState<SkipperView[]>([]);
-  const [puravidaData, setPuravidaData] = useState<SkipperView[]>([]);
+  const [operationsData, setOperationsData] = useState<BusinessViewRow[]>([]);
+  const [financeData, setFinanceData] = useState<FinanceViewRow[]>([]);
+  const [zataraData, setZataraData] = useState<SkipperViewRow[]>([]);
+  const [puravidaData, setPuravidaData] = useState<SkipperViewRow[]>([]);
   const [availableViews, setAvailableViews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeFilter, setTimeFilter] = useState('14');
@@ -90,7 +92,7 @@ export const BusinessViewDashboard = () => {
         user_role: profile?.role || 'operations'
       });
 
-      // Direct table queries for other views since they're already filtered
+      // Direct queries for specific business views
       const [financeResult, zataraResult, puravidaResult] = await Promise.all([
         supabase.from('business_view_finance').select('*').order('charter_date'),
         supabase.from('business_view_zatara_skipper').select('*').order('charter_date'),
@@ -192,19 +194,16 @@ export const BusinessViewDashboard = () => {
                     <CardTitle className="text-lg flex items-center space-x-2">
                       <Anchor className="h-5 w-5 text-zatara-blue" />
                       <span>{charter.boat} - {charter.locator}</span>
-                      <Badge className={getStatusColor(charter.booking_status)}>
-                        {charter.booking_status}
+                      <Badge className={getStatusColor(charter.status)}>
+                        {charter.status}
                       </Badge>
                     </CardTitle>
                     <div className="text-right">
                       <div className="text-lg font-bold">€{charter.charter_total}</div>
-                      {charter.extras_total > 0 && (
-                        <div className="text-sm text-gray-600">+€{charter.extras_total} extras</div>
-                      )}
                     </div>
                   </div>
                   <CardDescription>
-                    {charter.guest_full_name} • {new Date(charter.charter_date).toLocaleDateString()}
+                    {charter.guest_name} • {new Date(charter.charter_date).toLocaleDateString()}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -224,17 +223,15 @@ export const BusinessViewDashboard = () => {
                   <div className="space-y-2">
                     <h4 className="font-medium text-zatara-navy">Operations</h4>
                     <div className="text-sm space-y-1">
-                      {charter.crew && <div>👥 {charter.crew}</div>}
-                      {charter.fuel && <div>⛽ {charter.fuel}</div>}
-                      {charter.cleaning && <div>🧽 {charter.cleaning}</div>}
+                      {charter.crew_required && <div>👥 {charter.crew_required}</div>}
+                      {charter.equipment_required && <div>🏄 {charter.equipment_required}</div>}
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <h4 className="font-medium text-zatara-navy">F&B & Equipment</h4>
+                    <h4 className="font-medium text-zatara-navy">F&B & Notes</h4>
                     <div className="text-sm space-y-1">
-                      {charter.fnb_items && <div>🍽️ {charter.fnb_items}</div>}
-                      {charter.equipment && <div>🏄 {charter.equipment}</div>}
-                      {charter.supplier_needs && <div>📦 {charter.supplier_needs}</div>}
+                      {charter.fnb_details && <div>🍽️ {charter.fnb_details}</div>}
+                      {charter.charter_notes && <div>📝 {charter.charter_notes}</div>}
                     </div>
                   </div>
                 </CardContent>

@@ -1678,6 +1678,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_message_field_mappings: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          field_name: string
+          table_source: string
+          column_name: string
+          display_name: string
+          data_type: string
+          is_required: boolean
+        }[]
+      }
       get_operations_input_view: {
         Args: { input_mode?: string; user_role?: string }
         Returns: {

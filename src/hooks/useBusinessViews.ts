@@ -49,18 +49,18 @@ export const useBusinessViews = () => {
     }
   };
 
-  const fetchDirectView = async (tableName: string) => {
+  const fetchSpecificView = async (viewName: 'business_view_finance' | 'business_view_operations' | 'business_view_zatara_skipper' | 'business_view_puravida_skipper') => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from(tableName)
+        .from(viewName)
         .select('*')
         .order('charter_date', { ascending: true });
       
       if (error) throw error;
       return data || [];
     } catch (error) {
-      console.error(`Error fetching ${tableName}:`, error);
+      console.error(`Error fetching ${viewName}:`, error);
       return [];
     } finally {
       setLoading(false);
@@ -92,7 +92,7 @@ export const useBusinessViews = () => {
     loading,
     availableViews,
     fetchBusinessView,
-    fetchDirectView,
+    fetchSpecificView,
     fetchAvailableViews,
     getFilterOptions
   };
