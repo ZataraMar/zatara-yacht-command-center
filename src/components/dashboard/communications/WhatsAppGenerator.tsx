@@ -13,7 +13,7 @@ interface WhatsAppTemplate {
   template_name: string;
   template_type: string;
   message_content: string;
-  variables: Record<string, string>;
+  variables: any; // Changed from Record<string, string> to any to handle Json type
 }
 
 interface WhatsAppGeneratorProps {
