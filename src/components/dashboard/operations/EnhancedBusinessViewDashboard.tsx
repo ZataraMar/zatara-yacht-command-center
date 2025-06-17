@@ -8,7 +8,7 @@ import { OperationsView } from './views/OperationsView';
 import { FinanceView } from './views/FinanceView';
 import { SkipperView } from './views/SkipperView';
 import { WhatsAppGenerator } from '../communications/WhatsAppGenerator';
-import { ManualInputForm } from './forms/ManualInputForm';
+import { EnhancedOperationsInput } from './views/EnhancedOperationsInput';
 import { useEnhancedBusinessViews } from '@/hooks/useEnhancedBusinessViews';
 import { getStatusColor, getPaymentStatusColor } from './utils/statusColors';
 
@@ -33,23 +33,13 @@ export const EnhancedBusinessViewDashboard = () => {
   });
 
   const getViewTitle = () => {
-    switch (viewMode) {
-      case 'operations': return '🔧 Operations Dashboard';
-      case 'finance': return '💰 Financial Dashboard';
-      case 'zatara': return '⛵ Zatara Skipper View';
-      case 'puravida': return '🚤 PuraVida Skipper View';
-      default: return '📊 Business Dashboard';
-    }
+    const view = availableViews.find(v => v.view_name === viewMode);
+    return view?.display_name || '📊 Business Dashboard';
   };
 
   const getViewDescription = () => {
-    switch (viewMode) {
-      case 'operations': return 'Charter operations and workflow management';
-      case 'finance': return 'Payment tracking and financial reconciliation';
-      case 'zatara': return 'Zatara boat operations for skippers';
-      case 'puravida': return 'PuraVida boat operations for skippers';
-      default: return 'Charter business intelligence';
-    }
+    const view = availableViews.find(v => v.view_name === viewMode);
+    return view?.description || 'Charter business intelligence';
   };
 
   const renderMetrics = () => {
@@ -188,6 +178,7 @@ export const EnhancedBusinessViewDashboard = () => {
         setStatusFilter={setStatusFilter}
         viewMode={viewMode}
         setViewMode={setViewMode}
+        availableViews={availableViews}
         onRefresh={refetch}
         loading={loading}
         resultCount={data.length}
@@ -204,7 +195,7 @@ export const EnhancedBusinessViewDashboard = () => {
           {selectedCharter && (
             <>
               <WhatsAppGenerator charter={selectedCharter} />
-              <ManualInputForm 
+              <EnhancedOperationsInput 
                 charter={selectedCharter}
                 onSave={() => refetch()}
               />
@@ -216,12 +207,12 @@ export const EnhancedBusinessViewDashboard = () => {
               <CardHeader>
                 <CardTitle>Charter Tools</CardTitle>
                 <CardDescription>
-                  Select a charter from the list to access WhatsApp generator and manual input forms
+                  Select a charter from the list to access enhanced management tools
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-500 text-center py-8">
-                  Click on any charter to get started
+                  Click on any charter to get started with WhatsApp generator and operations input
                 </p>
               </CardContent>
             </Card>

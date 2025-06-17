@@ -1942,6 +1942,13 @@ export type Database = {
             foreignKeyName: "customer_communications_log_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_communications_log_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
@@ -2022,6 +2029,13 @@ export type Database = {
             foreignKeyName: "customer_history_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_history_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
@@ -2065,6 +2079,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "customer_preferences_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "customer_preferences_customer_id_fkey"
             columns: ["customer_id"]
@@ -2154,6 +2175,13 @@ export type Database = {
           value_rating?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "customer_reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "customer_reviews_customer_id_fkey"
             columns: ["customer_id"]
@@ -4088,6 +4116,27 @@ export type Database = {
       }
     }
     Views: {
+      boat_performance_dashboard: {
+        Row: {
+          available_slots: number | null
+          avg_booking_value: number | null
+          avg_guests_per_charter: number | null
+          boat_name: string | null
+          booked_slots: number | null
+          maintenance_events: number | null
+          profit_margin_percentage: number | null
+          revenue_per_hour: number | null
+          total_bookings: number | null
+          total_charter_hours: number | null
+          total_guests_served: number | null
+          total_maintenance_cost: number | null
+          total_maintenance_hours: number | null
+          total_revenue: number | null
+          utilization_category: string | null
+          utilization_percentage: number | null
+        }
+        Relationships: []
+      }
       business_view_finance: {
         Row: {
           balance_due: number | null
@@ -4200,6 +4249,81 @@ export type Database = {
         }
         Relationships: []
       }
+      crew_efficiency_metrics: {
+        Row: {
+          avg_charter_duration_hours: number | null
+          avg_customer_rating: number | null
+          avg_guests_per_charter: number | null
+          boat_specializations: string | null
+          crew_name: string | null
+          hourly_rate: number | null
+          performance_category: string | null
+          performance_rating: number | null
+          positive_review_percentage: number | null
+          reliability_score: number | null
+          revenue_per_charter: number | null
+          total_charters: number | null
+          total_customer_reviews: number | null
+          total_revenue_generated: number | null
+        }
+        Relationships: []
+      }
+      customer_360_view: {
+        Row: {
+          acquisition_date: string | null
+          acquisition_source: string | null
+          activity_status: string | null
+          average_booking_value: number | null
+          average_review_rating: number | null
+          avg_satisfaction_score: number | null
+          customer_key: string | null
+          customer_lifetime_value: number | null
+          customer_segment: string | null
+          customer_status: string | null
+          dietary_restrictions: string[] | null
+          email_primary: string | null
+          favorite_boat: string | null
+          full_name: string | null
+          id: number | null
+          last_booking_date: string | null
+          last_contact_date: string | null
+          last_contact_method: string | null
+          latest_review_date: string | null
+          nationality: string | null
+          phone_primary: string | null
+          preferred_season: string | null
+          special_requirements: string[] | null
+          total_bookings: number | null
+          total_charter_hours: number | null
+          total_charters: number | null
+          total_reviews_given: number | null
+          total_spent: number | null
+        }
+        Relationships: []
+      }
+      financial_overview_extended: {
+        Row: {
+          avg_booking_value: number | null
+          avg_payment_days: number | null
+          booking_source: string | null
+          bookings_count: number | null
+          charter_revenue: number | null
+          charter_revenue_percentage: number | null
+          extras_revenue: number | null
+          extras_revenue_percentage: number | null
+          fully_paid_bookings: number | null
+          gross_profit: number | null
+          gross_profit_margin: number | null
+          maintenance_costs: number | null
+          payment_completion_rate: number | null
+          revenue_month: string | null
+          service_revenue: number | null
+          total_outstanding: number | null
+          total_paid: number | null
+          total_revenue: number | null
+        }
+        Relationships: []
+      }
       operations_data: {
         Row: {
           boat: string | null
@@ -4209,11 +4333,73 @@ export type Database = {
         }
         Relationships: []
       }
+      predictive_analytics_view: {
+        Row: {
+          avg_growth_rate: number | null
+          avg_guests: number | null
+          bookings_count: number | null
+          month_over_month_growth: number | null
+          monthly_revenue: number | null
+          seasonal_avg_value: number | null
+          seasonal_category: string | null
+          seasonal_volatility: number | null
+          three_month_moving_avg: number | null
+          trend_direction: string | null
+          trend_month: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      assign_optimal_crew: {
+        Args: {
+          booking_locator_param: string
+          charter_date_param: string
+          start_time_param: string
+          end_time_param: string
+          boat_name_param: string
+        }
+        Returns: string
+      }
       bytea_to_text: {
         Args: { data: string }
         Returns: string
+      }
+      calculate_customer_lifetime_value: {
+        Args: { customer_id_param: number }
+        Returns: number
+      }
+      calculate_seasonal_forecast: {
+        Args: {
+          forecast_year: number
+          season_name: string
+          boat_name_param?: string
+        }
+        Returns: number
+      }
+      detect_booking_conflicts: {
+        Args: {
+          boat_name_param: string
+          start_time_param: string
+          end_time_param: string
+          booking_locator_param?: string
+        }
+        Returns: {
+          conflict_id: number
+          conflict_type: string
+          conflicting_locator: string
+          conflict_description: string
+        }[]
+      }
+      generate_performance_report: {
+        Args: { report_period?: string; boat_filter?: string }
+        Returns: {
+          metric_name: string
+          current_value: number
+          target_value: number
+          variance_percentage: number
+          trend_direction: string
+        }[]
       }
       generate_whatsapp_message: {
         Args: { charter_locator: string; template_name_param: string }

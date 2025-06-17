@@ -5,16 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Send, Copy } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { MessageCircle, Send, Copy, Sparkles } from 'lucide-react';
+import { useEnhancedWhatsAppTemplates } from '@/hooks/useEnhancedWhatsAppTemplates';
 import { toast } from '@/hooks/use-toast';
-
-interface WhatsAppTemplate {
-  template_name: string;
-  template_type: string;
-  message_content: string;
-  variables: any; // Changed from Record<string, string> to any to handle Json type
-}
 
 interface WhatsAppGeneratorProps {
   charter: {
@@ -29,47 +22,13 @@ interface WhatsAppGeneratorProps {
 }
 
 export const WhatsAppGenerator: React.FC<WhatsAppGeneratorProps> = ({ charter }) => {
-  const [templates, setTemplates] = useState<WhatsAppTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [generatedMessage, setGeneratedMessage] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
-    fetchTemplates();
-  }, []);
+  const { templates, generateMessage } = useEnhancedWhatsAppTemplates();
 
-  const fetchTemplates = async () => {
-    try {
-      const { data, error } = await supabase.rpc('get_whatsapp_templates');
-      if (error) throw error;
-      setTemplates(data || []);
-    } catch (error) {
-      console.error('Error fetching templates:', error);
-      // Fallback templates if database function doesn't exist yet
-      setTemplates([
-        {
-          template_name: 'booking_confirmation',
-          template_type: 'booking',
-          message_content: `Hi {{guest_name}}! 🛥️ Your charter with {{boat_name}} is confirmed for {{charter_date}} at {{start_time}}. We're excited to welcome {{total_guests}} guests aboard! Total: €{{charter_total}}. See you soon! ⛵`,
-          variables: {}
-        },
-        {
-          template_name: 'pre_departure',
-          template_type: 'reminder',
-          message_content: `Hi {{guest_name}}! 🌊 Your charter on {{boat_name}} is tomorrow at {{start_time}}. Please bring sunscreen, swimwear, and valid ID. Weather looks perfect! Can't wait to show you the beautiful Mallorcan coast! ⛵☀️`,
-          variables: {}
-        },
-        {
-          template_name: 'post_charter',
-          template_type: 'followup',
-          message_content: `Thank you {{guest_name}} for choosing Zatara! 🙏 We hope you had an amazing time on {{boat_name}}. We'd love to hear about your experience - please leave us a review! Looking forward to welcoming you back soon! ⭐⛵`,
-          variables: {}
-        }
-      ]);
-    }
-  };
-
-  const generateMessage = async () => {
+  const handleGenerateMessage = async () => {
     if (!selectedTemplate) {
       toast({
         title: "No template selected",
@@ -81,35 +40,10 @@ export const WhatsAppGenerator: React.FC<WhatsAppGeneratorProps> = ({ charter })
 
     setLoading(true);
     try {
-      // Try using the database function first
-      const { data, error } = await supabase.rpc('generate_whatsapp_message', {
-        charter_locator: charter.locator,
-        template_name_param: selectedTemplate
-      });
-
-      if (error) {
-        // Fallback to client-side generation
-        const template = templates.find(t => t.template_name === selectedTemplate);
-        if (template) {
-          let message = template.message_content;
-          message = message.replace(/\{\{guest_name\}\}/g, charter.guest_name.split(' ')[0]);
-          message = message.replace(/\{\{boat_name\}\}/g, charter.boat);
-          message = message.replace(/\{\{charter_date\}\}/g, new Date(charter.charter_date).toLocaleDateString());
-          message = message.replace(/\{\{start_time\}\}/g, charter.start_time);
-          message = message.replace(/\{\{total_guests\}\}/g, charter.total_guests.toString());
-          message = message.replace(/\{\{charter_total\}\}/g, charter.charter_total.toString());
-          setGeneratedMessage(message);
-        }
-      } else {
-        setGeneratedMessage(data);
-      }
+      const message = await generateMessage(charter.locator, selectedTemplate);
+      setGeneratedMessage(message);
     } catch (error) {
       console.error('Error generating message:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate message. Please try again.",
-        variant: "destructive"
-      });
     } finally {
       setLoading(false);
     }
@@ -137,12 +71,22 @@ export const WhatsAppGenerator: React.FC<WhatsAppGeneratorProps> = ({ charter })
     window.open(whatsappUrl, '_blank');
   };
 
+  // Filter templates based on boat compatibility
+  const compatibleTemplates = templates.filter(template => 
+    !template.boat_specific || 
+    template.applicable_boats.includes('all') ||
+    template.applicable_boats.some(boat => 
+      charter.boat.toLowerCase().includes(boat.toLowerCase())
+    )
+  );
+
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <MessageCircle className="h-5 w-5 text-green-600" />
-          <span>WhatsApp Message Generator</span>
+          <span>Enhanced WhatsApp Generator</span>
+          <Sparkles className="h-4 w-4 text-yellow-500" />
         </CardTitle>
         <CardDescription>
           Generate personalized messages for {charter.guest_name} - {charter.locator}
@@ -157,9 +101,16 @@ export const WhatsAppGenerator: React.FC<WhatsAppGeneratorProps> = ({ charter })
                 <SelectValue placeholder="Choose a template..." />
               </SelectTrigger>
               <SelectContent>
-                {templates.map((template) => (
+                {compatibleTemplates.map((template) => (
                   <SelectItem key={template.template_name} value={template.template_name}>
-                    {template.template_name.replace('_', ' ').toUpperCase()}
+                    <div className="flex items-center space-x-2">
+                      <span>{template.template_name.replace(/_/g, ' ').toUpperCase()}</span>
+                      {template.boat_specific && (
+                        <Badge variant="outline" className="text-xs">
+                          {template.applicable_boats.join(', ')}
+                        </Badge>
+                      )}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -171,16 +122,17 @@ export const WhatsAppGenerator: React.FC<WhatsAppGeneratorProps> = ({ charter })
               <Badge variant="outline">{charter.boat}</Badge>
               <Badge variant="outline">{new Date(charter.charter_date).toLocaleDateString()}</Badge>
               <Badge variant="outline">{charter.total_guests} guests</Badge>
+              <Badge variant="outline">€{charter.charter_total}</Badge>
             </div>
           </div>
         </div>
 
         <Button 
-          onClick={generateMessage} 
+          onClick={handleGenerateMessage} 
           disabled={!selectedTemplate || loading}
           className="w-full"
         >
-          {loading ? 'Generating...' : 'Generate Message'}
+          {loading ? 'Generating...' : 'Generate Enhanced Message'}
         </Button>
 
         {generatedMessage && (

@@ -14,6 +14,7 @@ interface EnhancedViewFiltersProps {
   setStatusFilter: (value: string) => void;
   viewMode: string;
   setViewMode: (value: string) => void;
+  availableViews: any[];
   onRefresh: () => void;
   loading?: boolean;
   resultCount?: number;
@@ -28,6 +29,7 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
   setStatusFilter,
   viewMode,
   setViewMode,
+  availableViews,
   onRefresh,
   loading = false,
   resultCount = 0
@@ -51,13 +53,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
     { value: 'option_request', label: 'Option Request' },
     { value: 'cancelled', label: 'Cancelled' },
     { value: 'all', label: 'All Status' }
-  ];
-
-  const viewModes = [
-    { value: 'operations', label: '🔧 Operations' },
-    { value: 'finance', label: '💰 Finance' },
-    { value: 'zatara', label: '⛵ Zatara' },
-    { value: 'puravida', label: '🚤 PuraVida' }
   ];
 
   const getActiveFiltersCount = () => {
@@ -140,15 +135,15 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
       {/* View Mode Tabs */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          {viewModes.map(mode => (
+          {availableViews.map(view => (
             <Button
-              key={mode.value}
-              onClick={() => setViewMode(mode.value)}
-              variant={viewMode === mode.value ? "default" : "outline"}
+              key={view.view_name}
+              onClick={() => setViewMode(view.view_name)}
+              variant={viewMode === view.view_name ? "default" : "outline"}
               size="sm"
               className="text-sm"
             >
-              {mode.label}
+              {view.display_name}
             </Button>
           ))}
         </div>
