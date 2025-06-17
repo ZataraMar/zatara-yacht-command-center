@@ -35,6 +35,7 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
   resultCount = 0
 }) => {
   const timeOptions = [
+    { value: '1', label: 'Today' },
     { value: '7', label: '7 days' },
     { value: '14', label: '14 days' },
     { value: '30', label: '30 days' },
@@ -49,17 +50,17 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
   ];
 
   const statusOptions = [
+    { value: 'all', label: 'All Status' },
     { value: 'booked_prebooked', label: 'Booked/Prebooked' },
     { value: 'option_request', label: 'Option Request' },
-    { value: 'cancelled', label: 'Cancelled' },
-    { value: 'all', label: 'All Status' }
+    { value: 'cancelled', label: 'Cancelled' }
   ];
 
   const getActiveFiltersCount = () => {
     let count = 0;
     if (timeFilter !== '14') count++;
     if (boatFilter !== 'all') count++;
-    if (statusFilter !== 'booked_prebooked') count++;
+    if (statusFilter !== 'all') count++;
     return count;
   };
 

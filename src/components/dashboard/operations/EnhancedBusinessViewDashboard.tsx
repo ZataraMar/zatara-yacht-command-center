@@ -9,28 +9,129 @@ import { FinanceView } from './views/FinanceView';
 import { SkipperView } from './views/SkipperView';
 import { WhatsAppGenerator } from '../communications/WhatsAppGenerator';
 import { EnhancedOperationsInput } from './views/EnhancedOperationsInput';
-import { useEnhancedBusinessViews } from '@/hooks/useEnhancedBusinessViews';
+import { useRealTimeBookings } from '@/hooks/useRealTimeBookings';
 import { getStatusColor, getPaymentStatusColor } from './utils/statusColors';
 
 export const EnhancedBusinessViewDashboard = () => {
   const [timeFilter, setTimeFilter] = useState('14');
   const [boatFilter, setBoatFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('booked_prebooked');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState('operations');
   const [selectedCharter, setSelectedCharter] = useState<any>(null);
 
-  const {
-    data,
-    loading,
-    error,
-    availableViews,
-    refetch
-  } = useEnhancedBusinessViews({
-    timeFilter,
-    boatFilter,
-    statusFilter,
-    viewMode
-  });
+  const { bookings, loading, error, refetch } = useRealTimeBookings();
+
+  // Filter bookings based on current filters
+  const filteredBookings = React.useMemo(() => {
+    if (!bookings) return [];
+
+    let filtered = [...bookings];
+
+    // Apply time filter
+    const daysAhead = parseInt(timeFilter);
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + daysAhead);
+    
+    filtered = filtered.filter(booking => {
+      if (!booking.start_date) return false;
+      const bookingDate = new Date(booking.start_date);
+      return bookingDate <= endDate && bookingDate >= new Date();
+    });
+
+    // Apply boat filter
+    if (boatFilter !== 'all') {
+      switch (boatFilter) {
+        case 'zatara_only':
+          filtered = filtered.filter(b => b.boat?.toLowerCase().includes('zatara'));
+          break;
+        case 'puravida_only':
+          filtered = filtered.filter(b => b.boat?.toLowerCase().includes('puravida') || b.boat?.toLowerCase().includes('pura vida'));
+          break;
+        case 'zatara_puravida':
+          filtered = filtered.filter(b => 
+            b.boat?.toLowerCase().includes('zatara') || 
+            b.boat?.toLowerCase().includes('puravida') || 
+            b.boat?.toLowerCase().includes('pura vida')
+          );
+          break;
+      }
+    }
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      switch (statusFilter) {
+        case 'booked_prebooked':
+          filtered = filtered.filter(b => 
+            ['confirmed', 'booked', 'prebooked'].includes(b.booking_status?.toLowerCase() || '')
+          );
+          break;
+        case 'option_request':
+          filtered = filtered.filter(b => 
+            b.booking_status?.toLowerCase().includes('option')
+          );
+          break;
+        case 'cancelled':
+          filtered = filtered.filter(b => 
+            b.booking_status?.toLowerCase().includes('cancel')
+          );
+          break;
+      }
+    }
+
+    return filtered;
+  }, [bookings, timeFilter, boatFilter, statusFilter]);
+
+  // Transform bookings to business view format
+  const transformedData = React.useMemo(() => {
+    return filteredBookings.map(booking => ({
+      locator: booking.locator,
+      charter_date: booking.start_date ? new Date(booking.start_date).toISOString().split('T')[0] : '',
+      guest_name: `${booking.guest_first_name || ''} ${booking.guest_surname || ''}`.trim(),
+      booking_source: booking.booking_source || '',
+      start_time: booking.start_date ? new Date(booking.start_date).toTimeString().split(' ')[0] : '',
+      end_time: booking.end_date ? new Date(booking.end_date).toTimeString().split(' ')[0] : '',
+      boat: booking.boat || '',
+      status: booking.booking_status || '',
+      charter_total: booking.charter_total || 0,
+      fnb_details: '',
+      crew_required: 'Standard crew',
+      equipment_required: '',
+      charter_notes: booking.booking_notes || '',
+      pre_departure_checks: false,
+      cleared_for_departure: false,
+      gps_coordinates: '',
+      total_guests: booking.total_guests || 1,
+      paid_amount: booking.paid_amount || 0,
+      outstanding_amount: booking.outstanding_amount || 0
+    }));
+  }, [filteredBookings]);
+
+  const availableViews = [
+    { 
+      view_name: 'operations', 
+      display_name: '🔧 Operations', 
+      view_type: 'operations',
+      description: 'Operations management' 
+    },
+    { 
+      view_name: 'finance', 
+      display_name: '💰 Finance', 
+      view_type: 'finance',
+      description: 'Financial tracking' 
+    },
+    { 
+      view_name: 'zatara', 
+      display_name: '⛵ Zatara', 
+      view_type: 'skipper',
+      description: 'Zatara operations' 
+    },
+    { 
+      view_name: 'puravida', 
+      display_name: '🚤 PuraVida', 
+      view_type: 'skipper',
+      description: 'PuraVida operations' 
+    }
+  ];
 
   const getViewTitle = () => {
     const view = availableViews.find(v => v.view_name === viewMode);
@@ -43,10 +144,10 @@ export const EnhancedBusinessViewDashboard = () => {
   };
 
   const renderMetrics = () => {
-    if (!data.length) return null;
+    if (!transformedData.length) return null;
 
-    const totalRevenue = data.reduce((sum, item) => sum + (item.charter_total || 0), 0);
-    const totalCharters = data.length;
+    const totalRevenue = transformedData.reduce((sum, item) => sum + (item.charter_total || 0), 0);
+    const totalCharters = transformedData.length;
     const avgCharterValue = totalRevenue / totalCharters;
 
     return (
@@ -108,11 +209,14 @@ export const EnhancedBusinessViewDashboard = () => {
       );
     }
 
-    if (!data.length) {
+    if (!transformedData.length) {
       return (
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-gray-500">No charters found for the selected filters.</p>
+            <p className="text-sm text-gray-400 mt-2">
+              Try adjusting your time range or boat filters to see more results.
+            </p>
           </CardContent>
         </Card>
       );
@@ -122,7 +226,7 @@ export const EnhancedBusinessViewDashboard = () => {
       case 'operations':
         return (
           <OperationsView 
-            data={data} 
+            data={transformedData} 
             getStatusColor={getStatusColor}
             onCharterSelect={setSelectedCharter}
           />
@@ -130,7 +234,7 @@ export const EnhancedBusinessViewDashboard = () => {
       case 'finance':
         return (
           <FinanceView 
-            data={data} 
+            data={transformedData} 
             getPaymentStatusColor={getPaymentStatusColor}
             onCharterSelect={setSelectedCharter}
           />
@@ -138,7 +242,7 @@ export const EnhancedBusinessViewDashboard = () => {
       case 'zatara':
         return (
           <SkipperView 
-            data={data} 
+            data={transformedData.filter(d => d.boat?.toLowerCase().includes('zatara'))} 
             boatName="Zatara" 
             boatColor="blue" 
             getStatusColor={getStatusColor}
@@ -148,7 +252,10 @@ export const EnhancedBusinessViewDashboard = () => {
       case 'puravida':
         return (
           <SkipperView 
-            data={data} 
+            data={transformedData.filter(d => 
+              d.boat?.toLowerCase().includes('puravida') || 
+              d.boat?.toLowerCase().includes('pura vida')
+            )} 
             boatName="PuraVida" 
             boatColor="teal" 
             getStatusColor={getStatusColor}
@@ -181,7 +288,7 @@ export const EnhancedBusinessViewDashboard = () => {
         availableViews={availableViews}
         onRefresh={refetch}
         loading={loading}
-        resultCount={data.length}
+        resultCount={transformedData.length}
       />
 
       {renderMetrics()}
