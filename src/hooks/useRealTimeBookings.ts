@@ -18,6 +18,7 @@ interface Booking {
   total_guests: number;
   paid_amount: number;
   outstanding_amount: number;
+  booking_notes: string; // Added this field
   data_source: string;
   created_at: string;
   updated_at: string;
@@ -39,7 +40,7 @@ export const useRealTimeBookings = () => {
       const { data, error: fetchError } = await supabase
         .from('bookings')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('start_date', { ascending: true }); // Order by start_date to see chronological order
 
       if (fetchError) {
         console.error('Error fetching bookings:', fetchError);
@@ -48,6 +49,13 @@ export const useRealTimeBookings = () => {
       }
 
       console.log('Successfully fetched bookings:', data?.length || 0);
+      console.log('Sample booking statuses:', data?.slice(0, 5).map(b => ({ 
+        locator: b.locator, 
+        status: b.booking_status, 
+        guest: `${b.guest_first_name} ${b.guest_surname}`,
+        date: b.start_date
+      })));
+      
       setBookings(data || []);
       setLastUpdate(new Date());
 
@@ -71,7 +79,6 @@ export const useRealTimeBookings = () => {
         table: 'bookings'
       }, (payload) => {
         console.log('Real-time booking update:', payload.eventType);
-        // Safely access payload properties with type checking
         if (payload.new && typeof payload.new === 'object' && 'locator' in payload.new) {
           console.log('Updated booking locator:', payload.new.locator);
         }

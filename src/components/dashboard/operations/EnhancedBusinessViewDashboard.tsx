@@ -11,6 +11,7 @@ import { WhatsAppGenerator } from '../communications/WhatsAppGenerator';
 import { EnhancedOperationsInput } from './views/EnhancedOperationsInput';
 import { useRealTimeBookings } from '@/hooks/useRealTimeBookings';
 import { getStatusColor, getPaymentStatusColor } from './utils/statusColors';
+import { BusinessViewRow, FinanceViewRow, SkipperViewRow } from './types/businessViewTypes';
 
 export const EnhancedBusinessViewDashboard = () => {
   const [timeFilter, setTimeFilter] = useState('14');
@@ -21,22 +22,35 @@ export const EnhancedBusinessViewDashboard = () => {
 
   const { bookings, loading, error, refetch } = useRealTimeBookings();
 
+  console.log('Raw bookings data:', bookings?.slice(0, 3)); // Debug log
+
   // Filter bookings based on current filters
   const filteredBookings = React.useMemo(() => {
     if (!bookings) return [];
 
+    console.log('Starting filter with bookings:', bookings.length);
+
     let filtered = [...bookings];
 
-    // Apply time filter
-    const daysAhead = parseInt(timeFilter);
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + daysAhead);
+    // Apply time filter - more flexible date range
+    const daysRange = parseInt(timeFilter);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - Math.floor(daysRange / 2)); // Go backwards half the range
+    
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + Math.ceil(daysRange / 2)); // Go forwards half the range
     
     filtered = filtered.filter(booking => {
       if (!booking.start_date) return false;
       const bookingDate = new Date(booking.start_date);
-      return bookingDate <= endDate && bookingDate >= new Date();
+      bookingDate.setHours(0, 0, 0, 0);
+      return bookingDate >= startDate && bookingDate <= endDate;
     });
+
+    console.log('After time filter:', filtered.length);
 
     // Apply boat filter
     if (boatFilter !== 'all') {
@@ -57,17 +71,22 @@ export const EnhancedBusinessViewDashboard = () => {
       }
     }
 
-    // Apply status filter
+    console.log('After boat filter:', filtered.length);
+
+    // Apply status filter - fix the status mapping
     if (statusFilter !== 'all') {
       switch (statusFilter) {
         case 'booked_prebooked':
-          filtered = filtered.filter(b => 
-            ['confirmed', 'booked', 'prebooked'].includes(b.booking_status?.toLowerCase() || '')
-          );
+          filtered = filtered.filter(b => {
+            const status = b.booking_status?.toLowerCase() || '';
+            return ['confirmed', 'booked', 'prebooked'].includes(status) ||
+                   status.includes('confirm') || status.includes('book');
+          });
           break;
         case 'option_request':
           filtered = filtered.filter(b => 
-            b.booking_status?.toLowerCase().includes('option')
+            b.booking_status?.toLowerCase().includes('option') ||
+            b.booking_status?.toLowerCase().includes('request')
           );
           break;
         case 'cancelled':
@@ -78,11 +97,14 @@ export const EnhancedBusinessViewDashboard = () => {
       }
     }
 
+    console.log('After status filter:', filtered.length);
+    console.log('Filtered bookings sample:', filtered.slice(0, 2));
+
     return filtered;
   }, [bookings, timeFilter, boatFilter, statusFilter]);
 
-  // Transform bookings to business view format
-  const transformedData = React.useMemo(() => {
+  // Transform bookings to operations view format
+  const transformedData: BusinessViewRow[] = React.useMemo(() => {
     return filteredBookings.map(booking => ({
       locator: booking.locator,
       charter_date: booking.start_date ? new Date(booking.start_date).toISOString().split('T')[0] : '',
@@ -103,6 +125,43 @@ export const EnhancedBusinessViewDashboard = () => {
       total_guests: booking.total_guests || 1,
       paid_amount: booking.paid_amount || 0,
       outstanding_amount: booking.outstanding_amount || 0
+    }));
+  }, [filteredBookings]);
+
+  // Transform bookings to finance view format
+  const financeData: FinanceViewRow[] = React.useMemo(() => {
+    return filteredBookings.map(booking => ({
+      locator: booking.locator,
+      charter_date: booking.start_date ? new Date(booking.start_date).toISOString().split('T')[0] : '',
+      guest_full_name: `${booking.guest_first_name || ''} ${booking.guest_surname || ''}`.trim(),
+      boat: booking.boat || '',
+      booking_source: booking.booking_source || '',
+      charter_total: booking.charter_total || 0,
+      outstanding_amount: booking.outstanding_amount || 0,
+      payments_received: booking.paid_amount || 0,
+      total_paid: booking.paid_amount || 0,
+      balance_due: booking.outstanding_amount || 0,
+      payment_status: booking.outstanding_amount > 0 ? 'partial' : 'paid'
+    }));
+  }, [filteredBookings]);
+
+  // Transform bookings to skipper view format
+  const skipperData: SkipperViewRow[] = React.useMemo(() => {
+    return filteredBookings.map(booking => ({
+      locator: booking.locator,
+      charter_date: booking.start_date ? new Date(booking.start_date).toISOString().split('T')[0] : '',
+      guest_full_name: `${booking.guest_first_name || ''} ${booking.guest_surname || ''}`.trim(),
+      guest_phone: booking.guest_phone || '',
+      start_time: booking.start_date ? new Date(booking.start_date).toTimeString().split(' ')[0] : '',
+      end_time: booking.end_date ? new Date(booking.end_date).toTimeString().split(' ')[0] : '',
+      total_guests: booking.total_guests || 1,
+      booking_status: booking.booking_status || '',
+      charter_notes: booking.booking_notes || '',
+      fnb_details: '',
+      equipment_required: '',
+      pre_departure_checks: false,
+      cleared_for_departure: false,
+      gps_coordinates: ''
     }));
   }, [filteredBookings]);
 
@@ -234,7 +293,7 @@ export const EnhancedBusinessViewDashboard = () => {
       case 'finance':
         return (
           <FinanceView 
-            data={transformedData} 
+            data={financeData} 
             getPaymentStatusColor={getPaymentStatusColor}
             onCharterSelect={setSelectedCharter}
           />
@@ -242,7 +301,7 @@ export const EnhancedBusinessViewDashboard = () => {
       case 'zatara':
         return (
           <SkipperView 
-            data={transformedData.filter(d => d.boat?.toLowerCase().includes('zatara'))} 
+            data={skipperData.filter(d => d.boat?.toLowerCase().includes('zatara'))} 
             boatName="Zatara" 
             boatColor="blue" 
             getStatusColor={getStatusColor}
@@ -252,7 +311,7 @@ export const EnhancedBusinessViewDashboard = () => {
       case 'puravida':
         return (
           <SkipperView 
-            data={transformedData.filter(d => 
+            data={skipperData.filter(d => 
               d.boat?.toLowerCase().includes('puravida') || 
               d.boat?.toLowerCase().includes('pura vida')
             )} 

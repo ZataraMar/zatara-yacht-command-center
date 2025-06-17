@@ -1,9 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Filter } from 'lucide-react';
+import { RefreshCw, Filter, Calendar } from 'lucide-react';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
 
 interface EnhancedViewFiltersProps {
   timeFilter: string;
@@ -34,12 +37,17 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
   loading = false,
   resultCount = 0
 }) => {
+  const [customDateRange, setCustomDateRange] = useState<Date | undefined>(undefined);
+  const [showCustomDate, setShowCustomDate] = useState(false);
+
   const timeOptions = [
-    { value: '1', label: 'Today' },
-    { value: '7', label: '7 days' },
-    { value: '14', label: '14 days' },
-    { value: '30', label: '30 days' },
-    { value: '60', label: '60 days' }
+    { value: '1', label: 'Today Only' },
+    { value: '3', label: '3 days (±1 day)' },
+    { value: '7', label: '7 days (±3 days)' },
+    { value: '14', label: '14 days (±7 days)' },
+    { value: '30', label: '30 days (±15 days)' },
+    { value: '60', label: '60 days (±30 days)' },
+    { value: 'custom', label: 'Custom Date' }
   ];
 
   const boatOptions = [
@@ -51,10 +59,19 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
 
   const statusOptions = [
     { value: 'all', label: 'All Status' },
-    { value: 'booked_prebooked', label: 'Booked/Prebooked' },
-    { value: 'option_request', label: 'Option Request' },
+    { value: 'booked_prebooked', label: 'Booked/Confirmed' },
+    { value: 'option_request', label: 'Option/Request' },
     { value: 'cancelled', label: 'Cancelled' }
   ];
+
+  const handleTimeFilterChange = (value: string) => {
+    if (value === 'custom') {
+      setShowCustomDate(true);
+    } else {
+      setShowCustomDate(false);
+      setTimeFilter(value);
+    }
+  };
 
   const getActiveFiltersCount = () => {
     let count = 0;
@@ -75,8 +92,8 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
         
         <div className="flex items-center space-x-2">
           <label className="text-sm font-medium">Time Range:</label>
-          <Select value={timeFilter} onValueChange={setTimeFilter}>
-            <SelectTrigger className="w-32">
+          <Select value={timeFilter} onValueChange={handleTimeFilterChange}>
+            <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -87,6 +104,35 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
               ))}
             </SelectContent>
           </Select>
+          
+          {showCustomDate && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-40 justify-start text-left font-normal">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {customDateRange ? format(customDateRange, "PPP") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={customDateRange}
+                  onSelect={(date) => {
+                    setCustomDateRange(date);
+                    if (date) {
+                      // Convert selected date to a custom filter range
+                      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+                      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                      const today = new Date();
+                      const daysDiff = Math.ceil((monthEnd.getTime() - monthStart.getTime()) / (1000 * 3600 * 24));
+                      setTimeFilter(daysDiff.toString());
+                    }
+                  }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          )}
         </div>
 
         <div className="flex items-center space-x-2">
