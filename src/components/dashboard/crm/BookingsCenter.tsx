@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ import { getBookingStatusColor } from './utils/badgeUtils';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
+import { BookingFilters } from '@/types/booking';
 
 export const BookingsCenter = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,7 +22,7 @@ export const BookingsCenter = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   // Build filter object for the hook
-  const filters = useMemo(() => ({
+  const filters = useMemo((): BookingFilters => ({
     startDate: dateRange?.from?.toISOString(),
     endDate: dateRange?.to?.toISOString(),
     boats: selectedBoats.length > 0 ? selectedBoats : undefined,
