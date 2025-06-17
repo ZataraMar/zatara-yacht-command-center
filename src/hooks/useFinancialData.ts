@@ -30,7 +30,7 @@ export const useFinancialData = () => {
       // Fetch historical data for cost ratio calculation using correct column names
       const { data: historicalData } = await supabase
         .from('charters_2023')
-        .select('charter_total_net, fuel_costs, food_costs, crew_costs, boat_cost');
+        .select('charter_total_net, fuel_cost, food_cost, crew_cost, boat_cost');
 
       let totalRevenue = 0;
       let paidAmount = 0;
@@ -52,7 +52,7 @@ export const useFinancialData = () => {
       if (historicalData && historicalData.length > 0) {
         const historicalCostRatio = historicalData.reduce((acc, charter) => {
           const revenue = charter.charter_total_net || 0;
-          const costs = (charter.fuel_costs || 0) + (charter.food_costs || 0) + (charter.crew_costs || 0) + (charter.boat_cost || 0);
+          const costs = (charter.fuel_cost || 0) + (charter.food_cost || 0) + (charter.crew_cost || 0) + (charter.boat_cost || 0);
           return acc + (revenue > 0 ? costs / revenue : 0);
         }, 0) / historicalData.length;
         
