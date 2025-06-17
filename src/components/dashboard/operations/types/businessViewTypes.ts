@@ -50,4 +50,5 @@ export interface SkipperViewRow {
   pre_departure_checks: boolean;
   cleared_for_departure: boolean;
   gps_coordinates: string;
+  boat: string;
 }
