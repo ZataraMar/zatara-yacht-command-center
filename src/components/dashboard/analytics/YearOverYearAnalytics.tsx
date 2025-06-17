@@ -338,13 +338,14 @@ export const YearOverYearAnalytics = () => {
                 <div className="space-y-4">
                   {years.map(year => {
                     const sources = yearlyMetrics[year]?.sourceBreakdown || {};
-                    const total = Object.values(sources).reduce((sum: number, count) => sum + Number(count), 0);
+                    const sourceEntries = Object.entries(sources) as [string, number][];
+                    const total: number = sourceEntries.reduce((sum, [, count]) => sum + Number(count), 0);
                     
                     return (
                       <div key={year} className="border rounded-lg p-3">
                         <h4 className="font-medium mb-2">{year} ({total} bookings)</h4>
                         <div className="space-y-1">
-                          {Object.entries(sources).map(([source, count]) => {
+                          {sourceEntries.map(([source, count]) => {
                             const numCount = Number(count);
                             return (
                               <div key={source} className="flex items-center justify-between text-sm">
@@ -375,13 +376,14 @@ export const YearOverYearAnalytics = () => {
                 <div className="space-y-4">
                   {years.map(year => {
                     const boats = yearlyMetrics[year]?.boatBreakdown || {};
-                    const total = Object.values(boats).reduce((sum: number, count) => sum + Number(count), 0);
+                    const boatEntries = Object.entries(boats) as [string, number][];
+                    const total: number = boatEntries.reduce((sum, [, count]) => sum + Number(count), 0);
                     
                     return (
                       <div key={year} className="border rounded-lg p-3">
                         <h4 className="font-medium mb-2">{year} ({total} bookings)</h4>
                         <div className="space-y-1">
-                          {Object.entries(boats).map(([boat, count]) => {
+                          {boatEntries.map(([boat, count]) => {
                             const numCount = Number(count);
                             return (
                               <div key={boat} className="flex items-center justify-between text-sm">
