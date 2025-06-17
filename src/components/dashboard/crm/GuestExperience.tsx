@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -121,7 +120,9 @@ export const GuestExperience = () => {
             favorite_boat: customer.preferred_boat || '',
             satisfaction_rating: customer.average_review_rating || 4.5,
             special_requests: customer.special_requirements || [],
-            dietary_requirements: customer.dietary_restrictions?.join(', ') || '',
+            dietary_requirements: Array.isArray(customer.dietary_restrictions) 
+              ? customer.dietary_restrictions.join(', ') 
+              : customer.dietary_restrictions || '',
             vip_status: customer.vip_status || false
           }));
           setGuests(transformedGuests);

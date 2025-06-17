@@ -70,7 +70,11 @@ export const useRealTimeBookings = () => {
         schema: 'public',
         table: 'bookings'
       }, (payload) => {
-        console.log('Real-time booking update:', payload.eventType, payload.new?.locator);
+        console.log('Real-time booking update:', payload.eventType);
+        // Safely access payload properties with type checking
+        if (payload.new && typeof payload.new === 'object' && 'locator' in payload.new) {
+          console.log('Updated booking locator:', payload.new.locator);
+        }
         fetchBookings();
       })
       .subscribe();
