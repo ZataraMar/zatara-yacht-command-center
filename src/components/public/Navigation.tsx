@@ -37,9 +37,6 @@ export const Navigation = () => {
               />
             </div>
             <div className="hidden sm:block">
-              <div className="text-3xl font-bold text-zatara-navy">
-                Zatara
-              </div>
               <div className="text-base text-zatara-blue tracking-wide font-medium">
                 LUXURY YACHT SERVICES
               </div>
