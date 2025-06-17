@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { TrendingUp, TrendingDown, DollarSign, Users, Anchor, Calendar, Target, AlertTriangle, Filter } from 'lucide-react';
 import { useComprehensiveBookings } from '@/hooks/useComprehensiveBookings';
 import { supabase } from '@/integrations/supabase/client';
+import { MonthOnMonthAnalytics } from './MonthOnMonthAnalytics';
 
 interface RevenueData {
   month: string;
@@ -45,20 +45,6 @@ export const BusinessIntelligence = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [comparisonYear, setComparisonYear] = useState<string>('');
   
-  const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
-  const [boatPerformance, setBoatPerformance] = useState<BoatPerformance[]>([]);
-  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
-  const [targetData, setTargetData] = useState<TargetData[]>([]);
-  const [kpis, setKpis] = useState({
-    totalRevenue: 0,
-    totalCharters: 0,
-    totalGuests: 0,
-    avgCharterValue: 0,
-    outstandingPayments: 0,
-    conversionRate: 0
-  });
-  const [error, setError] = useState<string | null>(null);
-
   // Get available years from bookings data
   const availableYears = useMemo(() => {
     if (!bookings || bookings.length === 0) return [];
@@ -377,13 +363,18 @@ export const BusinessIntelligence = () => {
       </div>
 
       {/* Charts and Analytics */}
-      <Tabs defaultValue="revenue" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="monthonmonth" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="monthonmonth">Month-on-Month</TabsTrigger>
           <TabsTrigger value="revenue">Revenue Trends</TabsTrigger>
           <TabsTrigger value="performance">Boat Performance</TabsTrigger>
           <TabsTrigger value="forecasting">Forecasting</TabsTrigger>
           <TabsTrigger value="targets">Targets</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="monthonmonth" className="space-y-4">
+          <MonthOnMonthAnalytics />
+        </TabsContent>
 
         <TabsContent value="revenue" className="space-y-4">
           <Card>
