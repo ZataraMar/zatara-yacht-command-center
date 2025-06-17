@@ -26,7 +26,7 @@ export interface Customer {
   preferred_time_slot: string;
   communication_preference: string;
   nationality: string;
-  special_requirements: string;
+  special_requirements: string[];
   vip_status: boolean;
   referral_source: string;
   marketing_consent: boolean;
