@@ -12,18 +12,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/SecureAuthContext';
 import { canManageUsers } from '@/utils/authSecurity';
 import { UserPlus, Users, Edit, Trash2, Mail, Shield, CheckCircle, XCircle } from 'lucide-react';
+import type { Database } from '@/integrations/supabase/types';
 
-interface UserProfile {
-  id: string;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  role?: string;
-  active?: boolean;
-  company?: string;
-  phone?: string;
-  created_at?: string;
-}
+type UserProfile = Database['public']['Tables']['profiles']['Row'];
+type UserProfileInsert = Database['public']['Tables']['profiles']['Insert'];
+type UserRole = Database['public']['Enums']['user_role'];
 
 export const UserManagement = () => {
   const { profile } = useAuth();
@@ -36,21 +29,21 @@ export const UserManagement = () => {
     first_name: '',
     last_name: '',
     email: '',
-    role: 'staff',
+    role: 'staff' as UserRole,
     company: 'Zatara Mar',
     phone: ''
   });
 
   const roleOptions = [
-    { value: 'owners', label: 'Owner', description: 'Full system access' },
-    { value: 'management', label: 'Management', description: 'Business operations and team oversight' },
-    { value: 'team', label: 'Team Lead', description: 'Operations and guest management' },
-    { value: 'skippers', label: 'Skipper', description: 'Boat operations and guest service' },
-    { value: 'staff', label: 'Staff', description: 'General operations support' },
-    { value: 'casual_staff', label: 'Casual Staff', description: 'Part-time support' },
-    { value: 'agency', label: 'Agency Partner', description: 'Business partner access' },
-    { value: 'charter_clients', label: 'Charter Client', description: 'Booking and charter access' },
-    { value: 'boat_club_clients', label: 'Boat Club Member', description: 'Boat club access' }
+    { value: 'owners' as UserRole, label: 'Owner', description: 'Full system access' },
+    { value: 'management' as UserRole, label: 'Management', description: 'Business operations and team oversight' },
+    { value: 'team' as UserRole, label: 'Team Lead', description: 'Operations and guest management' },
+    { value: 'skippers' as UserRole, label: 'Skipper', description: 'Boat operations and guest service' },
+    { value: 'staff' as UserRole, label: 'Staff', description: 'General operations support' },
+    { value: 'casual_staff' as UserRole, label: 'Casual Staff', description: 'Part-time support' },
+    { value: 'charter_brokers' as UserRole, label: 'Charter Broker', description: 'Charter booking partner' },
+    { value: 'charter_clients' as UserRole, label: 'Charter Client', description: 'Booking and charter access' },
+    { value: 'boat_club_clients' as UserRole, label: 'Boat Club Member', description: 'Boat club access' }
   ];
 
   const fetchUsers = async () => {
@@ -76,19 +69,20 @@ export const UserManagement = () => {
 
   const handleAddUser = async () => {
     try {
-      // For now, we'll create the profile entry
-      // In a full implementation, you'd want to send an invitation email
+      // Create the profile entry
+      const profileData: UserProfileInsert = {
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+        email: newUser.email,
+        role: newUser.role,
+        company: newUser.company,
+        phone: newUser.phone,
+        active: false // Set to false until they complete registration
+      };
+
       const { data, error } = await supabase
         .from('profiles')
-        .insert([{
-          first_name: newUser.first_name,
-          last_name: newUser.last_name,
-          email: newUser.email,
-          role: newUser.role,
-          company: newUser.company,
-          phone: newUser.phone,
-          active: false // Set to false until they complete registration
-        }]);
+        .insert(profileData);
 
       if (error) throw error;
 
@@ -180,7 +174,7 @@ export const UserManagement = () => {
       case 'team': return 'bg-blue-600 text-white';
       case 'skippers': return 'bg-blue-500 text-white';
       case 'staff': return 'bg-green-500 text-white';
-      case 'agency': return 'bg-orange-500 text-white';
+      case 'charter_brokers': return 'bg-orange-500 text-white';
       default: return 'bg-gray-500 text-white';
     }
   };
@@ -240,7 +234,7 @@ export const UserManagement = () => {
               </div>
               <div>
                 <Label htmlFor="role">Role</Label>
-                <Select value={newUser.role} onValueChange={(value) => setNewUser({ ...newUser, role: value })}>
+                <Select value={newUser.role} onValueChange={(value: UserRole) => setNewUser({ ...newUser, role: value })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
