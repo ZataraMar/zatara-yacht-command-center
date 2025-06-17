@@ -61,34 +61,23 @@ export const SystemHealthMonitor = () => {
 
   const fetchSystemPerformance = async () => {
     try {
-      // Try to get from system_performance_monitor table first
-      const { data: performanceData, error: performanceError } = await supabase
-        .from('system_performance_monitor')
-        .select('*')
-        .order('last_updated', { ascending: false })
-        .limit(1)
-        .single();
-      
-      if (performanceData && !performanceError) {
-        setPerformance(performanceData);
-      } else {
-        // Fallback: calculate basic metrics from existing tables
-        const [bookingsResult, customersResult] = await Promise.all([
-          supabase.from('bookings').select('id', { count: 'exact', head: true }),
-          supabase.from('customers').select('id', { count: 'exact', head: true })
-        ]);
+      // Calculate basic metrics from existing tables since system_performance_monitor
+      // table structure doesn't match our interface
+      const [bookingsResult, customersResult] = await Promise.all([
+        supabase.from('bookings').select('id', { count: 'exact', head: true }),
+        supabase.from('customers').select('id', { count: 'exact', head: true })
+      ]);
 
-        const fallbackPerformance: SystemPerformance = {
-          database_size: 'Unknown',
-          active_connections: 0,
-          table_count: 47, // Known from schema
-          total_bookings: bookingsResult.count || 0,
-          active_customers: customersResult.count || 0,
-          last_updated: new Date().toISOString()
-        };
+      const performanceData: SystemPerformance = {
+        database_size: 'Unknown',
+        active_connections: 0,
+        table_count: 47, // Known from schema
+        total_bookings: bookingsResult.count || 0,
+        active_customers: customersResult.count || 0,
+        last_updated: new Date().toISOString()
+      };
 
-        setPerformance(fallbackPerformance);
-      }
+      setPerformance(performanceData);
     } catch (error) {
       console.error('Error fetching system performance:', error);
       // Set minimal fallback data
