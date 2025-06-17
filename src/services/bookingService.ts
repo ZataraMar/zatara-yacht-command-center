@@ -42,9 +42,15 @@ export const fetchHistoricalBookings = async (year: number, filters?: BookingFil
   if (!shouldFetch) return [];
 
   try {
-    // Updated table names to match actual database schema
-    const tableName = year === 2022 ? 'charters_2022' : year === 2023 ? 'charters_2023' : 'charters_2022';
-    console.log(`Fetching data from table: ${tableName}`);
+    // Use correct table names for historical data
+    const tableName = year === 2022 ? 'charters_2022' : year === 2023 ? 'charters_2023' : null;
+    
+    if (!tableName) {
+      console.warn(`No table available for year ${year}`);
+      return [];
+    }
+    
+    console.log(`Fetching data from table: ${tableName} for year ${year}`);
     
     const { data: historicalData, error } = await supabase
       .from(tableName as any)

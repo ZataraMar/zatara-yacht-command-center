@@ -9,6 +9,108 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agency_profiles: {
+        Row: {
+          account_manager: string | null
+          agency_name: string
+          agency_type: string | null
+          auto_renewal: boolean | null
+          avg_booking_value: number | null
+          business_registration: string | null
+          commission_percentage: number | null
+          commission_type: string | null
+          company_address: string | null
+          contract_end_date: string | null
+          contract_start_date: string | null
+          conversion_rate: number | null
+          created_at: string | null
+          guest_demographic: string | null
+          id: number
+          minimum_booking_value: number | null
+          onboarding_notes: string | null
+          operational_notes: string | null
+          payment_terms: string | null
+          preferred_boats: string | null
+          primary_contact_email: string | null
+          primary_contact_name: string | null
+          primary_contact_phone: string | null
+          relationship_status: string | null
+          seasonal_focus: string | null
+          secondary_contact_email: string | null
+          secondary_contact_name: string | null
+          total_bookings_ytd: number | null
+          total_revenue_ytd: number | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          account_manager?: string | null
+          agency_name: string
+          agency_type?: string | null
+          auto_renewal?: boolean | null
+          avg_booking_value?: number | null
+          business_registration?: string | null
+          commission_percentage?: number | null
+          commission_type?: string | null
+          company_address?: string | null
+          contract_end_date?: string | null
+          contract_start_date?: string | null
+          conversion_rate?: number | null
+          created_at?: string | null
+          guest_demographic?: string | null
+          id?: number
+          minimum_booking_value?: number | null
+          onboarding_notes?: string | null
+          operational_notes?: string | null
+          payment_terms?: string | null
+          preferred_boats?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
+          relationship_status?: string | null
+          seasonal_focus?: string | null
+          secondary_contact_email?: string | null
+          secondary_contact_name?: string | null
+          total_bookings_ytd?: number | null
+          total_revenue_ytd?: number | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          account_manager?: string | null
+          agency_name?: string
+          agency_type?: string | null
+          auto_renewal?: boolean | null
+          avg_booking_value?: number | null
+          business_registration?: string | null
+          commission_percentage?: number | null
+          commission_type?: string | null
+          company_address?: string | null
+          contract_end_date?: string | null
+          contract_start_date?: string | null
+          conversion_rate?: number | null
+          created_at?: string | null
+          guest_demographic?: string | null
+          id?: number
+          minimum_booking_value?: number | null
+          onboarding_notes?: string | null
+          operational_notes?: string | null
+          payment_terms?: string | null
+          preferred_boats?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
+          relationship_status?: string | null
+          seasonal_focus?: string | null
+          secondary_contact_email?: string | null
+          secondary_contact_name?: string | null
+          total_bookings_ytd?: number | null
+          total_revenue_ytd?: number | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       api_sync_status: {
         Row: {
           api_credentials_valid: boolean | null
@@ -1924,6 +2026,98 @@ export type Database = {
           },
         ]
       }
+      commission_tracking: {
+        Row: {
+          agency_name: string
+          agency_representative: string | null
+          approved_by: string | null
+          booking_id: number | null
+          booking_locator: string
+          booking_source: string | null
+          calculated_by: string | null
+          commission_amount: number | null
+          commission_due_date: string | null
+          commission_notes: string | null
+          commission_paid_date: string | null
+          commission_percentage: number | null
+          commission_status: string | null
+          commission_type: string | null
+          created_at: string | null
+          gross_booking_value: number
+          id: number
+          net_booking_value: number | null
+          payment_method: string | null
+          payment_reference: string | null
+          platform_statement_ref: string | null
+          reconciled: boolean | null
+          reconciled_by: string | null
+          reconciled_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agency_name: string
+          agency_representative?: string | null
+          approved_by?: string | null
+          booking_id?: number | null
+          booking_locator: string
+          booking_source?: string | null
+          calculated_by?: string | null
+          commission_amount?: number | null
+          commission_due_date?: string | null
+          commission_notes?: string | null
+          commission_paid_date?: string | null
+          commission_percentage?: number | null
+          commission_status?: string | null
+          commission_type?: string | null
+          created_at?: string | null
+          gross_booking_value: number
+          id?: number
+          net_booking_value?: number | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          platform_statement_ref?: string | null
+          reconciled?: boolean | null
+          reconciled_by?: string | null
+          reconciled_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agency_name?: string
+          agency_representative?: string | null
+          approved_by?: string | null
+          booking_id?: number | null
+          booking_locator?: string
+          booking_source?: string | null
+          calculated_by?: string | null
+          commission_amount?: number | null
+          commission_due_date?: string | null
+          commission_notes?: string | null
+          commission_paid_date?: string | null
+          commission_percentage?: number | null
+          commission_status?: string | null
+          commission_type?: string | null
+          created_at?: string | null
+          gross_booking_value?: number
+          id?: number
+          net_booking_value?: number | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          platform_statement_ref?: string | null
+          reconciled?: boolean | null
+          reconciled_by?: string | null
+          reconciled_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_tracking_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commission_transactions: {
         Row: {
           base_amount_eur: number
@@ -1987,6 +2181,66 @@ export type Database = {
           updated_at?: string | null
           vat_amount_eur?: number | null
           vat_applicable?: boolean | null
+        }
+        Relationships: []
+      }
+      communication_templates: {
+        Row: {
+          active: boolean | null
+          auto_send: boolean | null
+          communication_channel: string | null
+          created_at: string | null
+          created_by: string | null
+          id: number
+          language_code: string | null
+          last_used: string | null
+          message_content: string
+          requires_approval: boolean | null
+          subject_line: string | null
+          template_name: string
+          template_type: string
+          times_used: number | null
+          trigger_event: string | null
+          updated_at: string | null
+          variables_used: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          auto_send?: boolean | null
+          communication_channel?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: number
+          language_code?: string | null
+          last_used?: string | null
+          message_content: string
+          requires_approval?: boolean | null
+          subject_line?: string | null
+          template_name: string
+          template_type: string
+          times_used?: number | null
+          trigger_event?: string | null
+          updated_at?: string | null
+          variables_used?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          auto_send?: boolean | null
+          communication_channel?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: number
+          language_code?: string | null
+          last_used?: string | null
+          message_content?: string
+          requires_approval?: boolean | null
+          subject_line?: string | null
+          template_name?: string
+          template_type?: string
+          times_used?: number | null
+          trigger_event?: string | null
+          updated_at?: string | null
+          variables_used?: string | null
         }
         Relationships: []
       }
@@ -2229,44 +2483,77 @@ export type Database = {
       }
       customer_communications: {
         Row: {
+          attachments: string | null
           booking_id: number | null
           charter_overview_sent: boolean | null
           client_messaging_status: string | null
+          communication_channel: string | null
+          communication_type: string | null
           created_at: string | null
           custom_message: string | null
           data_source: string | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
           id: number
           locator: string | null
           message_template_used: string | null
+          priority_level: string | null
+          recipient_type: string | null
+          resolved: boolean | null
+          response_required: boolean | null
+          sender_name: string | null
           sent_at: string | null
+          tags: string | null
           updated_at: string | null
           whatsapp_message_sent: boolean | null
         }
         Insert: {
+          attachments?: string | null
           booking_id?: number | null
           charter_overview_sent?: boolean | null
           client_messaging_status?: string | null
+          communication_channel?: string | null
+          communication_type?: string | null
           created_at?: string | null
           custom_message?: string | null
           data_source?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
           id?: number
           locator?: string | null
           message_template_used?: string | null
+          priority_level?: string | null
+          recipient_type?: string | null
+          resolved?: boolean | null
+          response_required?: boolean | null
+          sender_name?: string | null
           sent_at?: string | null
+          tags?: string | null
           updated_at?: string | null
           whatsapp_message_sent?: boolean | null
         }
         Update: {
+          attachments?: string | null
           booking_id?: number | null
           charter_overview_sent?: boolean | null
           client_messaging_status?: string | null
+          communication_channel?: string | null
+          communication_type?: string | null
           created_at?: string | null
           custom_message?: string | null
           data_source?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
           id?: number
           locator?: string | null
           message_template_used?: string | null
+          priority_level?: string | null
+          recipient_type?: string | null
+          resolved?: boolean | null
+          response_required?: boolean | null
+          sender_name?: string | null
           sent_at?: string | null
+          tags?: string | null
           updated_at?: string | null
           whatsapp_message_sent?: boolean | null
         }
@@ -3335,6 +3622,66 @@ export type Database = {
           updated_at?: string | null
           weather_conditions?: string | null
           year?: number
+        }
+        Relationships: []
+      }
+      internal_communications: {
+        Row: {
+          acknowledged_at: string | null
+          created_at: string | null
+          delivered_at: string | null
+          id: number
+          message_content: string
+          message_type: string | null
+          priority_level: string | null
+          read_at: string | null
+          recipient: string | null
+          recipient_group: string | null
+          related_boat: string | null
+          related_date: string | null
+          related_locator: string | null
+          requires_acknowledgment: boolean | null
+          sender: string
+          subject: string | null
+          urgent: boolean | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          id?: number
+          message_content: string
+          message_type?: string | null
+          priority_level?: string | null
+          read_at?: string | null
+          recipient?: string | null
+          recipient_group?: string | null
+          related_boat?: string | null
+          related_date?: string | null
+          related_locator?: string | null
+          requires_acknowledgment?: boolean | null
+          sender: string
+          subject?: string | null
+          urgent?: boolean | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          id?: number
+          message_content?: string
+          message_type?: string | null
+          priority_level?: string | null
+          read_at?: string | null
+          recipient?: string | null
+          recipient_group?: string | null
+          related_boat?: string | null
+          related_date?: string | null
+          related_locator?: string | null
+          requires_acknowledgment?: boolean | null
+          sender?: string
+          subject?: string | null
+          urgent?: boolean | null
         }
         Relationships: []
       }
@@ -6321,6 +6668,23 @@ export type Database = {
       }
     }
     Views: {
+      agency_performance_dashboard: {
+        Row: {
+          account_manager: string | null
+          agency_name: string | null
+          agency_type: string | null
+          avg_booking_value_2024: number | null
+          booking_growth: number | null
+          bookings_2024: number | null
+          commission_paid_2024: number | null
+          commission_percentage: number | null
+          primary_contact_name: string | null
+          relationship_status: string | null
+          revenue_2024: number | null
+          revenue_growth: number | null
+        }
+        Relationships: []
+      }
       boat_performance_dashboard: {
         Row: {
           available_slots: number | null
@@ -6453,6 +6817,60 @@ export type Database = {
           status: string | null
         }
         Relationships: []
+      }
+      communication_dashboard: {
+        Row: {
+          booking_source: string | null
+          charter_date: string | null
+          communication_channel: string | null
+          communication_type: string | null
+          days_until_charter: unknown | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          guest_name: string | null
+          locator: string | null
+          priority_level: string | null
+          resolved: boolean | null
+          sender_name: string | null
+          sent_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_finance"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_operations"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_puravida_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
+        ]
       }
       crew_efficiency_metrics: {
         Row: {
