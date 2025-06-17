@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Customer } from '@/types/customer';
 import { transformDatabaseCustomerToCustomer, ensureCustomerDefaults } from '@/utils/customerDataTransform';
+import { useCustomerSync } from './useCustomerSync';
 
 export const useCustomersList = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { syncing, performSync } = useCustomerSync();
 
   const fetchCustomers = async () => {
     try {
@@ -41,6 +43,16 @@ export const useCustomersList = () => {
         customersData = fallbackData?.map(transformDatabaseCustomerToCustomer) || [];
       }
 
+      // If no customers found and not currently syncing, trigger a sync
+      if ((!customersData || customersData.length === 0) && !syncing) {
+        console.log('No customers found, triggering sync...');
+        const syncSuccess = await performSync();
+        if (syncSuccess) {
+          // Retry fetching after sync
+          return fetchCustomers();
+        }
+      }
+
       setCustomers(customersData?.map(ensureCustomerDefaults) || []);
 
     } catch (err) {
@@ -57,7 +69,7 @@ export const useCustomersList = () => {
 
   return {
     customers,
-    loading,
+    loading: loading || syncing,
     error,
     refetch: fetchCustomers
   };
