@@ -52,6 +52,7 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Secure profile fetching with error handling
   const fetchProfile = async (userId: string) => {
     try {
+      console.log('Fetching profile for user ID:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -63,6 +64,7 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         return null;
       }
       
+      console.log('Profile fetched successfully:', data);
       return data;
     } catch (error) {
       console.warn('Profile fetch error:', error);
@@ -72,8 +74,10 @@ export const SecureAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const refreshProfile = async () => {
     if (user?.id) {
+      console.log('Refreshing profile for user:', user.email);
       const profileData = await fetchProfile(user.id);
       setProfile(profileData);
+      console.log('Profile refreshed:', profileData);
     }
   };
 
