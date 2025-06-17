@@ -31,13 +31,13 @@ export const CustomerAnalytics = () => {
   const totalBookings = customers.reduce((sum, customer) => sum + (customer.total_bookings || 0), 0);
 
   // Segment distribution
-  const segmentData = customers.reduce((acc, customer) => {
+  const segmentCounts = customers.reduce((acc, customer) => {
     const segment = customer.customer_segment || 'standard';
     acc[segment] = (acc[segment] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  const pieData = Object.entries(segmentData).map(([segment, count]) => ({
+  const pieData = Object.entries(segmentCounts).map(([segment, count]) => ({
     name: segment,
     value: count,
     percentage: ((count / totalCustomers) * 100).toFixed(1)
