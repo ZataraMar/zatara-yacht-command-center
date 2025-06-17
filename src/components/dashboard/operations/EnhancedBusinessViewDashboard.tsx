@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, BarChart3, Users, DollarSign } from 'lucide-react';
 import { EnhancedViewFilters } from './views/EnhancedViewFilters';
-import { OperationsView } from './views/OperationsView';
+import { EnhancedOperationsView } from './views/EnhancedOperationsView';
 import { FinanceView } from './views/FinanceView';
 import { SkipperView } from './views/SkipperView';
 import { WhatsAppGenerator } from '../communications/WhatsAppGenerator';
@@ -21,7 +22,7 @@ export const EnhancedBusinessViewDashboard = () => {
 
   const { bookings, loading, error, refetch } = useRealTimeBookings();
 
-  console.log('Raw bookings data:', bookings?.slice(0, 3)); // Debug log
+  console.log('Raw bookings data:', bookings?.slice(0, 3));
 
   // Filter bookings based on current filters
   const filteredBookings = React.useMemo(() => {
@@ -109,13 +110,6 @@ export const EnhancedBusinessViewDashboard = () => {
     }
 
     console.log('After status filter:', filtered.length);
-    console.log('Final filtered bookings:', filtered.map(b => ({
-      locator: b.locator,
-      status: b.booking_status,
-      boat: b.boat,
-      guest: `${b.guest_first_name} ${b.guest_surname}`,
-      date: b.start_date
-    })));
 
     return filtered;
   }, [bookings, timeFilter, boatFilter, statusFilter]);
@@ -302,7 +296,7 @@ export const EnhancedBusinessViewDashboard = () => {
     switch (viewMode) {
       case 'operations':
         return (
-          <OperationsView 
+          <EnhancedOperationsView 
             data={transformedData} 
             getStatusColor={getStatusColor}
             onCharterSelect={setSelectedCharter}
