@@ -8,6 +8,9 @@ import { useRealTimeBookings } from '@/hooks/useRealTimeBookings';
 import { DashboardMetrics } from './components/DashboardMetrics';
 import { ViewRenderer } from './components/ViewRenderer';
 import { useBookingFilters } from '@/hooks/useBookingFilters';
+import { QuickActions } from './components/QuickActions';
+import { FilterPresets } from './components/FilterPresets';
+import { BookingStats } from './components/BookingStats';
 import { 
   transformToBusinessView, 
   transformToFinanceView, 
@@ -22,8 +25,6 @@ export const EnhancedBusinessViewDashboard = () => {
   const [selectedCharter, setSelectedCharter] = useState<any>(null);
 
   const { bookings, loading, error, refetch } = useRealTimeBookings();
-
-  console.log('Raw bookings data:', bookings?.slice(0, 3));
 
   const { filteredBookings, availableViews } = useBookingFilters(
     bookings, 
@@ -45,6 +46,22 @@ export const EnhancedBusinessViewDashboard = () => {
   const getViewDescription = () => {
     const view = availableViews.find(v => v.view_name === viewMode);
     return view?.description || 'Charter business intelligence';
+  };
+
+  const handleApplyPreset = (preset: any) => {
+    if (preset.filters.timeFilter) setTimeFilter(preset.filters.timeFilter);
+    if (preset.filters.boatFilter) setBoatFilter(preset.filters.boatFilter);
+    if (preset.filters.statusFilter) setStatusFilter(preset.filters.statusFilter);
+    if (preset.filters.viewMode) setViewMode(preset.filters.viewMode);
+  };
+
+  const handleQuickActions = {
+    onRefresh: refetch,
+    onNewBooking: () => console.log('New booking action'),
+    onExportData: () => console.log('Export data action'),
+    onOpenCalendar: () => console.log('Open calendar action'),
+    onBulkMessage: () => console.log('Bulk message action'),
+    onOpenSettings: () => console.log('Open settings action')
   };
 
   return (
@@ -73,8 +90,8 @@ export const EnhancedBusinessViewDashboard = () => {
 
       <DashboardMetrics data={transformedData} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div className="xl:col-span-3">
           <ViewRenderer
             viewMode={viewMode}
             transformedData={transformedData}
@@ -86,7 +103,7 @@ export const EnhancedBusinessViewDashboard = () => {
           />
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-4">
           {selectedCharter && (
             <>
               <WhatsAppGenerator charter={selectedCharter} />
@@ -98,19 +115,30 @@ export const EnhancedBusinessViewDashboard = () => {
           )}
           
           {!selectedCharter && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Charter Tools</CardTitle>
-                <CardDescription>
-                  Select a charter from the list to access enhanced management tools
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-500 text-center py-8">
-                  Click on any charter to get started with WhatsApp generator and operations input
-                </p>
-              </CardContent>
-            </Card>
+            <>
+              <BookingStats data={transformedData} timeFilter={timeFilter} />
+              
+              <FilterPresets 
+                onApplyPreset={handleApplyPreset}
+                currentFilters={{ timeFilter, boatFilter, statusFilter, viewMode }}
+              />
+              
+              <QuickActions {...handleQuickActions} />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Charter Tools</CardTitle>
+                  <CardDescription className="text-xs">
+                    Select a charter to access management tools
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs text-gray-500 text-center py-4">
+                    Click on any charter to get started with WhatsApp generator and operations input
+                  </p>
+                </CardContent>
+              </Card>
+            </>
           )}
         </div>
       </div>
