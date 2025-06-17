@@ -8,6 +8,7 @@ import { CommunicationCenter } from './CommunicationCenter';
 import { GuestExperience } from './GuestExperience';
 import { FinancialReconciliation } from './FinancialReconciliation';
 import { ExtrasManagement } from './ExtrasManagement';
+import { BusinessIntelligence } from '../analytics/BusinessIntelligence';
 import { YearOverYearAnalytics } from '../analytics/YearOverYearAnalytics';
 
 export const CRMDashboard = () => {
@@ -21,12 +22,13 @@ export const CRMDashboard = () => {
       </div>
 
       <Tabs defaultValue="bookings" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-8">
+        <TabsList className="grid w-full grid-cols-9">
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="customers">Customers</TabsTrigger>
           <TabsTrigger value="financial">Financial</TabsTrigger>
           <TabsTrigger value="extras">Extras</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="yearoveryear">Year/Year</TabsTrigger>
           <TabsTrigger value="communications">Communications</TabsTrigger>
           <TabsTrigger value="experience">Experience</TabsTrigger>
           <TabsTrigger value="insights">Insights</TabsTrigger>
@@ -49,6 +51,10 @@ export const CRMDashboard = () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
+          <BusinessIntelligence />
+        </TabsContent>
+
+        <TabsContent value="yearoveryear" className="space-y-6">
           <YearOverYearAnalytics />
         </TabsContent>
 

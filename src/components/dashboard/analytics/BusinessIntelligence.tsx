@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, TrendingDown, DollarSign, Users, Anchor, Calendar, Target, AlertTriangle } from 'lucide-react';
+import { useComprehensiveBookings } from '@/hooks/useComprehensiveBookings';
 import { supabase } from '@/integrations/supabase/client';
 
 interface RevenueData {
@@ -12,6 +14,7 @@ interface RevenueData {
   revenue: number;
   charters: number;
   guests: number;
+  year: number;
 }
 
 interface BoatPerformance {
@@ -21,9 +24,26 @@ interface BoatPerformance {
   avgValue: number;
 }
 
+interface ForecastData {
+  month: string;
+  forecast: number;
+  actual: number;
+  target: number;
+}
+
+interface TargetData {
+  metric: string;
+  target: number;
+  actual: number;
+  progress: number;
+}
+
 export const BusinessIntelligence = () => {
+  const { bookings, loading } = useComprehensiveBookings();
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
   const [boatPerformance, setBoatPerformance] = useState<BoatPerformance[]>([]);
+  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
+  const [targetData, setTargetData] = useState<TargetData[]>([]);
   const [kpis, setKpis] = useState({
     totalRevenue: 0,
     totalCharters: 0,
@@ -32,78 +52,51 @@ export const BusinessIntelligence = () => {
     outstandingPayments: 0,
     conversionRate: 0
   });
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchAnalyticsData();
-  }, []);
-
-  const fetchAnalyticsData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Fetch current year bookings for analytics
-      const currentYear = new Date().getFullYear();
-      const { data: bookings, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .gte('start_date', `${currentYear}-01-01`)
-        .lte('start_date', `${currentYear}-12-31`);
-
-      if (error) {
-        console.error('Error fetching analytics:', error);
-        setError('Failed to fetch analytics data');
-        return;
-      }
-
-      if (bookings && bookings.length > 0) {
-        processAnalyticsData(bookings);
-      } else {
-        console.warn('No bookings data found for current year');
-        setError('No bookings data available for current year');
-      }
-    } catch (error) {
-      console.error('Error fetching analytics:', error);
-      setError('Failed to load analytics data');
-    } finally {
-      setLoading(false);
+    if (bookings && bookings.length > 0) {
+      processAnalyticsData(bookings);
+      fetchForecastingData();
+      fetchTargetsData();
     }
-  };
+  }, [bookings]);
 
-  const processAnalyticsData = (bookings: any[]) => {
-    // Process monthly revenue data
+  const processAnalyticsData = (bookingsData: any[]) => {
+    // Process monthly revenue data with year separation
     const monthlyData: { [key: string]: RevenueData } = {};
     let totalRevenue = 0;
-    let totalCharters = bookings.length;
+    let totalCharters = bookingsData.length;
     let totalGuests = 0;
     let totalOutstanding = 0;
 
-    bookings.forEach(booking => {
-      const month = new Date(booking.start_date).toLocaleDateString('en-US', { month: 'short' });
+    bookingsData.forEach(booking => {
+      const date = new Date(booking.start_date);
+      const month = date.toLocaleDateString('en-US', { month: 'short' });
+      const year = date.getFullYear();
+      const key = `${month}-${year}`;
       const revenue = booking.charter_total || 0;
       const guests = booking.total_guests || 0;
       const outstanding = booking.outstanding_amount || 0;
 
-      if (!monthlyData[month]) {
-        monthlyData[month] = { month, revenue: 0, charters: 0, guests: 0 };
+      if (!monthlyData[key]) {
+        monthlyData[key] = { month: `${month} ${year}`, revenue: 0, charters: 0, guests: 0, year };
       }
 
-      monthlyData[month].revenue += revenue;
-      monthlyData[month].charters += 1;
-      monthlyData[month].guests += guests;
+      monthlyData[key].revenue += revenue;
+      monthlyData[key].charters += 1;
+      monthlyData[key].guests += guests;
 
       totalRevenue += revenue;
       totalGuests += guests;
       totalOutstanding += outstanding;
     });
 
-    setRevenueData(Object.values(monthlyData));
+    setRevenueData(Object.values(monthlyData).sort((a, b) => a.year - b.year));
 
     // Process boat performance
     const boatData: { [key: string]: BoatPerformance } = {};
-    bookings.forEach(booking => {
+    bookingsData.forEach(booking => {
       const boat = booking.boat || 'Unknown';
       const revenue = booking.charter_total || 0;
 
@@ -130,6 +123,60 @@ export const BusinessIntelligence = () => {
       outstandingPayments: totalOutstanding,
       conversionRate: 85 // This would need proper calculation with lead data
     });
+  };
+
+  const fetchForecastingData = async () => {
+    try {
+      const { data: forecasts, error } = await supabase
+        .from('business_forecasting')
+        .select('*')
+        .order('forecast_year', { ascending: true })
+        .order('forecast_month', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching forecasting data:', error);
+        return;
+      }
+
+      if (forecasts && forecasts.length > 0) {
+        const forecastChartData = forecasts.map(forecast => ({
+          month: `${forecast.forecast_month}/${forecast.forecast_year}`,
+          forecast: forecast.total_revenue_forecast || 0,
+          actual: 0, // Would be calculated from actual bookings
+          target: forecast.charter_revenue_forecast || 0
+        }));
+        setForecastData(forecastChartData);
+      }
+    } catch (error) {
+      console.error('Error processing forecasting data:', error);
+    }
+  };
+
+  const fetchTargetsData = async () => {
+    try {
+      const { data: targets, error } = await supabase
+        .from('business_targets')
+        .select('*')
+        .eq('target_year', new Date().getFullYear())
+        .order('target_period', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching targets data:', error);
+        return;
+      }
+
+      if (targets && targets.length > 0) {
+        const targetMetrics = targets.map(target => ({
+          metric: `${target.target_period} Revenue`,
+          target: target.total_revenue_target || 0,
+          actual: kpis.totalRevenue, // Would be calculated properly per period
+          progress: target.total_revenue_target > 0 ? (kpis.totalRevenue / target.total_revenue_target) * 100 : 0
+        }));
+        setTargetData(targetMetrics);
+      }
+    } catch (error) {
+      console.error('Error processing targets data:', error);
+    }
   };
 
   const formatCurrency = (value: number) => {
@@ -177,12 +224,6 @@ export const BusinessIntelligence = () => {
             <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <p className="text-red-600 mb-2">Error loading analytics data</p>
             <p className="text-sm text-gray-600">{error}</p>
-            <button 
-              onClick={fetchAnalyticsData}
-              className="mt-4 px-4 py-2 bg-zatara-blue text-white rounded hover:bg-zatara-blue/90"
-            >
-              Retry
-            </button>
           </CardContent>
         </Card>
       </div>
@@ -251,8 +292,8 @@ export const BusinessIntelligence = () => {
         <TabsContent value="revenue" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Monthly Revenue Trend</CardTitle>
-              <CardDescription>Revenue and charter count by month</CardDescription>
+              <CardTitle>Multi-Year Revenue Trend</CardTitle>
+              <CardDescription>Revenue and charter count across all years</CardDescription>
             </CardHeader>
             <CardContent>
               {revenueData.length > 0 ? (
@@ -273,7 +314,7 @@ export const BusinessIntelligence = () => {
                 </ResponsiveContainer>
               ) : (
                 <div className="text-center text-gray-500 py-8">
-                  No revenue data available for this period
+                  No revenue data available
                 </div>
               )}
             </CardContent>
@@ -285,7 +326,7 @@ export const BusinessIntelligence = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Boat Performance</CardTitle>
-                <CardDescription>Revenue and charter count by boat</CardDescription>
+                <CardDescription>Revenue by boat across all years</CardDescription>
               </CardHeader>
               <CardContent>
                 {boatPerformance.length > 0 ? (
@@ -341,10 +382,28 @@ export const BusinessIntelligence = () => {
           <Card>
             <CardHeader>
               <CardTitle>Revenue Forecasting</CardTitle>
-              <CardDescription>Projected revenue based on current trends</CardDescription>
+              <CardDescription>Forecasted vs actual revenue trends</CardDescription>
             </CardHeader>
-            <CardContent className="text-center p-8">
-              <p className="text-gray-600">Forecasting module will integrate with your business_forecasting table data</p>
+            <CardContent>
+              {forecastData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart data={forecastData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                    <Legend />
+                    <Line type="monotone" dataKey="forecast" stroke="#1e40af" name="Forecast" />
+                    <Line type="monotone" dataKey="actual" stroke="#10b981" name="Actual" />
+                    <Line type="monotone" dataKey="target" stroke="#f59e0b" name="Target" />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  <p className="mb-4">No forecasting data available</p>
+                  <p className="text-sm">Forecasts will be loaded from the business_forecasting table</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -352,11 +411,39 @@ export const BusinessIntelligence = () => {
         <TabsContent value="targets" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Business Targets</CardTitle>
-              <CardDescription>Track progress against your business goals</CardDescription>
+              <CardTitle>Business Targets Progress</CardTitle>
+              <CardDescription>Track progress against {new Date().getFullYear()} business goals</CardDescription>
             </CardHeader>
-            <CardContent className="text-center p-8">
-              <p className="text-gray-600">Target tracking will integrate with your business_targets table data</p>
+            <CardContent>
+              {targetData.length > 0 ? (
+                <div className="space-y-4">
+                  {targetData.map((target, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">{target.metric}</h4>
+                        <Badge variant={target.progress >= 100 ? "default" : target.progress >= 75 ? "secondary" : "destructive"}>
+                          {target.progress.toFixed(1)}%
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                        <span>Target: {formatCurrency(target.target)}</span>
+                        <span>Actual: {formatCurrency(target.actual)}</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-zatara-blue h-2 rounded-full" 
+                          style={{ width: `${Math.min(target.progress, 100)}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  <p className="mb-4">No targets data available</p>
+                  <p className="text-sm">Targets will be loaded from the business_targets table</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
