@@ -5,6 +5,7 @@ import { EnhancedBusinessViewDashboard } from './operations/EnhancedBusinessView
 import { CharterReconciliation } from './operations/CharterReconciliation';
 import { BusinessIntelligence } from './analytics/BusinessIntelligence';
 import { CustomerCommunications } from './communications/CustomerCommunications';
+import { LiveCharterBoard } from './operations/LiveCharterBoard';
 
 export const DashboardOperations = () => {
   return (
@@ -16,16 +17,21 @@ export const DashboardOperations = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="business-views" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="business-views">Enhanced Views</TabsTrigger>
+      <Tabs defaultValue="enhanced-views" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="enhanced-views">Enhanced Views</TabsTrigger>
+          <TabsTrigger value="live-board">Live Board</TabsTrigger>
           <TabsTrigger value="reconciliation">Reconciliation</TabsTrigger>
           <TabsTrigger value="communications">Communications</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="business-views" className="space-y-6">
+        <TabsContent value="enhanced-views" className="space-y-6">
           <EnhancedBusinessViewDashboard />
+        </TabsContent>
+
+        <TabsContent value="live-board" className="space-y-6">
+          <LiveCharterBoard />
         </TabsContent>
 
         <TabsContent value="reconciliation" className="space-y-6">
