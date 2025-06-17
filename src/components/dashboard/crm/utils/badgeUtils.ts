@@ -30,11 +30,15 @@ export const getActivityStatusColor = (status: string) => {
 export const getBookingStatusColor = (status: string) => {
   switch (status?.toLowerCase()) {
     case 'confirmed':
+    case 'completed':
       return 'bg-green-500 text-white';
     case 'pending':
+    case 'prebooked':
       return 'bg-yellow-500 text-white';
     case 'cancelled':
       return 'bg-red-500 text-white';
+    case 'option':
+      return 'bg-blue-500 text-white';
     default:
       return 'bg-gray-500 text-white';
   }

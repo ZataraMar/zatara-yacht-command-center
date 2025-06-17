@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, UserPlus, Search, BarChart3, MessageSquare } from 'lucide-react';
+import { Users, UserPlus, Search, BarChart3, MessageSquare, Calendar } from 'lucide-react';
 import { CustomerList } from './CustomerList';
 import { CustomerProfileView } from './CustomerProfileView';
 import { CustomerSearch } from './CustomerSearch';
 import { CustomerAnalytics } from './CustomerAnalytics';
 import { CommunicationCenter } from './CommunicationCenter';
+import { BookingsCenter } from './BookingsCenter';
 
 export const CRMDashboard = () => {
   const [activeTab, setActiveTab] = useState('customers');
@@ -19,7 +20,7 @@ export const CRMDashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-zatara-navy">Customer Relationship Management</h1>
-          <p className="text-zatara-blue">Manage customer relationships and grow your business</p>
+          <p className="text-zatara-blue">Manage customer relationships and analyze booking history</p>
         </div>
         <div className="flex space-x-2">
           <Button variant="outline">
@@ -34,10 +35,14 @@ export const CRMDashboard = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="customers" className="flex items-center space-x-2">
             <Users className="h-4 w-4" />
             <span>Customers</span>
+          </TabsTrigger>
+          <TabsTrigger value="bookings" className="flex items-center space-x-2">
+            <Calendar className="h-4 w-4" />
+            <span>Bookings</span>
           </TabsTrigger>
           <TabsTrigger value="search" className="flex items-center space-x-2">
             <Search className="h-4 w-4" />
@@ -56,6 +61,10 @@ export const CRMDashboard = () => {
 
         <TabsContent value="customers" className="mt-6">
           <CustomerList />
+        </TabsContent>
+
+        <TabsContent value="bookings" className="mt-6">
+          <BookingsCenter />
         </TabsContent>
 
         <TabsContent value="search" className="mt-6">
