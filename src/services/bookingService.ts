@@ -42,7 +42,8 @@ export const fetchHistoricalBookings = async (year: number, filters?: BookingFil
   if (!shouldFetch) return [];
 
   try {
-    const tableName = year === 2022 ? 'charters_2022' : 'charters_2023';
+    // Updated table names to match actual database schema
+    const tableName = year === 2022 ? 'charters_2022' : year === 2023 ? 'charters_2023' : 'charters_2022';
     console.log(`Fetching data from table: ${tableName}`);
     
     const { data: historicalData, error } = await supabase

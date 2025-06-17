@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { RefreshCw, X, Filter, Calendar, Boat, Users, MapPin } from 'lucide-react';
+import { RefreshCw, X, Filter, Calendar, Ship, Users, MapPin } from 'lucide-react';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
@@ -67,10 +66,10 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
   ];
 
   const boatOptions = [
-    { label: 'All Boats', value: 'all', icon: Boat },
-    { label: 'Zatara Only', value: 'zatara_only', icon: Boat },
-    { label: 'PuraVida Only', value: 'puravida_only', icon: Boat },
-    { label: 'Zatara & PuraVida', value: 'zatara_puravida', icon: Boat }
+    { label: 'All Boats', value: 'all', icon: Ship },
+    { label: 'Zatara Only', value: 'zatara_only', icon: Ship },
+    { label: 'PuraVida Only', value: 'puravida_only', icon: Ship },
+    { label: 'Zatara & PuraVida', value: 'zatara_puravida', icon: Ship }
   ];
 
   const statusOptions = [
@@ -207,7 +206,7 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="boat-filter" className="text-sm font-semibold text-zatara-navy flex items-center">
-              <Boat className="h-4 w-4 mr-2" />
+              <Ship className="h-4 w-4 mr-2" />
               Fleet Filter
             </Label>
             <select
