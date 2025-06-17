@@ -16,10 +16,8 @@ interface CustomerProfileViewProps {
 }
 
 export const CustomerProfileView = ({ customerId }: CustomerProfileViewProps) => {
-  // Use a default customer ID if none provided (for demo purposes)
-  const effectiveCustomerId = customerId || 1;
-  
-  const { customer, customerHistory, loading, error, refetch } = useCustomerData(effectiveCustomerId);
+  // Don't use any default customer ID - let it show the customer list instead
+  const { customer, customerHistory, loading, error, refetch } = useCustomerData(customerId);
 
   if (loading) {
     return (
@@ -47,12 +45,24 @@ export const CustomerProfileView = ({ customerId }: CustomerProfileViewProps) =>
     );
   }
 
+  // If no customer ID provided, show message to select a customer
+  if (!customerId) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-gray-600 mb-4">Select a customer from the Customers tab to view their profile</p>
+        <p className="text-sm text-gray-500">
+          Use the Customers tab to browse and select a customer to view their detailed profile and booking history.
+        </p>
+      </div>
+    );
+  }
+
   if (!customer) {
     return (
       <div className="text-center p-8">
-        <p className="text-gray-600 mb-4">Customer profile not found (ID: {effectiveCustomerId})</p>
+        <p className="text-gray-600 mb-4">Customer profile not found (ID: {customerId})</p>
         <p className="text-sm text-gray-500 mb-4">
-          This may be because customer data hasn't been fully synced yet.
+          This customer may not exist or may have been removed.
         </p>
         <Button onClick={refetch}>Try Loading Again</Button>
       </div>

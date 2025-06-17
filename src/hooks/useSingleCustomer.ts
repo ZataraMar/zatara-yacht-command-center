@@ -4,13 +4,22 @@ import { supabase } from '@/integrations/supabase/client';
 import { Customer, CustomerHistory } from '@/types/customer';
 import { transformDatabaseCustomerToCustomer, ensureCustomerDefaults } from '@/utils/customerDataTransform';
 
-export const useSingleCustomer = (customerId: number) => {
+export const useSingleCustomer = (customerId?: number) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerHistory, setCustomerHistory] = useState<CustomerHistory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchCustomer = async () => {
+    // Don't fetch if no customer ID provided
+    if (!customerId) {
+      setCustomer(null);
+      setCustomerHistory([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -20,7 +29,7 @@ export const useSingleCustomer = (customerId: number) => {
         .from('customer_360_view')
         .select('*')
         .eq('id', customerId)
-        .single();
+        .maybeSingle();
 
       if (customerError) {
         // Fallback to customers table with basic fields
@@ -33,16 +42,16 @@ export const useSingleCustomer = (customerId: number) => {
             created_at, updated_at
           `)
           .eq('id', customerId)
-          .single();
+          .maybeSingle();
 
         if (fallbackError) {
           throw fallbackError;
         }
         
-        customerData = transformDatabaseCustomerToCustomer(fallbackData);
+        customerData = fallbackData ? transformDatabaseCustomerToCustomer(fallbackData) : null;
       }
 
-      setCustomer(ensureCustomerDefaults(customerData));
+      setCustomer(customerData ? ensureCustomerDefaults(customerData) : null);
 
       // Fetch customer history
       const { data: historyData, error: historyError } = await supabase

@@ -11,23 +11,28 @@ export const useCustomerSync = () => {
     setSyncStatus('Syncing customer data...');
     
     try {
+      console.log('Starting customer sync process...');
+      
       // First mark Andronautic data as real
       const markResult = await markAndronauticDataAsReal();
       if (!markResult.success) {
         throw new Error(markResult.error);
       }
+      console.log('Marked Andronautic data as real');
       
       // Then run auto migration
       const migrateResult = await autoMigrateAndronauticData();
       if (!migrateResult.success) {
         throw new Error(migrateResult.error);
       }
+      console.log('Auto migration completed');
       
       // Finally sync customers from bookings
       const syncResult = await syncCustomersFromBookings();
       if (!syncResult.success) {
         throw new Error(syncResult.error);
       }
+      console.log('Customer sync completed');
       
       setSyncStatus('Customer data synced successfully');
       return true;
@@ -41,9 +46,13 @@ export const useCustomerSync = () => {
     }
   };
 
-  // Auto-sync on mount if no customer data exists
+  // Only run sync on first mount, not every time
   useEffect(() => {
-    performSync();
+    let hasRun = false;
+    if (!hasRun) {
+      hasRun = true;
+      performSync();
+    }
   }, []);
 
   return {
