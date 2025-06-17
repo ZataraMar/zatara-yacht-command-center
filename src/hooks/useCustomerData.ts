@@ -177,7 +177,7 @@ export const useCustomerData = (customerId?: number) => {
           favorite_boat: '',
           last_contact_date: '',
           last_contact_method: ''
-        } as Customer)) || [];
+        })) || [];
       }
 
       setCustomers(customersData as Customer[]);
