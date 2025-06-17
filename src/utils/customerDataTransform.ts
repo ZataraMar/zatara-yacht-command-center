@@ -1,0 +1,72 @@
+
+import { Customer, DatabaseCustomer } from '@/types/customer';
+
+export const transformDatabaseCustomerToCustomer = (dbCustomer: DatabaseCustomer): Customer => {
+  return {
+    ...dbCustomer,
+    customer_segment: 'standard',
+    activity_status: 'active',
+    last_booking_date: dbCustomer.created_at,
+    customer_status: dbCustomer.customer_status || 'active',
+    acquisition_source: 'unknown',
+    acquisition_date: dbCustomer.created_at,
+    average_booking_value: 0,
+    average_review_rating: 0,
+    avg_satisfaction_score: 0,
+    dietary_restrictions: '',
+    favorite_boat: '',
+    last_contact_date: '',
+    last_contact_method: '',
+    latest_review_date: '',
+    nationality: '',
+    preferred_season: '',
+    special_requirements: '',
+    total_charter_hours: 0,
+    total_charters: 0,
+    total_reviews_given: 0
+  };
+};
+
+export const ensureCustomerDefaults = (customerData: any): Customer => {
+  return {
+    id: customerData.id,
+    customer_key: customerData.customer_key || '',
+    full_name: customerData.full_name || '',
+    first_name: customerData.first_name || '',
+    last_name: customerData.last_name || '',
+    phone_primary: customerData.phone_primary || '',
+    email_primary: customerData.email_primary || '',
+    customer_status: customerData.customer_status || 'active',
+    total_bookings: customerData.total_bookings || 0,
+    total_spent: customerData.total_spent || 0,
+    customer_lifetime_value: customerData.customer_lifetime_value || 0,
+    customer_segment: customerData.customer_segment || 'standard',
+    activity_status: customerData.activity_status || 'active',
+    last_booking_date: customerData.last_booking_date || customerData.created_at || '',
+    created_at: customerData.created_at || '',
+    updated_at: customerData.updated_at || '',
+    acquisition_source: customerData.acquisition_source || 'unknown',
+    acquisition_date: customerData.acquisition_date || customerData.created_at || '',
+    average_booking_value: customerData.average_booking_value || 0,
+    average_review_rating: customerData.average_review_rating || 0,
+    avg_satisfaction_score: customerData.avg_satisfaction_score || 0,
+    preferred_boat: customerData.preferred_boat || '',
+    preferred_time_slot: customerData.preferred_time_slot || '',
+    communication_preference: customerData.communication_preference || '',
+    nationality: customerData.nationality || '',
+    special_requirements: customerData.special_requirements || '',
+    vip_status: customerData.vip_status || false,
+    referral_source: customerData.referral_source || '',
+    marketing_consent: customerData.marketing_consent || false,
+    data_source: customerData.data_source || 'real',
+    dietary_restrictions: customerData.dietary_restrictions || '',
+    favorite_boat: customerData.favorite_boat || '',
+    last_contact_date: customerData.last_contact_date || '',
+    last_contact_method: customerData.last_contact_method || '',
+    latest_review_date: customerData.latest_review_date || '',
+    preferred_season: customerData.preferred_season || '',
+    total_charter_hours: customerData.total_charter_hours || 0,
+    total_charters: customerData.total_charters || 0,
+    total_reviews_given: customerData.total_reviews_given || 0
+  };
+};

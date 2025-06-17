@@ -2946,6 +2946,96 @@ export type Database = {
           },
         ]
       }
+      guardiennage_schedules: {
+        Row: {
+          actual_duration_hours: number | null
+          assigned_crew: string | null
+          boat_id: number | null
+          checklist_template: Json | null
+          completion_notes: string | null
+          contract_id: number | null
+          created_at: string | null
+          crew_contact: string | null
+          estimated_duration_hours: number | null
+          id: number
+          issues_found: string | null
+          next_visit_date: string | null
+          owner_notified: boolean | null
+          photo_urls: string[] | null
+          photos_taken: number | null
+          scheduled_date: string
+          scheduled_time: string | null
+          security_status: string | null
+          updated_at: string | null
+          visit_status: string | null
+          visit_type: string | null
+          weather_conditions: string | null
+        }
+        Insert: {
+          actual_duration_hours?: number | null
+          assigned_crew?: string | null
+          boat_id?: number | null
+          checklist_template?: Json | null
+          completion_notes?: string | null
+          contract_id?: number | null
+          created_at?: string | null
+          crew_contact?: string | null
+          estimated_duration_hours?: number | null
+          id?: number
+          issues_found?: string | null
+          next_visit_date?: string | null
+          owner_notified?: boolean | null
+          photo_urls?: string[] | null
+          photos_taken?: number | null
+          scheduled_date: string
+          scheduled_time?: string | null
+          security_status?: string | null
+          updated_at?: string | null
+          visit_status?: string | null
+          visit_type?: string | null
+          weather_conditions?: string | null
+        }
+        Update: {
+          actual_duration_hours?: number | null
+          assigned_crew?: string | null
+          boat_id?: number | null
+          checklist_template?: Json | null
+          completion_notes?: string | null
+          contract_id?: number | null
+          created_at?: string | null
+          crew_contact?: string | null
+          estimated_duration_hours?: number | null
+          id?: number
+          issues_found?: string | null
+          next_visit_date?: string | null
+          owner_notified?: boolean | null
+          photo_urls?: string[] | null
+          photos_taken?: number | null
+          scheduled_date?: string
+          scheduled_time?: string | null
+          security_status?: string | null
+          updated_at?: string | null
+          visit_status?: string | null
+          visit_type?: string | null
+          weather_conditions?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guardiennage_schedules_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guardiennage_schedules_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "service_contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       historical_charters: {
         Row: {
           boat: string | null
@@ -3038,6 +3128,140 @@ export type Database = {
           year?: number
         }
         Relationships: []
+      }
+      maintenance_requests: {
+        Row: {
+          actual_completion: string | null
+          approved_budget: number | null
+          assigned_vendor: string | null
+          boat_id: number
+          category: string | null
+          completion_deadline: string | null
+          created_at: string | null
+          customer_id: number | null
+          customer_satisfaction: number | null
+          description: string
+          estimated_cost: number | null
+          id: number
+          invoice_reference: string | null
+          labor_cost: number | null
+          labor_hours: number | null
+          notes: string | null
+          parts_cost: number | null
+          parts_required: string[] | null
+          photos_after: string[] | null
+          photos_before: string[] | null
+          priority_level: number | null
+          reported_by: string | null
+          reported_date: string | null
+          request_status: string | null
+          request_type: string | null
+          start_date: string | null
+          target_completion: string | null
+          total_cost: number | null
+          updated_at: string | null
+          vendor_contact: string | null
+          warranty_period_months: number | null
+          work_description: string | null
+        }
+        Insert: {
+          actual_completion?: string | null
+          approved_budget?: number | null
+          assigned_vendor?: string | null
+          boat_id: number
+          category?: string | null
+          completion_deadline?: string | null
+          created_at?: string | null
+          customer_id?: number | null
+          customer_satisfaction?: number | null
+          description: string
+          estimated_cost?: number | null
+          id?: number
+          invoice_reference?: string | null
+          labor_cost?: number | null
+          labor_hours?: number | null
+          notes?: string | null
+          parts_cost?: number | null
+          parts_required?: string[] | null
+          photos_after?: string[] | null
+          photos_before?: string[] | null
+          priority_level?: number | null
+          reported_by?: string | null
+          reported_date?: string | null
+          request_status?: string | null
+          request_type?: string | null
+          start_date?: string | null
+          target_completion?: string | null
+          total_cost?: number | null
+          updated_at?: string | null
+          vendor_contact?: string | null
+          warranty_period_months?: number | null
+          work_description?: string | null
+        }
+        Update: {
+          actual_completion?: string | null
+          approved_budget?: number | null
+          assigned_vendor?: string | null
+          boat_id?: number
+          category?: string | null
+          completion_deadline?: string | null
+          created_at?: string | null
+          customer_id?: number | null
+          customer_satisfaction?: number | null
+          description?: string
+          estimated_cost?: number | null
+          id?: number
+          invoice_reference?: string | null
+          labor_cost?: number | null
+          labor_hours?: number | null
+          notes?: string | null
+          parts_cost?: number | null
+          parts_required?: string[] | null
+          photos_after?: string[] | null
+          photos_before?: string[] | null
+          priority_level?: number | null
+          reported_by?: string | null
+          reported_date?: string | null
+          request_status?: string | null
+          request_type?: string | null
+          start_date?: string | null
+          target_completion?: string | null
+          total_cost?: number | null
+          updated_at?: string | null
+          vendor_contact?: string | null
+          warranty_period_months?: number | null
+          work_description?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_requests_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       maintenance_schedule: {
         Row: {
@@ -4377,6 +4601,102 @@ export type Database = {
           },
         ]
       }
+      service_providers: {
+        Row: {
+          active: boolean | null
+          address: string | null
+          availability_hours: string | null
+          call_out_fee: number | null
+          certifications: string[] | null
+          contact_person: string | null
+          created_at: string | null
+          email: string | null
+          emergency_available: boolean | null
+          hourly_rate: number | null
+          id: number
+          insurance_valid_until: string | null
+          jobs_completed: number | null
+          languages_spoken: string[] | null
+          last_job_date: string | null
+          location: string | null
+          minimum_charge: number | null
+          notes: string | null
+          operating_radius_km: number | null
+          payment_terms_days: number | null
+          phone: string | null
+          preferred_vendor: boolean | null
+          provider_name: string
+          provider_type: string | null
+          rating_average: number | null
+          rating_count: number | null
+          service_categories: string[]
+          specializations: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          address?: string | null
+          availability_hours?: string | null
+          call_out_fee?: number | null
+          certifications?: string[] | null
+          contact_person?: string | null
+          created_at?: string | null
+          email?: string | null
+          emergency_available?: boolean | null
+          hourly_rate?: number | null
+          id?: number
+          insurance_valid_until?: string | null
+          jobs_completed?: number | null
+          languages_spoken?: string[] | null
+          last_job_date?: string | null
+          location?: string | null
+          minimum_charge?: number | null
+          notes?: string | null
+          operating_radius_km?: number | null
+          payment_terms_days?: number | null
+          phone?: string | null
+          preferred_vendor?: boolean | null
+          provider_name: string
+          provider_type?: string | null
+          rating_average?: number | null
+          rating_count?: number | null
+          service_categories: string[]
+          specializations?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          address?: string | null
+          availability_hours?: string | null
+          call_out_fee?: number | null
+          certifications?: string[] | null
+          contact_person?: string | null
+          created_at?: string | null
+          email?: string | null
+          emergency_available?: boolean | null
+          hourly_rate?: number | null
+          id?: number
+          insurance_valid_until?: string | null
+          jobs_completed?: number | null
+          languages_spoken?: string[] | null
+          last_job_date?: string | null
+          location?: string | null
+          minimum_charge?: number | null
+          notes?: string | null
+          operating_radius_km?: number | null
+          payment_terms_days?: number | null
+          phone?: string | null
+          preferred_vendor?: boolean | null
+          provider_name?: string
+          provider_type?: string | null
+          rating_average?: number | null
+          rating_count?: number | null
+          service_categories?: string[]
+          specializations?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       service_requests: {
         Row: {
           access_instructions: string | null
@@ -4572,6 +4892,119 @@ export type Database = {
             columns: ["service_offering_id"]
             isOneToOne: false
             referencedRelation: "service_offerings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_reviews: {
+        Row: {
+          communication_rating: number | null
+          created_at: string | null
+          customer_id: number | null
+          guardiennage_schedule_id: number | null
+          id: number
+          maintenance_request_id: number | null
+          overall_rating: number | null
+          provider_id: number
+          quality_rating: number | null
+          response_from_provider: string | null
+          review_date: string | null
+          review_text: string | null
+          reviewer_name: string | null
+          service_request_id: number | null
+          timeliness_rating: number | null
+          updated_at: string | null
+          value_rating: number | null
+          would_recommend: boolean | null
+        }
+        Insert: {
+          communication_rating?: number | null
+          created_at?: string | null
+          customer_id?: number | null
+          guardiennage_schedule_id?: number | null
+          id?: number
+          maintenance_request_id?: number | null
+          overall_rating?: number | null
+          provider_id: number
+          quality_rating?: number | null
+          response_from_provider?: string | null
+          review_date?: string | null
+          review_text?: string | null
+          reviewer_name?: string | null
+          service_request_id?: number | null
+          timeliness_rating?: number | null
+          updated_at?: string | null
+          value_rating?: number | null
+          would_recommend?: boolean | null
+        }
+        Update: {
+          communication_rating?: number | null
+          created_at?: string | null
+          customer_id?: number | null
+          guardiennage_schedule_id?: number | null
+          id?: number
+          maintenance_request_id?: number | null
+          overall_rating?: number | null
+          provider_id?: number
+          quality_rating?: number | null
+          response_from_provider?: string | null
+          review_date?: string | null
+          review_text?: string | null
+          reviewer_name?: string | null
+          service_request_id?: number | null
+          timeliness_rating?: number | null
+          updated_at?: string | null
+          value_rating?: number | null
+          would_recommend?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "service_reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_reviews_guardiennage_schedule_id_fkey"
+            columns: ["guardiennage_schedule_id"]
+            isOneToOne: false
+            referencedRelation: "guardiennage_schedules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_reviews_maintenance_request_id_fkey"
+            columns: ["maintenance_request_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "service_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_reviews_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
             referencedColumns: ["id"]
           },
         ]
