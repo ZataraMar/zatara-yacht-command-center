@@ -42,23 +42,33 @@ export const fetchHistoricalBookings = async (year: number, filters?: BookingFil
   if (!shouldFetch) return [];
 
   try {
-    // Direct table query for historical data
     const tableName = year === 2022 ? 'charters_2022' : 'charters_2023';
+    console.log(`Fetching data from table: ${tableName}`);
+    
     const { data: historicalData, error } = await supabase
       .from(tableName as any)
       .select('*')
       .not('charter_date', 'is', null)
-      .order('charter_date', { ascending: false })
-      .limit(200);
+      .order('charter_date', { ascending: false });
 
     if (error) {
-      console.warn(`Error fetching ${year} data:`, error);
+      console.error(`Error fetching ${year} data from ${tableName}:`, error);
       return [];
     }
 
-    return (historicalData || []).map(charter => transformHistoricalBooking(charter, year));
+    console.log(`Raw ${year} data fetched:`, historicalData?.length || 0);
+    
+    if (!historicalData || historicalData.length === 0) {
+      console.warn(`No data found in ${tableName}`);
+      return [];
+    }
+
+    const transformedData = historicalData.map(charter => transformHistoricalBooking(charter, year));
+    console.log(`Transformed ${year} bookings:`, transformedData.length);
+    
+    return transformedData;
   } catch (fallbackErr) {
-    console.warn(`All queries failed for ${year}:`, fallbackErr);
+    console.error(`All queries failed for ${year}:`, fallbackErr);
     return [];
   }
 };
