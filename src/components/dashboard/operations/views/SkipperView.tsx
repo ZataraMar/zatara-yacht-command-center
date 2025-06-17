@@ -2,7 +2,8 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Anchor, Clock, Users, Phone, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Anchor, Clock, Users, Phone, AlertCircle, CheckCircle2, MessageCircle } from 'lucide-react';
 import { SkipperViewRow } from '../types/businessViewTypes';
 
 interface SkipperViewProps {
@@ -10,18 +11,42 @@ interface SkipperViewProps {
   boatName: string;
   boatColor: string;
   getStatusColor: (status: string) => string;
+  onCharterSelect?: (charter: any) => void;
 }
 
 export const SkipperView: React.FC<SkipperViewProps> = ({ 
   data, 
   boatName, 
   boatColor, 
-  getStatusColor 
+  getStatusColor,
+  onCharterSelect
 }) => {
+  const handleCharterClick = (charter: SkipperViewRow) => {
+    if (onCharterSelect) {
+      // Transform to expected format for tools
+      const transformedCharter = {
+        locator: charter.locator,
+        guest_name: charter.guest_full_name,
+        boat: boatName,
+        charter_date: charter.charter_date,
+        start_time: charter.start_time,
+        total_guests: charter.total_guests,
+        charter_total: 1500 // Default since not in skipper view
+      };
+      onCharterSelect(transformedCharter);
+    }
+  };
+
   return (
     <div className="grid gap-4">
       {data.map((charter) => (
-        <Card key={charter.locator} className={`border-l-4 border-${boatColor}-500`}>
+        <Card 
+          key={charter.locator} 
+          className={`border-l-4 border-${boatColor}-500 transition-all duration-200 ${
+            onCharterSelect ? 'cursor-pointer hover:shadow-lg hover:bg-gray-50' : ''
+          }`}
+          onClick={() => handleCharterClick(charter)}
+        >
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center space-x-2">
@@ -31,7 +56,7 @@ export const SkipperView: React.FC<SkipperViewProps> = ({
                   {charter.booking_status}
                 </Badge>
               </CardTitle>
-              <div className="flex space-x-2">
+              <div className="flex items-center space-x-2">
                 {charter.pre_departure_checks ? 
                   <CheckCircle2 className="h-5 w-5 text-green-500" /> : 
                   <AlertCircle className="h-5 w-5 text-yellow-500" />
@@ -40,6 +65,12 @@ export const SkipperView: React.FC<SkipperViewProps> = ({
                   <CheckCircle2 className="h-5 w-5 text-green-500" /> : 
                   <AlertCircle className="h-5 w-5 text-red-500" />
                 }
+                {onCharterSelect && (
+                  <Button variant="outline" size="sm">
+                    <MessageCircle className="h-3 w-3 mr-1" />
+                    Tools
+                  </Button>
+                )}
               </div>
             </div>
             <CardDescription>
