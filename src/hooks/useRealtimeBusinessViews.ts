@@ -28,32 +28,24 @@ export const useRealtimeBusinessViews = ({
       setLoading(true);
       setError(null);
 
-      // Use the enhanced business view function
+      // Use the existing business view function since enhanced one may not exist
       const { data: result, error: dbError } = await supabase
-        .rpc('get_enhanced_business_view', {
+        .rpc('get_business_view', {
           view_name: viewMode,
-          time_filter: parseInt(timeFilter),
+          time_forward: parseInt(timeFilter),
           boat_filter: boatFilter,
-          status_filter: statusFilter
+          status_filter: statusFilter,
+          user_role: profile.role
         });
 
       if (dbError) {
-        console.warn('Enhanced function failed, falling back:', dbError);
-        
-        // Fallback to existing function
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .rpc('get_business_view', {
-            view_name: viewMode,
-            time_forward: parseInt(timeFilter),
-            boat_filter: boatFilter,
-            status_filter: statusFilter,
-            user_role: profile.role
-          });
-        
-        if (fallbackError) throw fallbackError;
-        setData(fallbackData || []);
+        console.error('Business view function failed:', dbError);
+        setError(dbError.message);
+        setData([]);
       } else {
-        setData(result || []);
+        // Ensure we always set an array
+        const resultData = Array.isArray(result) ? result : (result ? [result] : []);
+        setData(resultData);
       }
 
     } catch (err) {

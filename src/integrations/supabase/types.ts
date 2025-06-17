@@ -4349,6 +4349,14 @@ export type Database = {
         }
         Relationships: []
       }
+      system_performance_monitor: {
+        Row: {
+          description: string | null
+          metric: string | null
+          value: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       assign_optimal_crew: {
@@ -4376,6 +4384,13 @@ export type Database = {
           boat_name_param?: string
         }
         Returns: number
+      }
+      cleanup_old_data: {
+        Args: { days_to_keep?: number }
+        Returns: {
+          table_cleaned: string
+          records_removed: number
+        }[]
       }
       detect_booking_conflicts: {
         Args: {
@@ -4564,6 +4579,19 @@ export type Database = {
       is_staff_or_higher: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      migrate_bookings_to_customers: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      system_health_check: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          component: string
+          status: string
+          details: string
+          last_updated: string
+        }[]
       }
       text_to_bytea: {
         Args: { data: string }

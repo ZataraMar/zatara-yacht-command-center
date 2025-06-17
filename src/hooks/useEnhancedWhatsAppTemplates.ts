@@ -13,6 +13,8 @@ interface WhatsAppTemplate {
   applicable_boats: string[];
   language_code: string;
   is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const useEnhancedWhatsAppTemplates = () => {
@@ -35,9 +37,38 @@ export const useEnhancedWhatsAppTemplates = () => {
           .order('template_name');
         
         if (fallbackError) throw fallbackError;
-        setTemplates(fallbackData || []);
+        
+        // Transform the data to match our interface
+        const transformedData = (fallbackData || []).map((item: any) => ({
+          id: item.id,
+          template_name: item.template_name,
+          template_type: item.template_type,
+          message_content: item.message_content,
+          variables: item.variables || {},
+          boat_specific: item.boat_specific || false,
+          applicable_boats: item.applicable_boats || ['all'],
+          language_code: item.language_code || 'en',
+          is_active: item.is_active || true,
+          created_at: item.created_at,
+          updated_at: item.updated_at
+        }));
+        
+        setTemplates(transformedData);
       } else {
-        setTemplates(data || []);
+        // Transform the RPC data to match our interface
+        const transformedData = (data || []).map((item: any) => ({
+          id: item.id || 0,
+          template_name: item.template_name,
+          template_type: item.template_type,
+          message_content: item.message_content,
+          variables: item.variables || {},
+          boat_specific: item.boat_specific || false,
+          applicable_boats: item.applicable_boats || ['all'],
+          language_code: item.language_code || 'en',
+          is_active: item.is_active || true
+        }));
+        
+        setTemplates(transformedData);
       }
     } catch (error) {
       console.error('Error fetching templates:', error);
