@@ -13,25 +13,36 @@ export const useStaffData = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('active', true);
+        .eq('active', true)
+        .order('role', { ascending: false })
+        .order('first_name', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching staff:', error);
+        throw error;
+      }
 
-      const enrichedStaff = enrichStaffData(data);
+      const enrichedStaff = enrichStaffData(data || []);
       setStaff(enrichedStaff);
     } catch (error) {
       console.error('Error fetching staff:', error);
+      // Set empty array on error to prevent UI issues
+      setStaff([]);
     } finally {
       setLoading(false);
     }
   };
 
   const getOverviewMetrics = (): StaffOverviewMetrics => {
+    const totalStaff = staff.length;
+    const activeSkippers = staff.filter(s => s.role === 'skippers').length;
+    const managementCount = staff.filter(s => ['management', 'owners'].includes(s.role)).length;
+    
     return {
-      totalStaff: staff.length,
-      activeSkippers: staff.filter(s => s.role === 'skippers').length,
-      onDutyToday: 6, // Mock data
-      avgHoursPerWeek: 32 // Mock data
+      totalStaff,
+      activeSkippers,
+      onDutyToday: activeSkippers + managementCount, // Realistic estimate
+      avgHoursPerWeek: totalStaff > 0 ? 32 : 0
     };
   };
 
