@@ -20,8 +20,10 @@ import {
   UserCheck,
   Shield,
   Zap,
-  TrendingUp
+  TrendingUp,
+  UserCog
 } from 'lucide-react';
+import { hasRole, isClientRole, canManageUsers } from '@/utils/authSecurity';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -43,27 +45,41 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const getNavigationItems = () => {
     const baseItems = [
       { icon: Home, label: 'Overview', href: '/dashboard', roles: ['all'] },
-      { icon: Activity, label: 'Operations Center', href: '/dashboard/operations', roles: ['team', 'agency', 'management', 'owners', 'staff', 'skippers'] },
-      { icon: Calendar, label: 'My Bookings', href: '/dashboard/bookings', roles: ['charter_clients', 'boat_club_clients'] },
     ];
 
+    // Client-specific navigation
+    if (isClientRole(userRole)) {
+      return [
+        ...baseItems,
+        { icon: Calendar, label: 'My Bookings', href: '/dashboard/bookings', roles: ['charter_clients', 'boat_club_clients'] },
+      ];
+    }
+
+    // Operational staff navigation
     const operationalItems = [
+      { icon: Activity, label: 'Operations Center', href: '/dashboard/operations', roles: ['team', 'agency', 'management', 'owners', 'staff', 'skippers'] },
       { icon: Anchor, label: 'Fleet Management', href: '/dashboard/fleet', roles: ['team', 'management', 'owners', 'staff', 'skippers'] },
-      { icon: Users, label: 'Team Management', href: '/dashboard/team', roles: ['management', 'owners'] },
-      { icon: DollarSign, label: 'Financial Management', href: '/dashboard/financials', roles: ['management', 'owners', 'agency'] },
       { icon: UserCheck, label: 'Guest Experience', href: '/dashboard/guests', roles: ['team', 'agency', 'management', 'owners', 'staff'] },
       { icon: Shield, label: 'Operational Excellence', href: '/dashboard/operations-excellence', roles: ['team', 'management', 'owners', 'staff', 'skippers'] },
     ];
 
+    // Management navigation
+    const managementItems = [
+      { icon: Users, label: 'Team Management', href: '/dashboard/team', roles: ['management', 'owners'] },
+      { icon: UserCog, label: 'User Management', href: '/dashboard/users', roles: ['management', 'owners'] },
+      { icon: DollarSign, label: 'Financial Management', href: '/dashboard/financials', roles: ['management', 'owners', 'agency'] },
+    ];
+
+    // Analytics navigation
     const analyticsItems = [
       { icon: TrendingUp, label: 'Advanced Analytics', href: '/dashboard/analytics', roles: ['management', 'owners', 'agency'] },
       { icon: Zap, label: 'Automation & Integration', href: '/dashboard/automation', roles: ['management', 'owners', 'agency'] },
     ];
 
-    const allItems = [...baseItems, ...operationalItems, ...analyticsItems];
+    const allItems = [...baseItems, ...operationalItems, ...managementItems, ...analyticsItems];
     
     return allItems.filter(item => 
-      item.roles.includes('all') || item.roles.includes(userRole)
+      item.roles.includes('all') || hasRole(userRole, item.roles)
     );
   };
 

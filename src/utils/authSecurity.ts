@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced auth state cleanup to prevent limbo states
@@ -122,10 +123,37 @@ export const secureSignOut = async () => {
   }
 };
 
-// Role-based access control helpers
+// Define role hierarchy levels
+const ROLE_LEVELS = {
+  'owners': 100,
+  'management': 80,
+  'team': 60,
+  'agency': 60,
+  'skippers': 50,
+  'staff': 40,
+  'casual_staff': 30,
+  'charter_clients': 20,
+  'boat_club_clients': 20
+};
+
+// Enhanced role-based access control with hierarchy
 export const hasRole = (userRole: string | null, allowedRoles: string[]): boolean => {
   if (!userRole) return false;
-  return allowedRoles.includes(userRole);
+  
+  const userLevel = ROLE_LEVELS[userRole as keyof typeof ROLE_LEVELS] || 0;
+  
+  // Check if user role is directly in allowed roles
+  if (allowedRoles.includes(userRole)) return true;
+  
+  // Check if user has sufficient hierarchy level for any allowed role
+  return allowedRoles.some(role => {
+    const requiredLevel = ROLE_LEVELS[role as keyof typeof ROLE_LEVELS] || 0;
+    return userLevel >= requiredLevel;
+  });
+};
+
+export const isOwner = (userRole: string | null): boolean => {
+  return userRole === 'owners';
 };
 
 export const isManagementOrOwner = (userRole: string | null): boolean => {
@@ -142,4 +170,8 @@ export const isClientRole = (userRole: string | null): boolean => {
 
 export const isAgencyOrTeam = (userRole: string | null): boolean => {
   return hasRole(userRole, ['agency', 'team']);
+};
+
+export const canManageUsers = (userRole: string | null): boolean => {
+  return hasRole(userRole, ['owners', 'management']);
 };

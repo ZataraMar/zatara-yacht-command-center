@@ -1,19 +1,43 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/SecureAuthContext';
 import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { isManagementOrOwner, isStaffOrHigher } from '@/utils/authSecurity';
+import { isManagementOrOwner, isStaffOrHigher, isClientRole } from '@/utils/authSecurity';
 import { Home, Calendar, Anchor, Users, BarChart3, TrendingUp } from 'lucide-react';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const userRole = profile?.role || '';
   const canViewFinancials = isManagementOrOwner(userRole);
   const canViewOperations = isStaffOrHigher(userRole);
+
+  // Auto-redirect authenticated users to appropriate dashboard
+  useEffect(() => {
+    if (user && profile) {
+      if (isClientRole(userRole)) {
+        navigate('/dashboard/bookings');
+      } else if (isStaffOrHigher(userRole)) {
+        navigate('/dashboard');
+      }
+    }
+  }, [user, profile, userRole, navigate]);
+
+  // If user is loading or will be redirected, show loading
+  if (user && profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zatara-blue mx-auto"></div>
+          <p className="text-zatara-navy mt-4">Redirecting to your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen gradient-mediterranean">
@@ -136,28 +160,51 @@ const Index = () => {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {canViewOperations && (
                 <>
-                  <Button className="h-20 sm:h-24 flex-col gradient-zatara text-white hover:shadow-luxury transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury">
-                    <Calendar className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
-                    <span className="text-luxury-xs font-semibold">View Bookings</span>
+                  <Button 
+                    asChild
+                    className="h-20 sm:h-24 flex-col gradient-zatara text-white hover:shadow-luxury transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury"
+                  >
+                    <Link to="/dashboard/operations">
+                      <Calendar className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
+                      <span className="text-luxury-xs font-semibold">Operations</span>
+                    </Link>
                   </Button>
-                  <Button variant="outline" className="h-20 sm:h-24 flex-col border-2 border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury">
-                    <Anchor className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
-                    <span className="text-luxury-xs font-semibold">Fleet</span>
+                  <Button 
+                    variant="outline" 
+                    asChild
+                    className="h-20 sm:h-24 flex-col border-2 border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury"
+                  >
+                    <Link to="/dashboard/fleet">
+                      <Anchor className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
+                      <span className="text-luxury-xs font-semibold">Fleet</span>
+                    </Link>
                   </Button>
                 </>
               )}
               
               {canViewOperations && (
-                <Button variant="outline" className="h-20 sm:h-24 flex-col border-2 border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury">
-                  <Users className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
-                  <span className="text-luxury-xs font-semibold">Team</span>
+                <Button 
+                  variant="outline" 
+                  asChild
+                  className="h-20 sm:h-24 flex-col border-2 border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury"
+                >
+                  <Link to="/dashboard/team">
+                    <Users className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
+                    <span className="text-luxury-xs font-semibold">Team</span>
+                  </Link>
                 </Button>
               )}
               
               {canViewFinancials && (
-                <Button variant="outline" className="h-20 sm:h-24 flex-col border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury">
-                  <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
-                  <span className="text-luxury-xs font-semibold">Reports</span>
+                <Button 
+                  variant="outline" 
+                  asChild
+                  className="h-20 sm:h-24 flex-col border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury"
+                >
+                  <Link to="/dashboard/analytics">
+                    <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
+                    <span className="text-luxury-xs font-semibold">Analytics</span>
+                  </Link>
                 </Button>
               )}
 
@@ -185,14 +232,29 @@ const Index = () => {
                 Management-only features and analytics go here.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
-                <Button variant="secondary" size="lg" className="luxury-touch-target bg-white/20 text-white hover:bg-white/30 rounded-luxury font-semibold transition-all duration-300 hover:scale-105">
-                  Business Analytics
+                <Button 
+                  variant="secondary" 
+                  size="lg" 
+                  asChild
+                  className="luxury-touch-target bg-white/20 text-white hover:bg-white/30 rounded-luxury font-semibold transition-all duration-300 hover:scale-105"
+                >
+                  <Link to="/dashboard/analytics">Business Analytics</Link>
                 </Button>
-                <Button variant="secondary" size="lg" className="luxury-touch-target bg-white/20 text-white hover:bg-white/30 rounded-luxury font-semibold transition-all duration-300 hover:scale-105">
-                  Financial Reports
+                <Button 
+                  variant="secondary" 
+                  size="lg" 
+                  asChild
+                  className="luxury-touch-target bg-white/20 text-white hover:bg-white/30 rounded-luxury font-semibold transition-all duration-300 hover:scale-105"
+                >
+                  <Link to="/dashboard/financials">Financial Reports</Link>
                 </Button>
-                <Button variant="secondary" size="lg" className="luxury-touch-target bg-white/20 text-white hover:bg-white/30 rounded-luxury font-semibold transition-all duration-300 hover:scale-105 col-span-2 sm:col-span-1">
-                  System Settings
+                <Button 
+                  variant="secondary" 
+                  size="lg" 
+                  asChild
+                  className="luxury-touch-target bg-white/20 text-white hover:bg-white/30 rounded-luxury font-semibold transition-all duration-300 hover:scale-105 col-span-2 sm:col-span-1"
+                >
+                  <Link to="/dashboard/users">User Management</Link>
                 </Button>
               </div>
             </CardContent>

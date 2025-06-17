@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { DashboardHome } from '@/components/dashboard/DashboardHome';
 import { DashboardOperations } from '@/components/dashboard/DashboardOperations';
@@ -11,11 +11,13 @@ import { GuestExperience } from '@/components/dashboard/crm/GuestExperience';
 import { OperationalExcellence } from '@/components/dashboard/operations/OperationalExcellence';
 import { AdvancedReporting } from '@/components/dashboard/analytics/AdvancedReporting';
 import { AutomationWorkflows } from '@/components/dashboard/integration/AutomationWorkflows';
+import { UserManagement } from '@/components/dashboard/admin/UserManagement';
 import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
 import { useAuth } from '@/contexts/SecureAuthContext';
+import { isClientRole, isOwner, isManagementOrOwner } from '@/utils/authSecurity';
 
 const Dashboard = () => {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const location = useLocation();
 
   // Handle users arriving from email verification
@@ -38,12 +40,21 @@ const Dashboard = () => {
     );
   }
 
+  const userRole = profile?.role || '';
+
+  // Auto-redirect based on role when accessing dashboard root
+  if (location.pathname === '/dashboard' && profile) {
+    if (isClientRole(userRole)) {
+      return <Navigate to="/dashboard/bookings" replace />;
+    }
+  }
+
   return (
     <DashboardLayout>
       <Routes>
         <Route path="/" element={<DashboardHome />} />
         
-        {/* Operations Center - Main Dashboard */}
+        {/* Operations Center - Main Dashboard for operational roles */}
         <Route 
           path="/operations" 
           element={
@@ -69,6 +80,16 @@ const Dashboard = () => {
           element={
             <SecureRoleBasedRoute allowedRoles={['management', 'owners']}>
               <StaffManagement />
+            </SecureRoleBasedRoute>
+          } 
+        />
+        
+        {/* User Management - Owners and Management only */}
+        <Route 
+          path="/users" 
+          element={
+            <SecureRoleBasedRoute allowedRoles={['management', 'owners']}>
+              <UserManagement />
             </SecureRoleBasedRoute>
           } 
         />
@@ -123,7 +144,7 @@ const Dashboard = () => {
           } 
         />
         
-        {/* Client Routes */}
+        {/* Client Routes - Booking Management */}
         <Route 
           path="/bookings" 
           element={
@@ -131,27 +152,31 @@ const Dashboard = () => {
               <div className="text-center p-8">
                 <h2 className="text-2xl font-bold text-zatara-navy mb-4">My Bookings</h2>
                 <p className="text-zatara-blue">Your booking management interface will be integrated here.</p>
+                <div className="mt-6 bg-blue-50 p-4 rounded-lg">
+                  <p className="text-sm text-blue-700">
+                    Welcome to the Zatara client portal. Your charter bookings and management tools will be available here soon.
+                  </p>
+                </div>
               </div>
             </SecureRoleBasedRoute>
           } 
         />
         
-        {/* Legacy Team Routes - Redirect to new structure */}
-        <Route 
-          path="/charters" 
-          element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owners', 'staff', 'skippers']}>
-              <DashboardOperations />
-            </SecureRoleBasedRoute>
-          } 
-        />
-        
+        {/* Settings - Available to all authenticated users */}
         <Route 
           path="/settings" 
           element={
             <div className="text-center p-8">
               <h2 className="text-2xl font-bold text-zatara-navy mb-4">Account Settings</h2>
               <p className="text-zatara-blue">Profile and system settings will be available here.</p>
+              <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  Current role: <span className="font-medium capitalize">{userRole?.replace('_', ' ')}</span>
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Email: <span className="font-medium">{profile?.email}</span>
+                </p>
+              </div>
             </div>
           } 
         />
