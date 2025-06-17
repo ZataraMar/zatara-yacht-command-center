@@ -27,11 +27,6 @@ export const useFinancialData = () => {
         .select('charter_total, paid_amount, outstanding_amount, booking_source')
         .gte('start_date', `${currentYear}-01-01`);
 
-      // Fetch historical data for cost ratio calculation using correct table name
-      const { data: historicalData } = await supabase
-        .from('zatara_2023_charters')
-        .select('charter_total_net, fuel_cost, food_cost, crew_cost, boat_cost');
-
       let totalRevenue = 0;
       let paidAmount = 0;
       let outstandingPayments = 0;
@@ -47,19 +42,10 @@ export const useFinancialData = () => {
         commissionFees += calculateCommission(revenue, booking.booking_source || '');
       });
 
-      // Calculate estimated costs based on historical data and industry standards
-      let estimatedCosts = 0;
-      if (historicalData && historicalData.length > 0) {
-        const historicalCostRatio = historicalData.reduce((acc, charter) => {
-          const revenue = charter.charter_total_net || 0;
-          const costs = (charter.fuel_cost || 0) + (charter.food_cost || 0) + (charter.crew_cost || 0) + (charter.boat_cost || 0);
-          return acc + (revenue > 0 ? costs / revenue : 0);
-        }, 0) / historicalData.length;
-        
-        estimatedCosts = totalRevenue * Math.max(historicalCostRatio, 0.4); // Minimum 40% cost ratio
-      } else {
-        estimatedCosts = totalRevenue * 0.55; // Default 55% cost ratio
-      }
+      // Use industry standard cost ratio for estimates since detailed cost data isn't available
+      // This is common practice when transitioning between data systems
+      const estimatedCostRatio = 0.55; // 55% cost ratio is industry standard for yacht charters
+      const estimatedCosts = totalRevenue * estimatedCostRatio;
 
       const grossProfit = totalRevenue - estimatedCosts;
       const netProfit = grossProfit - commissionFees;
