@@ -1781,6 +1781,164 @@ export type Database = {
         }
         Relationships: []
       }
+      client_budgets: {
+        Row: {
+          alert_sent: boolean | null
+          alert_threshold_percent: number | null
+          allocated_amount_eur: number
+          approval_required_over_budget: boolean | null
+          auto_renewal: boolean | null
+          boat_id: number | null
+          budget_category: string | null
+          budget_period_end: string
+          budget_period_start: string
+          budget_status: string | null
+          budget_type: string | null
+          created_at: string | null
+          customer_id: number
+          id: number
+          notes: string | null
+          remaining_amount_eur: number | null
+          spent_amount_eur: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          alert_sent?: boolean | null
+          alert_threshold_percent?: number | null
+          allocated_amount_eur: number
+          approval_required_over_budget?: boolean | null
+          auto_renewal?: boolean | null
+          boat_id?: number | null
+          budget_category?: string | null
+          budget_period_end: string
+          budget_period_start: string
+          budget_status?: string | null
+          budget_type?: string | null
+          created_at?: string | null
+          customer_id: number
+          id?: number
+          notes?: string | null
+          remaining_amount_eur?: number | null
+          spent_amount_eur?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          alert_sent?: boolean | null
+          alert_threshold_percent?: number | null
+          allocated_amount_eur?: number
+          approval_required_over_budget?: boolean | null
+          auto_renewal?: boolean | null
+          boat_id?: number | null
+          budget_category?: string | null
+          budget_period_end?: string
+          budget_period_start?: string
+          budget_status?: string | null
+          budget_type?: string | null
+          created_at?: string | null
+          customer_id?: number
+          id?: number
+          notes?: string | null
+          remaining_amount_eur?: number | null
+          spent_amount_eur?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_budgets_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_budgets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_budgets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "client_budgets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commission_transactions: {
+        Row: {
+          base_amount_eur: number
+          commission_amount_eur: number
+          commission_rate: number
+          created_at: string | null
+          id: number
+          notes: string | null
+          payee_name: string
+          payee_type: string | null
+          payment_date: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          payment_status: string | null
+          reference_id: number | null
+          total_commission_eur: number
+          transaction_date: string | null
+          transaction_type: string | null
+          updated_at: string | null
+          vat_amount_eur: number | null
+          vat_applicable: boolean | null
+        }
+        Insert: {
+          base_amount_eur: number
+          commission_amount_eur: number
+          commission_rate: number
+          created_at?: string | null
+          id?: number
+          notes?: string | null
+          payee_name: string
+          payee_type?: string | null
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          reference_id?: number | null
+          total_commission_eur: number
+          transaction_date?: string | null
+          transaction_type?: string | null
+          updated_at?: string | null
+          vat_amount_eur?: number | null
+          vat_applicable?: boolean | null
+        }
+        Update: {
+          base_amount_eur?: number
+          commission_amount_eur?: number
+          commission_rate?: number
+          created_at?: string | null
+          id?: number
+          notes?: string | null
+          payee_name?: string
+          payee_type?: string | null
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          reference_id?: number | null
+          total_commission_eur?: number
+          transaction_date?: string | null
+          transaction_type?: string | null
+          updated_at?: string | null
+          vat_amount_eur?: number | null
+          vat_applicable?: boolean | null
+        }
+        Relationships: []
+      }
       comparative_analytics: {
         Row: {
           absolute_difference: number | null
@@ -3128,6 +3286,138 @@ export type Database = {
           year?: number
         }
         Relationships: []
+      }
+      invoice_line_items: {
+        Row: {
+          booking_id: number | null
+          created_at: string | null
+          id: number
+          invoice_id: number
+          line_description: string
+          line_subtotal_eur: number
+          line_tax_amount_eur: number | null
+          line_tax_rate: number | null
+          line_total_eur: number
+          maintenance_request_id: number | null
+          margin_eur: number | null
+          margin_percent: number | null
+          provider_cost_eur: number | null
+          provider_id: number | null
+          quantity: number | null
+          service_category: string | null
+          service_date: string | null
+          service_request_id: number | null
+          unit_price_eur: number
+          unit_type: string | null
+          updated_at: string | null
+          yacht_sale_id: number | null
+        }
+        Insert: {
+          booking_id?: number | null
+          created_at?: string | null
+          id?: number
+          invoice_id: number
+          line_description: string
+          line_subtotal_eur: number
+          line_tax_amount_eur?: number | null
+          line_tax_rate?: number | null
+          line_total_eur: number
+          maintenance_request_id?: number | null
+          margin_eur?: number | null
+          margin_percent?: number | null
+          provider_cost_eur?: number | null
+          provider_id?: number | null
+          quantity?: number | null
+          service_category?: string | null
+          service_date?: string | null
+          service_request_id?: number | null
+          unit_price_eur: number
+          unit_type?: string | null
+          updated_at?: string | null
+          yacht_sale_id?: number | null
+        }
+        Update: {
+          booking_id?: number | null
+          created_at?: string | null
+          id?: number
+          invoice_id?: number
+          line_description?: string
+          line_subtotal_eur?: number
+          line_tax_amount_eur?: number | null
+          line_tax_rate?: number | null
+          line_total_eur?: number
+          maintenance_request_id?: number | null
+          margin_eur?: number | null
+          margin_percent?: number | null
+          provider_cost_eur?: number | null
+          provider_id?: number | null
+          quantity?: number | null
+          service_category?: string | null
+          service_date?: string | null
+          service_request_id?: number | null
+          unit_price_eur?: number
+          unit_type?: string | null
+          updated_at?: string | null
+          yacht_sale_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_line_items_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "service_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_maintenance_request_id_fkey"
+            columns: ["maintenance_request_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "service_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_service_category_fkey"
+            columns: ["service_category"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["category_name"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_service_category_fkey"
+            columns: ["service_category"]
+            isOneToOne: false
+            referencedRelation: "service_performance_by_category"
+            referencedColumns: ["category_name"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_yacht_sale_id_fkey"
+            columns: ["yacht_sale_id"]
+            isOneToOne: false
+            referencedRelation: "yacht_inventory"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       maintenance_requests: {
         Row: {
@@ -4502,6 +4792,115 @@ export type Database = {
           },
           {
             foreignKeyName: "service_contracts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_invoices: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          customer_id: number
+          discount_amount_eur: number | null
+          discount_percent: number | null
+          due_date: string | null
+          exchange_rate: number | null
+          id: number
+          invoice_date: string | null
+          invoice_number: string
+          invoice_status: string | null
+          invoice_type: string | null
+          late_fee_eur: number | null
+          notes: string | null
+          outstanding_amount_eur: number | null
+          paid_amount_eur: number | null
+          payment_date: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          service_period_end: string | null
+          service_period_start: string | null
+          subtotal_eur: number | null
+          tax_amount_eur: number | null
+          tax_rate: number | null
+          total_amount_eur: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          customer_id: number
+          discount_amount_eur?: number | null
+          discount_percent?: number | null
+          due_date?: string | null
+          exchange_rate?: number | null
+          id?: number
+          invoice_date?: string | null
+          invoice_number: string
+          invoice_status?: string | null
+          invoice_type?: string | null
+          late_fee_eur?: number | null
+          notes?: string | null
+          outstanding_amount_eur?: number | null
+          paid_amount_eur?: number | null
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          subtotal_eur?: number | null
+          tax_amount_eur?: number | null
+          tax_rate?: number | null
+          total_amount_eur: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          customer_id?: number
+          discount_amount_eur?: number | null
+          discount_percent?: number | null
+          due_date?: string | null
+          exchange_rate?: number | null
+          id?: number
+          invoice_date?: string | null
+          invoice_number?: string
+          invoice_status?: string | null
+          invoice_type?: string | null
+          late_fee_eur?: number | null
+          notes?: string | null
+          outstanding_amount_eur?: number | null
+          paid_amount_eur?: number | null
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          subtotal_eur?: number | null
+          tax_amount_eur?: number | null
+          tax_rate?: number | null
+          total_amount_eur?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_service_usage"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "service_invoices_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"

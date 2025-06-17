@@ -16,31 +16,31 @@ export interface Customer {
   last_booking_date: string;
   created_at: string;
   updated_at: string;
-  // Additional fields from customer_360_view
-  acquisition_source?: string;
-  acquisition_date?: string;
-  average_booking_value?: number;
-  average_review_rating?: number;
-  avg_satisfaction_score?: number;
-  preferred_boat?: string;
-  preferred_time_slot?: string;
-  communication_preference?: string;
-  nationality?: string;
-  special_requirements?: string;
-  vip_status?: boolean;
-  referral_source?: string;
-  marketing_consent?: boolean;
-  data_source?: string;
+  // Additional fields from customer_360_view - all required with defaults
+  acquisition_source: string;
+  acquisition_date: string;
+  average_booking_value: number;
+  average_review_rating: number;
+  avg_satisfaction_score: number;
+  preferred_boat: string;
+  preferred_time_slot: string;
+  communication_preference: string;
+  nationality: string;
+  special_requirements: string;
+  vip_status: boolean;
+  referral_source: string;
+  marketing_consent: boolean;
+  data_source: string;
   // Additional optional fields for completeness
-  dietary_restrictions?: string;
-  favorite_boat?: string;
-  last_contact_date?: string;
-  last_contact_method?: string;
-  latest_review_date?: string;
-  preferred_season?: string;
-  total_charter_hours?: number;
-  total_charters?: number;
-  total_reviews_given?: number;
+  dietary_restrictions: string;
+  favorite_boat: string;
+  last_contact_date: string;
+  last_contact_method: string;
+  latest_review_date: string;
+  preferred_season: string;
+  total_charter_hours: number;
+  total_charters: number;
+  total_reviews_given: number;
 }
 
 export interface CustomerHistory {
