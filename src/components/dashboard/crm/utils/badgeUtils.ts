@@ -2,23 +2,40 @@
 export const getCustomerSegmentColor = (segment: string) => {
   switch (segment?.toLowerCase()) {
     case 'vip':
-      return 'bg-purple-100 text-purple-800';
+      return 'bg-yellow-500 text-white';
+    case 'premium':
+      return 'bg-purple-500 text-white';
     case 'loyal':
-      return 'bg-blue-100 text-blue-800';
-    case 'new':
-      return 'bg-green-100 text-green-800';
+      return 'bg-blue-500 text-white';
+    case 'standard':
+      return 'bg-gray-500 text-white';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-400 text-white';
   }
 };
 
 export const getActivityStatusColor = (status: string) => {
   switch (status?.toLowerCase()) {
     case 'active':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-500 text-white';
     case 'inactive':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-500 text-white';
+    case 'pending':
+      return 'bg-yellow-500 text-white';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-500 text-white';
+  }
+};
+
+export const getBookingStatusColor = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case 'confirmed':
+      return 'bg-green-500 text-white';
+    case 'pending':
+      return 'bg-yellow-500 text-white';
+    case 'cancelled':
+      return 'bg-red-500 text-white';
+    default:
+      return 'bg-gray-500 text-white';
   }
 };
