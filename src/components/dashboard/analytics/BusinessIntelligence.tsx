@@ -33,6 +33,7 @@ export const BusinessIntelligence = () => {
     conversionRate: 0
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAnalyticsData();
@@ -40,19 +41,32 @@ export const BusinessIntelligence = () => {
 
   const fetchAnalyticsData = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      
       // Fetch current year bookings for analytics
       const currentYear = new Date().getFullYear();
-      const { data: bookings } = await supabase
+      const { data: bookings, error } = await supabase
         .from('bookings')
         .select('*')
         .gte('start_date', `${currentYear}-01-01`)
         .lte('start_date', `${currentYear}-12-31`);
 
-      if (bookings) {
+      if (error) {
+        console.error('Error fetching analytics:', error);
+        setError('Failed to fetch analytics data');
+        return;
+      }
+
+      if (bookings && bookings.length > 0) {
         processAnalyticsData(bookings);
+      } else {
+        console.warn('No bookings data found for current year');
+        setError('No bookings data available for current year');
       }
     } catch (error) {
       console.error('Error fetching analytics:', error);
+      setError('Failed to load analytics data');
     } finally {
       setLoading(false);
     }
@@ -155,6 +169,26 @@ export const BusinessIntelligence = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <p className="text-red-600 mb-2">Error loading analytics data</p>
+            <p className="text-sm text-gray-600">{error}</p>
+            <button 
+              onClick={fetchAnalyticsData}
+              className="mt-4 px-4 py-2 bg-zatara-blue text-white rounded hover:bg-zatara-blue/90"
+            >
+              Retry
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* KPI Overview */}
@@ -221,21 +255,27 @@ export const BusinessIntelligence = () => {
               <CardDescription>Revenue and charter count by month</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip formatter={(value, name) => [
-                    name === 'revenue' ? formatCurrency(value as number) : value,
-                    name === 'revenue' ? 'Revenue' : 'Charters'
-                  ]} />
-                  <Legend />
-                  <Bar yAxisId="left" dataKey="revenue" fill="#1e40af" name="Revenue" />
-                  <Bar yAxisId="right" dataKey="charters" fill="#3b82f6" name="Charters" />
-                </BarChart>
-              </ResponsiveContainer>
+              {revenueData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis yAxisId="left" />
+                    <YAxis yAxisId="right" orientation="right" />
+                    <Tooltip formatter={(value, name) => [
+                      name === 'revenue' ? formatCurrency(value as number) : value,
+                      name === 'revenue' ? 'Revenue' : 'Charters'
+                    ]} />
+                    <Legend />
+                    <Bar yAxisId="left" dataKey="revenue" fill="#1e40af" name="Revenue" />
+                    <Bar yAxisId="right" dataKey="charters" fill="#3b82f6" name="Charters" />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  No revenue data available for this period
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -248,15 +288,21 @@ export const BusinessIntelligence = () => {
                 <CardDescription>Revenue and charter count by boat</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={boatPerformance}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="boat" />
-                    <YAxis />
-                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                    <Bar dataKey="revenue" fill="#1e40af" />
-                  </BarChart>
-                </ResponsiveContainer>
+                {boatPerformance.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={boatPerformance}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="boat" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                      <Bar dataKey="revenue" fill="#1e40af" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="text-center text-gray-500 py-8">
+                    No boat performance data available
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -267,18 +313,24 @@ export const BusinessIntelligence = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {boatPerformance.map((boat, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <p className="font-medium">{boat.boat}</p>
-                        <p className="text-sm text-gray-500">{boat.charters} charters</p>
+                  {boatPerformance.length > 0 ? (
+                    boatPerformance.map((boat, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <p className="font-medium">{boat.boat}</p>
+                          <p className="text-sm text-gray-500">{boat.charters} charters</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold">{formatCurrency(boat.avgValue)}</p>
+                          <p className="text-sm text-gray-500">avg value</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold">{formatCurrency(boat.avgValue)}</p>
-                        <p className="text-sm text-gray-500">avg value</p>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-gray-500 py-8">
+                      No boat data available
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>

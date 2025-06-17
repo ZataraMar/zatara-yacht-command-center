@@ -7,10 +7,12 @@ import { Calendar, Users, DollarSign, Anchor, TrendingUp, AlertTriangle, Clock, 
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/SecureAuthContext';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { useSystemStatus } from '@/hooks/useSystemStatus';
 
 export const DashboardHome = () => {
   const { profile } = useAuth();
   const { metrics, loading } = useDashboardData();
+  const { systemStatus, overallHealth, loading: healthLoading } = useSystemStatus();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-EU', {
@@ -266,45 +268,49 @@ export const DashboardHome = () => {
         </div>
       </div>
 
-      {/* Enhanced System Status */}
+      {/* Live System Status */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center space-x-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
+            <div className={`w-3 h-3 rounded-full ${
+              healthLoading ? 'bg-gray-400' : 
+              overallHealth === 'healthy' ? 'bg-green-500 animate-pulse' : 
+              overallHealth === 'warning' ? 'bg-yellow-500 animate-pulse' : 
+              'bg-red-500 animate-pulse'
+            }`}></div>
             <span>System Status</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <div>
-                <p className="text-sm font-medium">Database</p>
-                <p className="text-xs text-green-600">Connected</p>
-              </div>
+          {healthLoading ? (
+            <div className="flex items-center justify-center p-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-zatara-blue"></div>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <div>
-                <p className="text-sm font-medium">Real-time</p>
-                <p className="text-xs text-green-600">Active</p>
-              </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {systemStatus.map((status, index) => (
+                <div key={index} className={`flex items-center space-x-3 p-3 rounded-lg ${
+                  status.status === 'healthy' ? 'bg-green-50' : 
+                  status.status === 'warning' ? 'bg-yellow-50' : 
+                  'bg-red-50'
+                }`}>
+                  <div className={`w-3 h-3 rounded-full ${
+                    status.status === 'healthy' ? 'bg-green-500' : 
+                    status.status === 'warning' ? 'bg-yellow-500' : 
+                    'bg-red-500'
+                  }`}></div>
+                  <div>
+                    <p className="text-sm font-medium capitalize">{status.component.replace('_', ' ')}</p>
+                    <p className={`text-xs ${
+                      status.status === 'healthy' ? 'text-green-600' : 
+                      status.status === 'warning' ? 'text-yellow-600' : 
+                      'text-red-600'
+                    }`}>{status.status}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <div>
-                <p className="text-sm font-medium">Communications</p>
-                <p className="text-xs text-green-600">Ready</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              <div>
-                <p className="text-sm font-medium">API Status</p>
-                <p className="text-xs text-blue-600">Monitoring</p>
-              </div>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

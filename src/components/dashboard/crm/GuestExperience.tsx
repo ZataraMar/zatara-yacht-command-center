@@ -19,7 +19,8 @@ import {
   Gift,
   Search,
   Plus,
-  Filter
+  Filter,
+  AlertTriangle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -43,6 +44,7 @@ interface Guest {
 export const GuestExperience = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
 
@@ -52,17 +54,30 @@ export const GuestExperience = () => {
 
   const fetchGuests = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      
       const { data: bookings, error } = await supabase
         .from('bookings')
         .select('*')
         .not('guest_email', 'is', null);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching guests:', error);
+        setError('Failed to fetch guest data');
+        return;
+      }
+
+      if (!bookings || bookings.length === 0) {
+        console.warn('No guest data found');
+        setError('No guest data available');
+        return;
+      }
 
       // Process bookings into guest profiles
       const guestMap = new Map();
       
-      bookings?.forEach(booking => {
+      bookings.forEach(booking => {
         const key = booking.guest_email;
         if (!guestMap.has(key)) {
           guestMap.set(key, {
@@ -100,6 +115,7 @@ export const GuestExperience = () => {
       setGuests(Array.from(guestMap.values()));
     } catch (error) {
       console.error('Error fetching guests:', error);
+      setError('Failed to load guest data');
     } finally {
       setLoading(false);
     }
@@ -135,6 +151,26 @@ export const GuestExperience = () => {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zatara-blue"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <p className="text-red-600 mb-2">Error loading guest data</p>
+            <p className="text-sm text-gray-600">{error}</p>
+            <button 
+              onClick={fetchGuests}
+              className="mt-4 px-4 py-2 bg-zatara-blue text-white rounded hover:bg-zatara-blue/90"
+            >
+              Retry
+            </button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -228,76 +264,85 @@ export const GuestExperience = () => {
           </div>
 
           {/* Guest Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredGuests.map((guest) => (
-              <Card key={guest.id} className="hover:shadow-lg transition-shadow cursor-pointer"
-                    onClick={() => setSelectedGuest(guest)}>
-                <CardHeader>
-                  <div className="flex items-start space-x-4">
-                    <Avatar>
-                      <AvatarFallback>
-                        {getInitials(guest.first_name, guest.last_name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">
-                        {guest.first_name} {guest.last_name}
-                      </CardTitle>
-                      <div className="flex items-center space-x-2 mt-1">
-                        {getVIPBadge(guest)}
-                        <Badge variant="outline" className="text-xs">
-                          {guest.total_charters} charter{guest.total_charters !== 1 ? 's' : ''}
-                        </Badge>
+          {filteredGuests.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredGuests.map((guest) => (
+                <Card key={guest.id} className="hover:shadow-lg transition-shadow cursor-pointer"
+                      onClick={() => setSelectedGuest(guest)}>
+                  <CardHeader>
+                    <div className="flex items-start space-x-4">
+                      <Avatar>
+                        <AvatarFallback>
+                          {getInitials(guest.first_name, guest.last_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <CardTitle className="text-lg">
+                          {guest.first_name} {guest.last_name}
+                        </CardTitle>
+                        <div className="flex items-center space-x-2 mt-1">
+                          {getVIPBadge(guest)}
+                          <Badge variant="outline" className="text-xs">
+                            {guest.total_charters} charter{guest.total_charters !== 1 ? 's' : ''}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2 text-sm">
-                      <Mail className="h-4 w-4 text-gray-500" />
-                      <span className="truncate">{guest.email}</span>
-                    </div>
-                    {guest.phone && (
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
                       <div className="flex items-center space-x-2 text-sm">
-                        <Phone className="h-4 w-4 text-gray-500" />
-                        <span>{guest.phone}</span>
+                        <Mail className="h-4 w-4 text-gray-500" />
+                        <span className="truncate">{guest.email}</span>
                       </div>
-                    )}
-                    {guest.nationality && (
-                      <div className="flex items-center space-x-2 text-sm">
-                        <MapPin className="h-4 w-4 text-gray-500" />
-                        <span>{guest.nationality}</span>
+                      {guest.phone && (
+                        <div className="flex items-center space-x-2 text-sm">
+                          <Phone className="h-4 w-4 text-gray-500" />
+                          <span>{guest.phone}</span>
+                        </div>
+                      )}
+                      {guest.nationality && (
+                        <div className="flex items-center space-x-2 text-sm">
+                          <MapPin className="h-4 w-4 text-gray-500" />
+                          <span>{guest.nationality}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-sm font-medium">Total Spent:</span>
+                        <span className="text-sm font-bold text-green-600">
+                          {formatCurrency(guest.total_spent)}
+                        </span>
                       </div>
-                    )}
-                    <div className="flex justify-between items-center pt-2">
-                      <span className="text-sm font-medium">Total Spent:</span>
-                      <span className="text-sm font-bold text-green-600">
-                        {formatCurrency(guest.total_spent)}
-                      </span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">Last Charter:</span>
+                        <span className="text-sm">
+                          {guest.last_charter ? new Date(guest.last_charter).toLocaleDateString() : 'N/A'}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-1 pt-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`h-4 w-4 ${star <= guest.satisfaction_rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                          />
+                        ))}
+                        <span className="text-sm text-gray-600 ml-2">
+                          {guest.satisfaction_rating.toFixed(1)}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Last Charter:</span>
-                      <span className="text-sm">
-                        {guest.last_charter ? new Date(guest.last_charter).toLocaleDateString() : 'N/A'}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-1 pt-2">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`h-4 w-4 ${star <= guest.satisfaction_rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                        />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">
-                        {guest.satisfaction_rating.toFixed(1)}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">No guests found matching your search</p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="feedback" className="space-y-6">
@@ -355,7 +400,7 @@ export const GuestExperience = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Guest Detail Modal would go here */}
+      {/* Guest Detail Modal */}
       {selectedGuest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
