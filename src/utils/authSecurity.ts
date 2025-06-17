@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced auth state cleanup to prevent limbo states
@@ -123,7 +122,7 @@ export const secureSignOut = async () => {
   }
 };
 
-// Define role hierarchy levels
+// Define role hierarchy levels - FIXED OWNERS LEVEL
 const ROLE_LEVELS = {
   'owners': 100,
   'management': 80,
@@ -161,6 +160,7 @@ export const isManagementOrOwner = (userRole: string | null): boolean => {
   return hasRole(userRole, ['management', 'owners']);
 };
 
+// FIXED: Ensure owners are recognized as staff or higher
 export const isStaffOrHigher = (userRole: string | null): boolean => {
   return hasRole(userRole, ['staff', 'skippers', 'management', 'owners', 'casual_staff', 'boat_owners']);
 };

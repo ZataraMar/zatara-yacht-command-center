@@ -16,19 +16,21 @@ const Index = () => {
   const canViewFinancials = isManagementOrOwner(userRole);
   const canViewOperations = isStaffOrHigher(userRole);
 
-  // Auto-redirect authenticated users to appropriate dashboard
+  // SIMPLIFIED: Only redirect clients, let all staff/management stay on Index
   useEffect(() => {
     if (user && profile) {
+      console.log('User role:', userRole);
+      // Only redirect clients to their bookings page
       if (isClientRole(userRole)) {
+        console.log('Redirecting client to bookings');
         navigate('/dashboard/bookings');
-      } else if (isStaffOrHigher(userRole)) {
-        navigate('/dashboard');
       }
+      // Staff and management can stay on the Index/dashboard overview
     }
   }, [user, profile, userRole, navigate]);
 
-  // If user is loading or will be redirected, show loading
-  if (user && profile) {
+  // Show loading only for clients who will be redirected
+  if (user && profile && isClientRole(userRole)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

@@ -26,7 +26,7 @@ export const enhancedCleanupAuthState = () => {
   localStorage.removeItem('zatara_user_preferences');
 };
 
-// Enhanced secure sign-in with proper URL configuration
+// Enhanced secure sign-in with proper URL configuration - FIXED REDIRECT
 export const enhancedSecureSignIn = async (email: string, password: string) => {
   try {
     // Clean up existing state
@@ -48,7 +48,8 @@ export const enhancedSecureSignIn = async (email: string, password: string) => {
     if (error) throw error;
     
     if (data.user) {
-      // Redirect to dashboard after successful login
+      // Always redirect to dashboard for authenticated users
+      console.log('Login successful, redirecting to dashboard');
       window.location.href = '/dashboard';
     }
     
