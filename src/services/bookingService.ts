@@ -43,7 +43,7 @@ export const fetchHistoricalBookings = async (year: number, filters?: BookingFil
 
   try {
     // Use correct table names for historical data
-    const tableName = year === 2022 ? 'charters_2022' : year === 2023 ? 'charters_2023' : null;
+    const tableName = year === 2022 ? 'charters_2022' : year === 2023 ? 'zatara_2023_charters' : null;
     
     if (!tableName) {
       console.warn(`No table available for year ${year}`);
