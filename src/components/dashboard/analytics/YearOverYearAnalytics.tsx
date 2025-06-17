@@ -344,17 +344,20 @@ export const YearOverYearAnalytics = () => {
                       <div key={year} className="border rounded-lg p-3">
                         <h4 className="font-medium mb-2">{year} ({total} bookings)</h4>
                         <div className="space-y-1">
-                          {Object.entries(sources).map(([source, count]) => (
-                            <div key={source} className="flex items-center justify-between text-sm">
-                              <span>{source}</span>
-                              <div className="flex items-center space-x-2">
-                                <span>{Number(count)}</span>
-                                <Badge variant="outline">
-                                  {total > 0 ? ((Number(count) / total) * 100).toFixed(1) : '0'}%
-                                </Badge>
+                          {Object.entries(sources).map(([source, count]) => {
+                            const numCount = Number(count);
+                            return (
+                              <div key={source} className="flex items-center justify-between text-sm">
+                                <span>{source}</span>
+                                <div className="flex items-center space-x-2">
+                                  <span>{numCount}</span>
+                                  <Badge variant="outline">
+                                    {total > 0 ? ((numCount / total) * 100).toFixed(1) : '0'}%
+                                  </Badge>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     );
@@ -378,17 +381,20 @@ export const YearOverYearAnalytics = () => {
                       <div key={year} className="border rounded-lg p-3">
                         <h4 className="font-medium mb-2">{year} ({total} bookings)</h4>
                         <div className="space-y-1">
-                          {Object.entries(boats).map(([boat, count]) => (
-                            <div key={boat} className="flex items-center justify-between text-sm">
-                              <span>{boat}</span>
-                              <div className="flex items-center space-x-2">
-                                <span>{Number(count)}</span>
-                                <Badge variant="outline">
-                                  {total > 0 ? ((Number(count) / total) * 100).toFixed(1) : '0'}%
-                                </Badge>
+                          {Object.entries(boats).map(([boat, count]) => {
+                            const numCount = Number(count);
+                            return (
+                              <div key={boat} className="flex items-center justify-between text-sm">
+                                <span>{boat}</span>
+                                <div className="flex items-center space-x-2">
+                                  <span>{numCount}</span>
+                                  <Badge variant="outline">
+                                    {total > 0 ? ((numCount / total) * 100).toFixed(1) : '0'}%
+                                  </Badge>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     );
