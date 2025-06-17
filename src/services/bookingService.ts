@@ -41,17 +41,36 @@ export const fetchHistoricalBookings = async (year: number, filters?: BookingFil
   const shouldFetch = !filters?.years || filters.years.includes(year);
   if (!shouldFetch) return [];
 
-  const tableName = `charters_${year}`;
-  const { data: historicalData, error } = await supabase
-    .from(tableName)
-    .select('*')
-    .not('charter_date', 'is', null)
-    .order('charter_date', { ascending: false })
-    .limit(200);
+  // Use a dynamic query approach to handle table names
+  const { data: historicalData, error } = await supabase.rpc('get_historical_bookings', {
+    target_year: year,
+    start_date_filter: filters?.startDate,
+    end_date_filter: filters?.endDate
+  });
 
   if (error) {
     console.warn(`Error fetching ${year} data:`, error);
-    return [];
+    
+    // Fallback to direct table query if RPC doesn't exist
+    try {
+      const tableName = year === 2022 ? 'charters_2022' : 'charters_2023';
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from(tableName as any)
+        .select('*')
+        .not('charter_date', 'is', null)
+        .order('charter_date', { ascending: false })
+        .limit(200);
+
+      if (fallbackError) {
+        console.warn(`Fallback query failed for ${year}:`, fallbackError);
+        return [];
+      }
+
+      return (fallbackData || []).map(charter => transformHistoricalBooking(charter, year));
+    } catch (fallbackErr) {
+      console.warn(`All queries failed for ${year}:`, fallbackErr);
+      return [];
+    }
   }
 
   return (historicalData || []).map(charter => transformHistoricalBooking(charter, year));

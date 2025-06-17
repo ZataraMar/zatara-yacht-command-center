@@ -1,12 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Filter, Calendar } from 'lucide-react';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RefreshCw, X, Filter } from 'lucide-react';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
+import { DateRange } from 'react-day-picker';
 
 interface EnhancedViewFiltersProps {
   timeFilter: string;
@@ -17,10 +19,18 @@ interface EnhancedViewFiltersProps {
   setStatusFilter: (value: string) => void;
   viewMode: string;
   setViewMode: (value: string) => void;
-  availableViews: any[];
+  availableViews: Array<{ view_name: string; display_name: string }>;
   onRefresh: () => void;
-  loading?: boolean;
-  resultCount?: number;
+  loading: boolean;
+  resultCount: number;
+  dateRange?: DateRange;
+  setDateRange?: (range: DateRange | undefined) => void;
+  selectedSources?: string[];
+  setSelectedSources?: (sources: string[]) => void;
+  selectedStatuses?: string[];
+  setSelectedStatuses?: (statuses: string[]) => void;
+  selectedBoats?: string[];
+  setSelectedBoats?: (boats: string[]) => void;
 }
 
 export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
@@ -34,178 +44,276 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
   setViewMode,
   availableViews,
   onRefresh,
-  loading = false,
-  resultCount = 0
+  loading,
+  resultCount,
+  dateRange,
+  setDateRange,
+  selectedSources = [],
+  setSelectedSources,
+  selectedStatuses = [],
+  setSelectedStatuses,
+  selectedBoats = [],
+  setSelectedBoats
 }) => {
-  const [customDateRange, setCustomDateRange] = useState<Date | undefined>(undefined);
-  const [showCustomDate, setShowCustomDate] = useState(false);
-
   const timeOptions = [
-    { value: '1', label: 'Today Only' },
-    { value: '3', label: '3 days (±1 day)' },
-    { value: '7', label: '7 days (±3 days)' },
-    { value: '14', label: '14 days (±7 days)' },
-    { value: '30', label: '30 days (±15 days)' },
-    { value: '60', label: '60 days (±30 days)' },
-    { value: 'custom', label: 'Custom Date' }
+    { label: 'Today', value: '0' },
+    { label: 'Next 7 days', value: '7' },
+    { label: 'Next 14 days', value: '14' },
+    { label: 'Next 30 days', value: '30' },
+    { label: 'Custom Range', value: 'custom' }
   ];
 
   const boatOptions = [
-    { value: 'all', label: 'All Boats' },
-    { value: 'zatara_only', label: 'Zatara Only' },
-    { value: 'puravida_only', label: 'PuraVida Only' },
-    { value: 'zatara_puravida', label: 'Both Boats' }
+    { label: 'All Boats', value: 'all' },
+    { label: 'Zatara Only', value: 'zatara_only' },
+    { label: 'PuraVida Only', value: 'puravida_only' },
+    { label: 'Zatara & PuraVida', value: 'zatara_puravida' }
   ];
 
   const statusOptions = [
-    { value: 'all', label: 'All Status' },
-    { value: 'booked_prebooked', label: 'Booked/Confirmed' },
-    { value: 'option_request', label: 'Option/Request' },
-    { value: 'cancelled', label: 'Cancelled' }
+    { label: 'Booked/Confirmed', value: 'booked_prebooked' },
+    { label: 'Option/Request', value: 'option_request' },
+    { label: 'Cancelled', value: 'cancelled' },
+    { label: 'All Statuses', value: 'all' }
   ];
 
-  const handleTimeFilterChange = (value: string) => {
-    if (value === 'custom') {
-      setShowCustomDate(true);
-    } else {
-      setShowCustomDate(false);
-      setTimeFilter(value);
-    }
+  const sourceOptions = [
+    { label: 'Andronautic', value: 'andronautic' },
+    { label: 'ClickBoat', value: 'clickboat' },
+    { label: 'Airbnb', value: 'airbnb' },
+    { label: 'Direct', value: 'direct' },
+    { label: 'Viator', value: 'viator' },
+    { label: 'GetYourGuide', value: 'getyourguide' }
+  ];
+
+  const multiSelectStatusOptions = [
+    { label: 'Confirmed', value: 'confirmed' },
+    { label: 'Booked', value: 'booked' },
+    { label: 'Prebooked', value: 'prebooked' },
+    { label: 'Option', value: 'option' },
+    { label: 'Request', value: 'request' },
+    { label: 'Cancelled', value: 'cancelled' }
+  ];
+
+  const multiSelectBoatOptions = [
+    { label: 'Zatara', value: 'zatara' },
+    { label: 'PuraVida', value: 'puravida' }
+  ];
+
+  const clearAllFilters = () => {
+    setTimeFilter('14');
+    setBoatFilter('all');
+    setStatusFilter('booked_prebooked');
+    setDateRange?.(undefined);
+    setSelectedSources?.([]);
+    setSelectedStatuses?.([]);
+    setSelectedBoats?.([]);
   };
 
-  const getActiveFiltersCount = () => {
-    let count = 0;
-    if (timeFilter !== '14') count++;
-    if (boatFilter !== 'all') count++;
-    if (statusFilter !== 'all') count++;
-    return count;
-  };
+  const hasActiveFilters = 
+    timeFilter !== '14' || 
+    boatFilter !== 'all' || 
+    statusFilter !== 'booked_prebooked' ||
+    dateRange ||
+    selectedSources.length > 0 ||
+    selectedStatuses.length > 0 ||
+    selectedBoats.length > 0;
 
   return (
-    <div className="space-y-4">
-      {/* Main Filters */}
-      <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-lg border shadow-sm">
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-gray-500" />
-          <label className="text-sm font-medium text-gray-700">Filters:</label>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <label className="text-sm font-medium">Time Range:</label>
-          <Select value={timeFilter} onValueChange={handleTimeFilterChange}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {timeOptions.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          {showCustomDate && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-40 justify-start text-left font-normal">
-                  <Calendar className="mr-2 h-4 w-4" />
-                  {customDateRange ? format(customDateRange, "PPP") : "Pick a date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={customDateRange}
-                  onSelect={(date) => {
-                    setCustomDateRange(date);
-                    if (date) {
-                      // Convert selected date to a custom filter range
-                      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-                      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-                      const today = new Date();
-                      const daysDiff = Math.ceil((monthEnd.getTime() - monthStart.getTime()) / (1000 * 3600 * 24));
-                      setTimeFilter(daysDiff.toString());
-                    }
-                  }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          )}
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <label className="text-sm font-medium">Boats:</label>
-          <Select value={boatFilter} onValueChange={setBoatFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {boatOptions.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <label className="text-sm font-medium">Status:</label>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {statusOptions.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button 
-          onClick={onRefresh} 
-          variant="outline" 
-          size="sm"
-          disabled={loading}
-          className="ml-auto"
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
-        </Button>
-      </div>
-
-      {/* View Mode Tabs */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          {availableViews.map(view => (
-            <Button
-              key={view.view_name}
-              onClick={() => setViewMode(view.view_name)}
-              variant={viewMode === view.view_name ? "default" : "outline"}
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center space-x-2">
+            <Filter className="h-5 w-5" />
+            <span>Advanced Filters</span>
+          </CardTitle>
+          <div className="flex items-center space-x-2">
+            {hasActiveFilters && (
+              <Button variant="outline" size="sm" onClick={clearAllFilters}>
+                <X className="h-4 w-4 mr-2" />
+                Clear All
+              </Button>
+            )}
+            <Button 
+              onClick={onRefresh} 
+              disabled={loading}
               size="sm"
-              className="text-sm"
             >
-              {view.display_name}
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
             </Button>
-          ))}
+          </div>
+        </div>
+        <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <span>Showing {resultCount} results</span>
+          {hasActiveFilters && <Badge variant="secondary">Filtered</Badge>}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* View Selection */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="view-select">View Mode</Label>
+            <select
+              id="view-select"
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md"
+            >
+              {availableViews.map((view) => (
+                <option key={view.view_name} value={view.view_name}>
+                  {view.display_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="time-filter">Time Range</Label>
+            <select
+              id="time-filter"
+              value={timeFilter}
+              onChange={(e) => setTimeFilter(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md"
+            >
+              {timeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Date Range</Label>
+            {setDateRange && (
+              <DateRangePicker
+                date={dateRange}
+                onDateChange={setDateRange}
+                placeholder="Select date range"
+              />
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {getActiveFiltersCount() > 0 && (
-            <Badge variant="secondary">
-              {getActiveFiltersCount()} active filter{getActiveFiltersCount() !== 1 ? 's' : ''}
-            </Badge>
-          )}
-          <Badge variant="outline">
-            {resultCount} result{resultCount !== 1 ? 's' : ''}
-          </Badge>
+        {/* Legacy Filters (for compatibility) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="boat-filter">Boat Filter (Legacy)</Label>
+            <select
+              id="boat-filter"
+              value={boatFilter}
+              onChange={(e) => setBoatFilter(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md"
+            >
+              {boatOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="status-filter">Status Filter (Legacy)</Label>
+            <select
+              id="status-filter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md"
+            >
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
-    </div>
+
+        {/* Enhanced Multi-Select Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {setSelectedBoats && (
+            <div className="space-y-2">
+              <Label>Boats (Multi-Select)</Label>
+              <MultiSelect
+                options={multiSelectBoatOptions}
+                selected={selectedBoats}
+                onChange={setSelectedBoats}
+                placeholder="Select boats"
+              />
+            </div>
+          )}
+
+          {setSelectedSources && (
+            <div className="space-y-2">
+              <Label>Booking Sources</Label>
+              <MultiSelect
+                options={sourceOptions}
+                selected={selectedSources}
+                onChange={setSelectedSources}
+                placeholder="Select sources"
+              />
+            </div>
+          )}
+
+          {setSelectedStatuses && (
+            <div className="space-y-2">
+              <Label>Booking Statuses</Label>
+              <MultiSelect
+                options={multiSelectStatusOptions}
+                selected={selectedStatuses}
+                onChange={setSelectedStatuses}
+                placeholder="Select statuses"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Active Filters Display */}
+        {hasActiveFilters && (
+          <div className="border-t pt-4">
+            <Label className="text-sm font-medium">Active Filters:</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {timeFilter !== '14' && (
+                <Badge variant="secondary">
+                  Time: {timeOptions.find(o => o.value === timeFilter)?.label}
+                </Badge>
+              )}
+              {boatFilter !== 'all' && (
+                <Badge variant="secondary">
+                  Boat: {boatOptions.find(o => o.value === boatFilter)?.label}
+                </Badge>
+              )}
+              {statusFilter !== 'booked_prebooked' && (
+                <Badge variant="secondary">
+                  Status: {statusOptions.find(o => o.value === statusFilter)?.label}
+                </Badge>
+              )}
+              {dateRange && (
+                <Badge variant="secondary">
+                  Custom Date Range
+                </Badge>
+              )}
+              {selectedSources.map(source => (
+                <Badge key={source} variant="secondary">
+                  Source: {source}
+                </Badge>
+              ))}
+              {selectedStatuses.map(status => (
+                <Badge key={status} variant="secondary">
+                  Status: {status}
+                </Badge>
+              ))}
+              {selectedBoats.map(boat => (
+                <Badge key={boat} variant="secondary">
+                  Boat: {boat}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };

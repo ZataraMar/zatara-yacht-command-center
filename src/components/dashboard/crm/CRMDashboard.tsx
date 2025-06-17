@@ -1,86 +1,67 @@
 
-import React, { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, UserPlus, Search, BarChart3, MessageSquare, Calendar } from 'lucide-react';
+import { BookingsCenter } from './BookingsCenter';
 import { CustomerList } from './CustomerList';
-import { CustomerProfileView } from './CustomerProfileView';
-import { CustomerSearch } from './CustomerSearch';
 import { CustomerAnalytics } from './CustomerAnalytics';
 import { CommunicationCenter } from './CommunicationCenter';
-import { BookingsCenter } from './BookingsCenter';
+import { GuestExperience } from './GuestExperience';
+import { FinancialReconciliation } from './FinancialReconciliation';
+import { ExtrasManagement } from './ExtrasManagement';
+import { YearOverYearAnalytics } from '../analytics/YearOverYearAnalytics';
 
 export const CRMDashboard = () => {
-  const [activeTab, setActiveTab] = useState('customers');
-  const navigate = useNavigate();
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-zatara-navy">Customer Relationship Management</h1>
-          <p className="text-zatara-blue">Manage customer relationships and analyze booking history</p>
-        </div>
-        <div className="flex space-x-2">
-          <Button variant="outline">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add Customer
-          </Button>
-          <Button>
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Send Campaign
-          </Button>
+          <h1 className="text-3xl font-bold text-zatara-navy">CRM Dashboard</h1>
+          <p className="text-zatara-blue">Complete customer relationship and financial management</p>
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="customers" className="flex items-center space-x-2">
-            <Users className="h-4 w-4" />
-            <span>Customers</span>
-          </TabsTrigger>
-          <TabsTrigger value="bookings" className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4" />
-            <span>Bookings</span>
-          </TabsTrigger>
-          <TabsTrigger value="search" className="flex items-center space-x-2">
-            <Search className="h-4 w-4" />
-            <span>Search</span>
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center space-x-2">
-            <BarChart3 className="h-4 w-4" />
-            <span>Analytics</span>
-          </TabsTrigger>
-          <TabsTrigger value="communications" className="flex items-center space-x-2">
-            <MessageSquare className="h-4 w-4" />
-            <span>Communications</span>
-          </TabsTrigger>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
+      <Tabs defaultValue="bookings" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-8">
+          <TabsTrigger value="bookings">Bookings</TabsTrigger>
+          <TabsTrigger value="customers">Customers</TabsTrigger>
+          <TabsTrigger value="financial">Financial</TabsTrigger>
+          <TabsTrigger value="extras">Extras</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="communications">Communications</TabsTrigger>
+          <TabsTrigger value="experience">Experience</TabsTrigger>
+          <TabsTrigger value="insights">Insights</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="customers" className="mt-6">
-          <CustomerList />
-        </TabsContent>
-
-        <TabsContent value="bookings" className="mt-6">
+        <TabsContent value="bookings" className="space-y-6">
           <BookingsCenter />
         </TabsContent>
 
-        <TabsContent value="search" className="mt-6">
-          <CustomerSearch />
+        <TabsContent value="customers" className="space-y-6">
+          <CustomerList />
         </TabsContent>
 
-        <TabsContent value="analytics" className="mt-6">
-          <CustomerAnalytics />
+        <TabsContent value="financial" className="space-y-6">
+          <FinancialReconciliation />
         </TabsContent>
 
-        <TabsContent value="communications" className="mt-6">
+        <TabsContent value="extras" className="space-y-6">
+          <ExtrasManagement />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <YearOverYearAnalytics />
+        </TabsContent>
+
+        <TabsContent value="communications" className="space-y-6">
           <CommunicationCenter />
         </TabsContent>
 
-        <TabsContent value="profile" className="mt-6">
-          <CustomerProfileView />
+        <TabsContent value="experience" className="space-y-6">
+          <GuestExperience />
+        </TabsContent>
+
+        <TabsContent value="insights" className="space-y-6">
+          <CustomerAnalytics />
         </TabsContent>
       </Tabs>
     </div>

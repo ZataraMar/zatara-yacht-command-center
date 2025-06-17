@@ -15,6 +15,9 @@ export interface ComprehensiveBooking {
   charter_total: number;
   paid_amount: number;
   outstanding_amount: number;
+  cash_payment?: number;
+  card_payment?: number;
+  contract_signed?: boolean;
   booking_status: string;
   total_guests: number;
   booking_notes?: string;
