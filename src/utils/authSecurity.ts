@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced auth state cleanup to prevent limbo states
@@ -57,9 +58,9 @@ export const secureSignIn = async (email: string, password: string) => {
 export const secureSignUp = async (email: string, password: string, userData: any) => {
   const redirectUrl = `${window.location.origin}/`;
   
-  // Validate role assignment - allow all account types
+  // Validate role assignment - allow all account types including skipper
   const requestedRole = userData.role;
-  const allowedRoles = ['charter_clients', 'boat_club_clients', 'agency', 'boat_owners'];
+  const allowedRoles = ['charter_clients', 'boat_club_clients', 'agency', 'boat_owners', 'skippers', 'staff'];
   
   if (!allowedRoles.includes(requestedRole)) {
     userData.role = 'charter_clients'; // Default to charter clients
@@ -122,9 +123,17 @@ export const secureSignOut = async () => {
   }
 };
 
-// SIMPLIFIED ROLE SYSTEM - OWNER GETS EVERYTHING
+// Enhanced role system with skipper support
 export const isOwner = (userRole: string | null): boolean => {
   return userRole === 'owner';
+};
+
+export const isSkipper = (userRole: string | null): boolean => {
+  return userRole === 'skippers';
+};
+
+export const isStaff = (userRole: string | null): boolean => {
+  return userRole === 'staff';
 };
 
 // For now, owner gets access to everything
@@ -132,13 +141,14 @@ export const hasFullAccess = (userRole: string | null): boolean => {
   return isOwner(userRole);
 };
 
-// Backward compatibility functions - simplified
+// Management or higher includes owner
 export const isManagementOrOwner = (userRole: string | null): boolean => {
-  return isOwner(userRole);
+  return isOwner(userRole) || userRole === 'management';
 };
 
+// Staff or higher includes skippers, staff, management, and owner
 export const isStaffOrHigher = (userRole: string | null): boolean => {
-  return isOwner(userRole);
+  return isOwner(userRole) || isSkipper(userRole) || isStaff(userRole) || userRole === 'management';
 };
 
 export const isClientRole = (userRole: string | null): boolean => {
@@ -147,6 +157,19 @@ export const isClientRole = (userRole: string | null): boolean => {
 
 export const canManageUsers = (userRole: string | null): boolean => {
   return isOwner(userRole);
+};
+
+// Enhanced access control for different operational areas
+export const canAccessOperations = (userRole: string | null): boolean => {
+  return isOwner(userRole) || isSkipper(userRole) || isStaff(userRole) || userRole === 'management';
+};
+
+export const canAccessFinancials = (userRole: string | null): boolean => {
+  return isOwner(userRole) || userRole === 'management';
+};
+
+export const canManageFleet = (userRole: string | null): boolean => {
+  return isOwner(userRole) || userRole === 'management';
 };
 
 // Legacy function for compatibility

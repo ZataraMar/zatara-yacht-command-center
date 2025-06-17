@@ -14,7 +14,7 @@ import { AutomationWorkflows } from '@/components/dashboard/integration/Automati
 import { UserManagement } from '@/components/dashboard/admin/UserManagement';
 import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
 import { useAuth } from '@/contexts/SecureAuthContext';
-import { isClientRole, isOwner } from '@/utils/authSecurity';
+import { isClientRole, isOwner, isSkipper, canAccessOperations, canAccessFinancials, canManageFleet } from '@/utils/authSecurity';
 
 const Dashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -47,15 +47,24 @@ const Dashboard = () => {
     if (isClientRole(userRole)) {
       return <Navigate to="/dashboard/bookings" replace />;
     }
+    if (isSkipper(userRole)) {
+      return <Navigate to="/dashboard/operations" replace />;
+    }
   }
 
-  // Simple component wrapper for owner access
-  const OwnerOnlyRoute = ({ children }: { children: React.ReactNode }) => {
-    if (!isOwner(userRole)) {
+  // Access control component wrapper
+  const AccessControlRoute = ({ 
+    children, 
+    accessCheck 
+  }: { 
+    children: React.ReactNode;
+    accessCheck: (userRole: string) => boolean;
+  }) => {
+    if (!accessCheck(userRole)) {
       return (
         <div className="text-center p-8">
           <h2 className="text-2xl font-bold text-zatara-navy mb-4">Access Restricted</h2>
-          <p className="text-zatara-blue">This section is only available to the system owner.</p>
+          <p className="text-zatara-blue">You don't have permission to access this section.</p>
         </div>
       );
     }
@@ -67,85 +76,93 @@ const Dashboard = () => {
       <Routes>
         <Route path="/" element={<DashboardHome />} />
         
-        {/* Owner gets access to everything */}
+        {/* Operations - Available to skippers, staff, management, and owner */}
         <Route 
           path="/operations" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={canAccessOperations}>
               <DashboardOperations />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         
+        {/* Fleet Management - Available to management and owner */}
         <Route 
           path="/fleet" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={canManageFleet}>
               <FleetOverview />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         
+        {/* Team Management - Owner only */}
         <Route 
           path="/team" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={isOwner}>
               <StaffManagement />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         
+        {/* User Management - Owner only */}
         <Route 
           path="/users" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={isOwner}>
               <UserManagement />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         
+        {/* Financials - Management and owner only */}
         <Route 
           path="/financials" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={canAccessFinancials}>
               <AdvancedFinancials />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         
+        {/* Guest Experience - Owner only for now */}
         <Route 
           path="/guests" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={isOwner}>
               <GuestExperience />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         
+        {/* Operations Excellence - Owner only */}
         <Route 
           path="/operations-excellence" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={isOwner}>
               <OperationalExcellence />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         
+        {/* Analytics - Owner only */}
         <Route 
           path="/analytics" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={isOwner}>
               <AdvancedReporting />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         
+        {/* Automation - Owner only */}
         <Route 
           path="/automation" 
           element={
-            <OwnerOnlyRoute>
+            <AccessControlRoute accessCheck={isOwner}>
               <AutomationWorkflows />
-            </OwnerOnlyRoute>
+            </AccessControlRoute>
           } 
         />
         

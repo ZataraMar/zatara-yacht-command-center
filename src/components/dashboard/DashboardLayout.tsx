@@ -1,191 +1,183 @@
 
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/SecureAuthContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  Home, 
+  Bell, 
   Calendar, 
-  Anchor, 
   Users, 
   BarChart3, 
   Settings, 
-  Bell,
-  Menu,
   LogOut,
-  Activity,
-  MessageCircle,
+  Menu,
+  X,
+  Anchor,
   DollarSign,
   UserCheck,
-  Shield,
   Zap,
-  TrendingUp,
-  UserCog
+  Target,
+  MessageSquare,
+  Shield
 } from 'lucide-react';
-import { isOwner, isClientRole } from '@/utils/authSecurity';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/SecureAuthContext';
+import { secureSignOut, isOwner } from '@/utils/authSecurity';
+import { ZataraLogo } from '@/components/common/ZataraLogo';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  title?: string;
-  subtitle?: string;
 }
 
-export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ 
-  children, 
-  title = "Dashboard",
-  subtitle = "Welcome to Zatara Mar"
-}) => {
-  const { user, profile, signOut } = useAuth();
+export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { profile } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   const userRole = profile?.role || '';
+  const isOwnerUser = isOwner(userRole);
 
-  const getNavigationItems = () => {
-    const baseItems = [
-      { icon: Home, label: 'Overview', href: '/dashboard' },
-    ];
-
-    // If owner, show everything
-    if (isOwner(userRole)) {
-      return [
-        ...baseItems,
-        { icon: Activity, label: 'Operations Center', href: '/dashboard/operations' },
-        { icon: Anchor, label: 'Fleet Management', href: '/dashboard/fleet' },
-        { icon: Users, label: 'Team Management', href: '/dashboard/team' },
-        { icon: UserCog, label: 'User Management', href: '/dashboard/users' },
-        { icon: UserCheck, label: 'Guest Experience', href: '/dashboard/guests' },
-        { icon: DollarSign, label: 'Financial Management', href: '/dashboard/financials' },
-        { icon: TrendingUp, label: 'Advanced Analytics', href: '/dashboard/analytics' },
-        { icon: Shield, label: 'Operational Excellence', href: '/dashboard/operations-excellence' },
-        { icon: Zap, label: 'Automation & Integration', href: '/dashboard/automation' },
-      ];
-    }
-
-    // Client-specific navigation
-    if (isClientRole(userRole)) {
-      return [
-        ...baseItems,
-        { icon: Calendar, label: 'My Bookings', href: '/dashboard/bookings' },
-      ];
-    }
-
-    // Default fallback
-    return baseItems;
-  };
-
-  const navigationItems = getNavigationItems();
+  const navigation = [
+    { name: 'Overview', href: '/dashboard', icon: BarChart3, current: location.pathname === '/dashboard' },
+    ...(isOwnerUser ? [
+      { name: 'Operations', href: '/dashboard/operations', icon: Anchor, current: location.pathname === '/dashboard/operations' },
+      { name: 'Fleet Management', href: '/dashboard/fleet', icon: Target, current: location.pathname === '/dashboard/fleet' },
+      { name: 'Team', href: '/dashboard/team', icon: Users, current: location.pathname === '/dashboard/team' },
+      { name: 'User Management', href: '/dashboard/users', icon: Shield, current: location.pathname === '/dashboard/users' },
+      { name: 'Financials', href: '/dashboard/financials', icon: DollarSign, current: location.pathname === '/dashboard/financials' },
+      { name: 'Guest Experience', href: '/dashboard/guests', icon: UserCheck, current: location.pathname === '/dashboard/guests' },
+      { name: 'Operations Excellence', href: '/dashboard/operations-excellence', icon: Zap, current: location.pathname === '/dashboard/operations-excellence' },
+      { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3, current: location.pathname === '/dashboard/analytics' },
+      { name: 'Automation', href: '/dashboard/automation', icon: MessageSquare, current: location.pathname === '/dashboard/automation' },
+    ] : [
+      { name: 'My Bookings', href: '/dashboard/bookings', icon: Calendar, current: location.pathname === '/dashboard/bookings' },
+    ]),
+    { name: 'Settings', href: '/dashboard/settings', icon: Settings, current: location.pathname === '/dashboard/settings' },
+  ];
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth');
+    await secureSignOut();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full w-64 bg-white shadow-luxury transform transition-transform duration-200 ease-in-out z-50 lg:translate-x-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        <div className="p-6 border-b border-zatara-gold/20">
-          <Link to="/" className="flex items-center space-x-3">
-            <img 
-              src="/lovable-uploads/83fe3d22-8bf7-47d2-9462-1954772ef062.png" 
-              alt="Zatara" 
-              className="h-12 w-auto"
-            />
-            <div>
-              <h1 className="zatara-luxury-script text-lg text-zatara-navy">Zatara Mar</h1>
-              <p className="text-xs text-zatara-blue uppercase tracking-wide">Management</p>
-            </div>
-          </Link>
-        </div>
-
-        <nav className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-zatara-navy hover:bg-zatara-blue/10 transition-colors"
+    <div className="h-screen flex overflow-hidden bg-gray-100">
+      {/* Mobile menu */}
+      <div className={`fixed inset-0 flex z-40 lg:hidden ${sidebarOpen ? '' : 'pointer-events-none'}`}>
+        <div className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ease-linear duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setSidebarOpen(false)} />
+        
+        <div className={`relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white transition ease-in-out duration-300 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="absolute top-0 right-0 -mr-12 pt-2">
+            <button
+              type="button"
+              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               onClick={() => setSidebarOpen(false)}
             >
-              <item.icon className="h-5 w-5" />
-              <span className="font-medium text-sm">{item.label}</span>
-            </Link>
-          ))}
-        </nav>
+              <X className="h-6 w-6 text-white" />
+            </button>
+          </div>
+          
+          <div className="flex-shrink-0 flex items-center px-4">
+            <ZataraLogo variant="full" size="md" />
+          </div>
+          
+          <div className="mt-5 flex-1 h-0 overflow-y-auto">
+            <nav className="px-2 space-y-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`${
+                    item.current
+                      ? 'bg-zatara-blue text-white'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  } group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <item.icon className="mr-4 h-6 w-6" />
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-zatara-gold/20">
-          <div className="space-y-2">
-            <Link
-              to="/dashboard/settings"
-              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-zatara-navy hover:bg-zatara-blue/10 transition-colors w-full"
-            >
-              <Settings className="h-5 w-5" />
-              <span className="font-medium">Settings</span>
-            </Link>
-            <Button
-              variant="ghost"
-              onClick={handleSignOut}
-              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors w-full justify-start"
-            >
-              <LogOut className="h-5 w-5" />
-              <span className="font-medium">Sign Out</span>
-            </Button>
+      {/* Static sidebar for desktop */}
+      <div className="hidden lg:flex lg:flex-shrink-0">
+        <div className="flex flex-col w-64">
+          <div className="flex flex-col flex-grow bg-white pt-5 pb-4 overflow-y-auto border-r border-gray-200">
+            <div className="flex items-center flex-shrink-0 px-4">
+              <ZataraLogo variant="full" size="lg" />
+            </div>
+            
+            <div className="mt-5 flex-grow flex flex-col">
+              <nav className="flex-1 px-2 space-y-1 bg-white">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`${
+                      item.current
+                        ? 'bg-zatara-blue text-white'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors`}
+                  >
+                    <item.icon className="mr-3 h-5 w-5" />
+                    {item.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="lg:ml-64">
-        {/* Top header */}
-        <header className="bg-white/90 backdrop-blur-sm shadow-sm border-b border-zatara-gold/20 sticky top-0 z-30">
-          <div className="px-4 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden"
-                >
-                  <Menu className="h-5 w-5" />
-                </Button>
-                <div>
-                  <h1 className="text-xl font-bold text-zatara-navy">{title}</h1>
-                  <p className="text-sm text-zatara-blue">{subtitle}</p>
+      <div className="flex flex-col w-0 flex-1 overflow-hidden">
+        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow border-b border-gray-200">
+          <button
+            type="button"
+            className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-zatara-blue lg:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+          
+          <div className="flex-1 px-4 flex justify-between items-center">
+            <div className="flex-1 flex">
+              <h1 className="text-2xl font-semibold text-zatara-navy">
+                {navigation.find(nav => nav.current)?.name || 'Dashboard'}
+              </h1>
+            </div>
+            
+            <div className="ml-4 flex items-center md:ml-6 space-x-4">
+              <Button variant="ghost" size="sm">
+                <Bell className="h-5 w-5" />
+                <Badge className="ml-1 bg-red-500 text-white">3</Badge>
+              </Button>
+              
+              <div className="flex items-center space-x-3">
+                <div className="text-sm text-right">
+                  <p className="font-medium text-zatara-navy">{profile?.first_name} {profile?.last_name}</p>
+                  <p className="text-zatara-blue capitalize">{userRole?.replace('_', ' ')}</p>
                 </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <Button variant="ghost" size="sm">
-                  <Bell className="h-5 w-5" />
+                
+                <ZataraLogo size="sm" />
+                
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4" />
                 </Button>
-                <div className="text-right hidden md:block">
-                  <div className="text-sm font-medium text-zatara-navy">
-                    {profile?.first_name} {profile?.last_name}
-                  </div>
-                  <div className="text-xs text-zatara-blue capitalize">
-                    {profile?.role?.replace('_', ' ')}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
-        </header>
+        </div>
 
-        {/* Page content */}
-        <main className="p-4 lg:p-8">
-          {children}
+        <main className="flex-1 relative overflow-y-auto focus:outline-none bg-gray-50">
+          <div className="py-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+              {children}
+            </div>
+          </div>
         </main>
       </div>
     </div>
