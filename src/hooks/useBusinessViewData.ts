@@ -41,8 +41,20 @@ export const useBusinessViewData = (timeFilter: string, boatFilter: string) => {
 
       setOperationsData(operationsResult || []);
       setFinanceData(financeResult.data || []);
-      setZataraData(zataraResult.data || []);
-      setPuravidaData(puravidaResult.data || []);
+      
+      // Transform zatara data to include boat field
+      const transformedZataraData: SkipperViewRow[] = (zataraResult.data || []).map(item => ({
+        ...item,
+        boat: 'Zatara'
+      }));
+      setZataraData(transformedZataraData);
+      
+      // Transform puravida data to include boat field
+      const transformedPuravidaData: SkipperViewRow[] = (puravidaResult.data || []).map(item => ({
+        ...item,
+        boat: 'PuraVida'
+      }));
+      setPuravidaData(transformedPuravidaData);
 
     } catch (error) {
       console.error('Error fetching business views:', error);
