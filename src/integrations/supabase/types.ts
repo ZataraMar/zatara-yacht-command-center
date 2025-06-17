@@ -863,6 +863,34 @@ export type Database = {
             referencedRelation: "bookings"
             referencedColumns: ["locator"]
           },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_finance"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_operations"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_puravida_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
         ]
       }
       historical_charters: {
@@ -958,6 +986,39 @@ export type Database = {
         }
         Relationships: []
       }
+      message_field_mapping: {
+        Row: {
+          column_name: string
+          created_at: string | null
+          data_type: string | null
+          display_name: string | null
+          field_name: string
+          id: number
+          is_required: boolean | null
+          table_source: string
+        }
+        Insert: {
+          column_name: string
+          created_at?: string | null
+          data_type?: string | null
+          display_name?: string | null
+          field_name: string
+          id?: number
+          is_required?: boolean | null
+          table_source: string
+        }
+        Update: {
+          column_name?: string
+          created_at?: string | null
+          data_type?: string | null
+          display_name?: string | null
+          field_name?: string
+          id?: number
+          is_required?: boolean | null
+          table_source?: string
+        }
+        Relationships: []
+      }
       operations: {
         Row: {
           booking_id: number | null
@@ -1032,6 +1093,34 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "bookings"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_finance"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_operations"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_puravida_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_zatara_skipper"
             referencedColumns: ["locator"]
           },
         ]
@@ -1228,6 +1317,111 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          boat_access: string[] | null
+          created_at: string | null
+          id: number
+          permissions: Json | null
+          role_name: string
+          user_id: string | null
+        }
+        Insert: {
+          boat_access?: string[] | null
+          created_at?: string | null
+          id?: number
+          permissions?: Json | null
+          role_name: string
+          user_id?: string | null
+        }
+        Update: {
+          boat_access?: string[] | null
+          created_at?: string | null
+          id?: number
+          permissions?: Json | null
+          role_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      view_configurations: {
+        Row: {
+          boat_filter: string | null
+          columns_included: string[] | null
+          created_at: string | null
+          default_filters: Json | null
+          description: string | null
+          display_name: string | null
+          id: number
+          is_active: boolean | null
+          sort_order: number | null
+          time_filter: string | null
+          user_roles: string[] | null
+          view_name: string
+          view_type: string
+        }
+        Insert: {
+          boat_filter?: string | null
+          columns_included?: string[] | null
+          created_at?: string | null
+          default_filters?: Json | null
+          description?: string | null
+          display_name?: string | null
+          id?: number
+          is_active?: boolean | null
+          sort_order?: number | null
+          time_filter?: string | null
+          user_roles?: string[] | null
+          view_name: string
+          view_type: string
+        }
+        Update: {
+          boat_filter?: string | null
+          columns_included?: string[] | null
+          created_at?: string | null
+          default_filters?: Json | null
+          description?: string | null
+          display_name?: string | null
+          id?: number
+          is_active?: boolean | null
+          sort_order?: number | null
+          time_filter?: string | null
+          user_roles?: string[] | null
+          view_name?: string
+          view_type?: string
+        }
+        Relationships: []
+      }
+      whatsapp_templates: {
+        Row: {
+          created_at: string | null
+          id: number
+          is_active: boolean | null
+          message_content: string
+          template_name: string
+          template_type: string | null
+          variables: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          message_content: string
+          template_name: string
+          template_type?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          message_content?: string
+          template_name?: string
+          template_type?: string | null
+          variables?: Json | null
+        }
+        Relationships: []
+      }
       zatara_2023_charters: {
         Row: {
           boat: string | null
@@ -1305,6 +1499,108 @@ export type Database = {
       }
     }
     Views: {
+      business_view_finance: {
+        Row: {
+          balance_due: number | null
+          boat: string | null
+          booking_source: string | null
+          charter_date: string | null
+          charter_total: number | null
+          guest_full_name: string | null
+          locator: string | null
+          outstanding_amount: number | null
+          payment_status: string | null
+          payments_received: number | null
+          total_paid: number | null
+        }
+        Insert: {
+          balance_due?: never
+          boat?: string | null
+          booking_source?: string | null
+          charter_date?: never
+          charter_total?: number | null
+          guest_full_name?: never
+          locator?: string | null
+          outstanding_amount?: number | null
+          payment_status?: never
+          payments_received?: never
+          total_paid?: number | null
+        }
+        Update: {
+          balance_due?: never
+          boat?: string | null
+          booking_source?: string | null
+          charter_date?: never
+          charter_total?: number | null
+          guest_full_name?: never
+          locator?: string | null
+          outstanding_amount?: number | null
+          payment_status?: never
+          payments_received?: never
+          total_paid?: number | null
+        }
+        Relationships: []
+      }
+      business_view_operations: {
+        Row: {
+          boat: string | null
+          booking_source: string | null
+          booking_status: string | null
+          charter_date: string | null
+          charter_total: number | null
+          cleaning: string | null
+          crew: string | null
+          end_time: string | null
+          equipment: string | null
+          extras_categories: string | null
+          extras_total: number | null
+          fnb_items: string | null
+          fuel: string | null
+          guest_full_name: string | null
+          locator: string | null
+          start_time: string | null
+          supplier_needs: string | null
+        }
+        Relationships: []
+      }
+      business_view_puravida_skipper: {
+        Row: {
+          booking_status: string | null
+          charter_date: string | null
+          charter_notes: string | null
+          cleared_for_departure: boolean | null
+          end_time: string | null
+          equipment_required: string | null
+          fnb_details: string | null
+          gps_coordinates: string | null
+          guest_full_name: string | null
+          guest_phone: string | null
+          locator: string | null
+          pre_departure_checks: boolean | null
+          start_time: string | null
+          total_guests: number | null
+        }
+        Relationships: []
+      }
+      business_view_zatara_skipper: {
+        Row: {
+          booking_status: string | null
+          charter_date: string | null
+          charter_notes: string | null
+          cleared_for_departure: boolean | null
+          end_time: string | null
+          equipment_required: string | null
+          fnb_details: string | null
+          gps_coordinates: string | null
+          guest_full_name: string | null
+          guest_phone: string | null
+          locator: string | null
+          pre_departure_checks: boolean | null
+          start_time: string | null
+          total_guests: number | null
+        }
+        Relationships: []
+      }
       charter_data: {
         Row: {
           boat: string | null
@@ -1330,9 +1626,99 @@ export type Database = {
         Args: { data: string }
         Returns: string
       }
+      generate_whatsapp_message: {
+        Args: { charter_locator: string; template_name_param: string }
+        Returns: string
+      }
+      get_available_views: {
+        Args: { user_role?: string }
+        Returns: {
+          view_name: string
+          display_name: string
+          view_type: string
+          description: string
+        }[]
+      }
+      get_business_view: {
+        Args: {
+          view_name?: string
+          time_forward?: number
+          time_backward?: number
+          boat_filter?: string
+          status_filter?: string
+          user_role?: string
+        }
+        Returns: {
+          locator: string
+          charter_date: string
+          guest_name: string
+          booking_source: string
+          start_time: string
+          end_time: string
+          boat: string
+          status: string
+          charter_total: number
+          fnb_details: string
+          crew_required: string
+          equipment_required: string
+          charter_notes: string
+          pre_departure_checks: boolean
+          cleared_for_departure: boolean
+          gps_coordinates: string
+          total_guests: number
+          paid_amount: number
+          outstanding_amount: number
+        }[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_filter_options: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_operations_input_view: {
+        Args: { input_mode?: string; user_role?: string }
+        Returns: {
+          locator: string
+          charter_date_link: string
+          guest_first_name: string
+          start_time: string
+          end_time: string
+          duration_hours: number
+          boat: string
+          booking_source: string
+          charter_total: number
+          paid_amount: number
+          outstanding_amount: number
+          cash_payment: number
+          card_payment: number
+          cleared_for_departure: boolean
+          pre_departure_checks: boolean
+          charter_notes: string
+          contract_signed: boolean
+          client_messaging_status: string
+          charter_overview_sent: boolean
+          gps_coordinates: string
+          fnb_details: string
+          crew_required: string
+          fuel_needs: string
+          cleaning_status: string
+          equipment_required: string
+          supplier_orders: string
+          next_48hrs_prep: string
+          urgent_notes: string
+        }[]
+      }
+      get_whatsapp_templates: {
+        Args: { filter_type?: string }
+        Returns: {
+          template_name: string
+          template_type: string
+          message_content: string
+          variables: Json
+        }[]
       }
       http: {
         Args: { request: Database["public"]["CompositeTypes"]["http_request"] }

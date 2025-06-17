@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LiveCharterBoard } from './operations/LiveCharterBoard';
+import { BusinessViewDashboard } from './operations/BusinessViewDashboard';
 import { CharterReconciliation } from './operations/CharterReconciliation';
 import { BusinessIntelligence } from './analytics/BusinessIntelligence';
 import { CustomerCommunications } from './communications/CustomerCommunications';
@@ -12,20 +12,20 @@ export const DashboardOperations = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-zatara-navy">Operations Center</h1>
-          <p className="text-zatara-blue">Real-time charter management and business intelligence</p>
+          <p className="text-zatara-blue">Real-time charter management with clean business views</p>
         </div>
       </div>
 
-      <Tabs defaultValue="live" className="space-y-6">
+      <Tabs defaultValue="business-views" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="live">Live Charters</TabsTrigger>
+          <TabsTrigger value="business-views">Business Views</TabsTrigger>
           <TabsTrigger value="reconciliation">Reconciliation</TabsTrigger>
           <TabsTrigger value="communications">Communications</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="live" className="space-y-6">
-          <LiveCharterBoard />
+        <TabsContent value="business-views" className="space-y-6">
+          <BusinessViewDashboard />
         </TabsContent>
 
         <TabsContent value="reconciliation" className="space-y-6">
