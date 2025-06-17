@@ -27,9 +27,9 @@ export const useFinancialData = () => {
         .select('charter_total, paid_amount, outstanding_amount, booking_source')
         .gte('start_date', `${currentYear}-01-01`);
 
-      // Fetch historical data for cost ratio calculation using correct column names
+      // Fetch historical data for cost ratio calculation using correct table name
       const { data: historicalData } = await supabase
-        .from('charters_2023')
+        .from('zatara_2023_charters')
         .select('charter_total_net, fuel_cost, food_cost, crew_cost, boat_cost');
 
       let totalRevenue = 0;

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
@@ -16,9 +15,9 @@ export const ExpenseAnalysis: React.FC = () => {
 
   const fetchExpenseData = async () => {
     try {
-      // Fetch historical expense data from charters_2023 table
+      // Fetch historical expense data from zatara_2023_charters table
       const { data: historicalData, error } = await supabase
-        .from('charters_2023')
+        .from('zatara_2023_charters')
         .select('fuel_cost, food_cost, crew_cost, boat_cost, charter_date')
         .not('fuel_cost', 'is', null)
         .not('food_cost', 'is', null)
@@ -63,9 +62,26 @@ export const ExpenseAnalysis: React.FC = () => {
           { name: 'Port Fees', value: 4000, color: '#f59e0b' } // Estimated
         ]);
 
-        // Process monthly expenses
+        // Process monthly expenses - need to parse the charter_date format
         const monthlyMap = historicalData.reduce((acc: any, item) => {
-          const month = new Date(item.charter_date).toLocaleDateString('en-US', { month: 'short' });
+          // Parse the charter_date which is in format like "Sat 8/4"
+          const dateStr = item.charter_date;
+          let month = 'Unknown';
+          
+          if (typeof dateStr === 'string' && dateStr.includes('/')) {
+            const parts = dateStr.trim().split(' ');
+            const datePart = parts.length > 1 ? parts[1] : parts[0];
+            
+            if (datePart.includes('/')) {
+              const [monthNum] = datePart.split('/');
+              const monthNumber = parseInt(monthNum, 10);
+              if (monthNumber >= 1 && monthNumber <= 12) {
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                month = monthNames[monthNumber - 1];
+              }
+            }
+          }
+          
           if (!acc[month]) {
             acc[month] = { month, costs: 0 };
           }
