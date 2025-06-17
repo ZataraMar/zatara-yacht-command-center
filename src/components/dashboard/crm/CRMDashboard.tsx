@@ -10,6 +10,7 @@ import { FinancialReconciliation } from './FinancialReconciliation';
 import { ExtrasManagement } from './ExtrasManagement';
 import { BusinessIntelligence } from '../analytics/BusinessIntelligence';
 import { YearOverYearAnalytics } from '../analytics/YearOverYearAnalytics';
+import { DashboardBuilder } from '../admin/DashboardBuilder';
 
 export const CRMDashboard = () => {
   return (
@@ -22,7 +23,7 @@ export const CRMDashboard = () => {
       </div>
 
       <Tabs defaultValue="bookings" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-9">
+        <TabsList className="grid w-full grid-cols-10">
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="customers">Customers</TabsTrigger>
           <TabsTrigger value="financial">Financial</TabsTrigger>
@@ -32,6 +33,7 @@ export const CRMDashboard = () => {
           <TabsTrigger value="communications">Communications</TabsTrigger>
           <TabsTrigger value="experience">Experience</TabsTrigger>
           <TabsTrigger value="insights">Insights</TabsTrigger>
+          <TabsTrigger value="builder">Builder</TabsTrigger>
         </TabsList>
 
         <TabsContent value="bookings" className="space-y-6">
@@ -68,6 +70,10 @@ export const CRMDashboard = () => {
 
         <TabsContent value="insights" className="space-y-6">
           <CustomerAnalytics />
+        </TabsContent>
+
+        <TabsContent value="builder" className="space-y-6">
+          <DashboardBuilder />
         </TabsContent>
       </Tabs>
     </div>
