@@ -682,96 +682,147 @@ export type Database = {
       }
       bookings: {
         Row: {
+          assigned_salesman: string | null
           boat: string | null
           booking_notes: string | null
+          booking_sequence: string | null
           booking_source: string | null
           booking_status: string | null
+          booking_user: string | null
+          cancellation_reason: string | null
           card_payment: number | null
           cash_payment: number | null
+          charter_days: number | null
           charter_total: number | null
           children_details: string | null
+          confirmation_date: string | null
           contract_signed: boolean | null
           created_at: string | null
           data_source: string | null
           deposit_amount: number | null
+          dropoff_location: string | null
           end_date: string | null
+          extras_net: number | null
+          extras_tax: number | null
           extras_total: number | null
+          fuel_liters: number | null
+          fuel_price: number | null
           guest_email: string | null
           guest_first_name: string | null
           guest_phone: string | null
           guest_surname: string | null
           health_allergies: string | null
           id: number
+          is_last_minute: boolean | null
           locator: string
           nationality: string | null
           outstanding_amount: number | null
           paid_amount: number | null
+          pickup_location: string | null
+          platform_commission: number | null
           raw_data: Json | null
           reason_for_booking: string | null
+          reconfirmation_date: string | null
+          service_net: number | null
+          service_tax: number | null
           service_total: number | null
           start_date: string | null
           total_guests: number | null
           updated_at: string | null
         }
         Insert: {
+          assigned_salesman?: string | null
           boat?: string | null
           booking_notes?: string | null
+          booking_sequence?: string | null
           booking_source?: string | null
           booking_status?: string | null
+          booking_user?: string | null
+          cancellation_reason?: string | null
           card_payment?: number | null
           cash_payment?: number | null
+          charter_days?: number | null
           charter_total?: number | null
           children_details?: string | null
+          confirmation_date?: string | null
           contract_signed?: boolean | null
           created_at?: string | null
           data_source?: string | null
           deposit_amount?: number | null
+          dropoff_location?: string | null
           end_date?: string | null
+          extras_net?: number | null
+          extras_tax?: number | null
           extras_total?: number | null
+          fuel_liters?: number | null
+          fuel_price?: number | null
           guest_email?: string | null
           guest_first_name?: string | null
           guest_phone?: string | null
           guest_surname?: string | null
           health_allergies?: string | null
           id?: number
+          is_last_minute?: boolean | null
           locator: string
           nationality?: string | null
           outstanding_amount?: number | null
           paid_amount?: number | null
+          pickup_location?: string | null
+          platform_commission?: number | null
           raw_data?: Json | null
           reason_for_booking?: string | null
+          reconfirmation_date?: string | null
+          service_net?: number | null
+          service_tax?: number | null
           service_total?: number | null
           start_date?: string | null
           total_guests?: number | null
           updated_at?: string | null
         }
         Update: {
+          assigned_salesman?: string | null
           boat?: string | null
           booking_notes?: string | null
+          booking_sequence?: string | null
           booking_source?: string | null
           booking_status?: string | null
+          booking_user?: string | null
+          cancellation_reason?: string | null
           card_payment?: number | null
           cash_payment?: number | null
+          charter_days?: number | null
           charter_total?: number | null
           children_details?: string | null
+          confirmation_date?: string | null
           contract_signed?: boolean | null
           created_at?: string | null
           data_source?: string | null
           deposit_amount?: number | null
+          dropoff_location?: string | null
           end_date?: string | null
+          extras_net?: number | null
+          extras_tax?: number | null
           extras_total?: number | null
+          fuel_liters?: number | null
+          fuel_price?: number | null
           guest_email?: string | null
           guest_first_name?: string | null
           guest_phone?: string | null
           guest_surname?: string | null
           health_allergies?: string | null
           id?: number
+          is_last_minute?: boolean | null
           locator?: string
           nationality?: string | null
           outstanding_amount?: number | null
           paid_amount?: number | null
+          pickup_location?: string | null
+          platform_commission?: number | null
           raw_data?: Json | null
           reason_for_booking?: string | null
+          reconfirmation_date?: string | null
+          service_net?: number | null
+          service_tax?: number | null
           service_total?: number | null
           start_date?: string | null
           total_guests?: number | null

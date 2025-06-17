@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Filter, Calendar, Users, Euro, BarChart3, Download } from 'lucide-react';
 import { useComprehensiveBookings } from '@/hooks/useComprehensiveBookings';
-import { getBookingStatusColor } from '../utils/badgeUtils';
+import { getBookingStatusColor } from './utils/badgeUtils';
 
 export const BookingsCenter = () => {
   const { bookings, loading, error, refetch } = useComprehensiveBookings();
