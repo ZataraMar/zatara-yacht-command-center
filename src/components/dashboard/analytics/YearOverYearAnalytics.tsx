@@ -16,6 +16,10 @@ export const YearOverYearAnalytics = () => {
 
   // Get unique booking statuses for the multi-select
   const statusOptions = useMemo(() => {
+    if (!bookings || bookings.length === 0) {
+      return [];
+    }
+    
     const uniqueStatuses = Array.from(new Set(bookings.map(booking => booking.booking_status)))
       .filter(status => status && status.trim() !== '')
       .sort();
@@ -28,6 +32,9 @@ export const YearOverYearAnalytics = () => {
 
   // Filter bookings based on selected statuses
   const filteredBookings = useMemo(() => {
+    if (!bookings || bookings.length === 0) {
+      return [];
+    }
     if (selectedStatuses.length === 0) {
       return bookings;
     }
