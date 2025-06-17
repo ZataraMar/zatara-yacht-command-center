@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { MonthlyComparisonData } from './types';
 import { BreakdownAnalysis } from './BreakdownAnalysis';
+import { BoatBreakdownAnalysis } from './BoatBreakdownAnalysis';
 import { YearlyMetrics } from './types';
 
 interface ChartTabsProps {
@@ -14,12 +15,19 @@ interface ChartTabsProps {
 }
 
 export const ChartTabs: React.FC<ChartTabsProps> = ({ monthlyComparisonData, years, yearlyMetrics }) => {
+  // Fixed color scheme to avoid duplicate yellows
+  const getYearColor = (year: number, index: number) => {
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    return colors[index % colors.length];
+  };
+
   return (
     <Tabs defaultValue="monthly" className="space-y-4">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="monthly">Monthly Trends</TabsTrigger>
         <TabsTrigger value="revenue">Revenue Analysis</TabsTrigger>
-        <TabsTrigger value="breakdown">Breakdown Analysis</TabsTrigger>
+        <TabsTrigger value="boats">Boat Breakdown</TabsTrigger>
+        <TabsTrigger value="breakdown">Source Analysis</TabsTrigger>
       </TabsList>
 
       <TabsContent value="monthly">
@@ -39,7 +47,7 @@ export const ChartTabs: React.FC<ChartTabsProps> = ({ monthlyComparisonData, yea
                   <Bar 
                     key={year}
                     dataKey={`bookings_${year}`} 
-                    fill={index === 0 ? '#3b82f6' : index === 1 ? '#10b981' : '#f59e0b'}
+                    fill={getYearColor(year, index)}
                     name={`${year} Bookings`}
                   />
                 ))}
@@ -67,7 +75,7 @@ export const ChartTabs: React.FC<ChartTabsProps> = ({ monthlyComparisonData, yea
                     key={year}
                     type="monotone" 
                     dataKey={`revenue_${year}`} 
-                    stroke={index === 0 ? '#3b82f6' : index === 1 ? '#10b981' : '#f59e0b'}
+                    stroke={getYearColor(year, index)}
                     strokeWidth={2}
                     name={`${year} Revenue`}
                   />
@@ -76,6 +84,10 @@ export const ChartTabs: React.FC<ChartTabsProps> = ({ monthlyComparisonData, yea
             </ResponsiveContainer>
           </CardContent>
         </Card>
+      </TabsContent>
+
+      <TabsContent value="boats">
+        <BoatBreakdownAnalysis yearlyMetrics={yearlyMetrics} years={years} />
       </TabsContent>
 
       <TabsContent value="breakdown">

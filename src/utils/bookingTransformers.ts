@@ -1,3 +1,4 @@
+
 import { ComprehensiveBooking } from '@/types/booking';
 
 export const transformCurrentBooking = (booking: any): ComprehensiveBooking => ({
@@ -30,12 +31,14 @@ export const transformCurrentBooking = (booking: any): ComprehensiveBooking => (
   booking_date: booking.start_date.split('T')[0]
 });
 
-// Parse zatara_2023_charters date format "Sat 8/4" to proper date
+// Enhanced date parser for zatara_2023_charters
 const parseZataraDate = (dateStr: string, year: number): string => {
   if (!dateStr) return `${year}-01-01`;
   
+  console.log('Parsing date string:', dateStr, 'for year:', year);
+  
   try {
-    // Handle format like "Sat 8/4" or "8/4"
+    // Handle format like "Sat 8/4", "Mon 15/5", "8/4", "15/5"
     const parts = dateStr.trim().split(' ');
     const datePart = parts.length > 1 ? parts[1] : parts[0];
     
@@ -45,15 +48,23 @@ const parseZataraDate = (dateStr: string, year: number): string => {
       const dayNum = parseInt(day, 10);
       
       if (monthNum >= 1 && monthNum <= 12 && dayNum >= 1 && dayNum <= 31) {
-        return `${year}-${monthNum.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
+        const parsedDate = `${year}-${monthNum.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
+        console.log('Successfully parsed date:', dateStr, '->', parsedDate);
+        return parsedDate;
       }
     }
     
-    // Fallback to January 1st if parsing fails
-    return `${year}-01-01`;
+    // Try to parse as standard date format
+    const testDate = new Date(dateStr);
+    if (!isNaN(testDate.getTime()) && testDate.getFullYear() === year) {
+      return testDate.toISOString().split('T')[0];
+    }
+    
+    console.warn(`Failed to parse date: ${dateStr}, using fallback`);
+    return `${year}-06-01`; // Default to June instead of January
   } catch (error) {
-    console.warn(`Failed to parse date: ${dateStr}`, error);
-    return `${year}-01-01`;
+    console.warn(`Error parsing date: ${dateStr}`, error);
+    return `${year}-06-01`; // Default to June instead of January
   }
 };
 
