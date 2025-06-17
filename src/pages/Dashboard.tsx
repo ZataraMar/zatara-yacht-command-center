@@ -14,7 +14,7 @@ import { AutomationWorkflows } from '@/components/dashboard/integration/Automati
 import { UserManagement } from '@/components/dashboard/admin/UserManagement';
 import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
 import { useAuth } from '@/contexts/SecureAuthContext';
-import { isClientRole, isOwner, isManagementOrOwner } from '@/utils/authSecurity';
+import { isClientRole, isOwner } from '@/utils/authSecurity';
 
 const Dashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -49,98 +49,103 @@ const Dashboard = () => {
     }
   }
 
+  // Simple component wrapper for owner access
+  const OwnerOnlyRoute = ({ children }: { children: React.ReactNode }) => {
+    if (!isOwner(userRole)) {
+      return (
+        <div className="text-center p-8">
+          <h2 className="text-2xl font-bold text-zatara-navy mb-4">Access Restricted</h2>
+          <p className="text-zatara-blue">This section is only available to the system owner.</p>
+        </div>
+      );
+    }
+    return <>{children}</>;
+  };
+
   return (
     <DashboardLayout>
       <Routes>
         <Route path="/" element={<DashboardHome />} />
         
-        {/* Operations Center - Main Dashboard for operational roles */}
+        {/* Owner gets access to everything */}
         <Route 
           path="/operations" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owner', 'staff', 'skippers']}>
+            <OwnerOnlyRoute>
               <DashboardOperations />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         
-        {/* Fleet Management */}
         <Route 
           path="/fleet" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'management', 'owner', 'staff', 'skippers']}>
+            <OwnerOnlyRoute>
               <FleetOverview />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         
-        {/* Staff & Team Management */}
         <Route 
           path="/team" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owner']}>
+            <OwnerOnlyRoute>
               <StaffManagement />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         
-        {/* User Management - Owners and Management only */}
         <Route 
           path="/users" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owner']}>
+            <OwnerOnlyRoute>
               <UserManagement />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         
-        {/* Advanced Financial Management */}
         <Route 
           path="/financials" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owner', 'agency']}>
+            <OwnerOnlyRoute>
               <AdvancedFinancials />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         
-        {/* Guest Experience & CRM */}
         <Route 
           path="/guests" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owner', 'staff']}>
+            <OwnerOnlyRoute>
               <GuestExperience />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         
-        {/* Operational Excellence */}
         <Route 
           path="/operations-excellence" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'management', 'owner', 'staff', 'skippers']}>
+            <OwnerOnlyRoute>
               <OperationalExcellence />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         
-        {/* Advanced Analytics & Reporting */}
         <Route 
           path="/analytics" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owner', 'agency']}>
+            <OwnerOnlyRoute>
               <AdvancedReporting />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         
-        {/* Integration & Automation */}
         <Route 
           path="/automation" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owner', 'agency']}>
+            <OwnerOnlyRoute>
               <AutomationWorkflows />
-            </SecureRoleBasedRoute>
+            </OwnerOnlyRoute>
           } 
         />
         

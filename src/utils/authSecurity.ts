@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced auth state cleanup to prevent limbo states
@@ -123,57 +122,38 @@ export const secureSignOut = async () => {
   }
 };
 
-// Define role hierarchy levels - FIXED: Changed 'owners' to 'owner'
-const ROLE_LEVELS = {
-  'owner': 100,
-  'management': 80,
-  'boat_owners': 60,
-  'agency': 60,
-  'skippers': 50,
-  'staff': 40,
-  'casual_staff': 30,
-  'charter_brokers': 25,
-  'charter_clients': 20,
-  'boat_club_clients': 20
-};
-
-// Enhanced role-based access control with hierarchy
-export const hasRole = (userRole: string | null, allowedRoles: string[]): boolean => {
-  if (!userRole) return false;
-  
-  const userLevel = ROLE_LEVELS[userRole as keyof typeof ROLE_LEVELS] || 0;
-  
-  // Check if user role is directly in allowed roles
-  if (allowedRoles.includes(userRole)) return true;
-  
-  // Check if user has sufficient hierarchy level for any allowed role
-  return allowedRoles.some(role => {
-    const requiredLevel = ROLE_LEVELS[role as keyof typeof ROLE_LEVELS] || 0;
-    return userLevel >= requiredLevel;
-  });
-};
-
+// SIMPLIFIED ROLE SYSTEM - OWNER GETS EVERYTHING
 export const isOwner = (userRole: string | null): boolean => {
   return userRole === 'owner';
 };
 
-export const isManagementOrOwner = (userRole: string | null): boolean => {
-  return hasRole(userRole, ['management', 'owner']);
+// For now, owner gets access to everything
+export const hasFullAccess = (userRole: string | null): boolean => {
+  return isOwner(userRole);
 };
 
-// FIXED: Ensure owner is recognized as staff or higher
+// Backward compatibility functions - simplified
+export const isManagementOrOwner = (userRole: string | null): boolean => {
+  return isOwner(userRole);
+};
+
 export const isStaffOrHigher = (userRole: string | null): boolean => {
-  return hasRole(userRole, ['staff', 'skippers', 'management', 'owner', 'casual_staff', 'boat_owners']);
+  return isOwner(userRole);
 };
 
 export const isClientRole = (userRole: string | null): boolean => {
-  return hasRole(userRole, ['charter_clients', 'boat_club_clients']);
-};
-
-export const isAgencyOrTeam = (userRole: string | null): boolean => {
-  return hasRole(userRole, ['agency', 'boat_owners']);
+  return userRole === 'charter_clients' || userRole === 'boat_club_clients';
 };
 
 export const canManageUsers = (userRole: string | null): boolean => {
-  return hasRole(userRole, ['owner', 'management']);
+  return isOwner(userRole);
+};
+
+// Legacy function for compatibility
+export const hasRole = (userRole: string | null, allowedRoles: string[]): boolean => {
+  // If user is owner, they have access to everything
+  if (isOwner(userRole)) return true;
+  
+  // Otherwise, only allow specific client roles
+  return allowedRoles.includes(userRole || '');
 };

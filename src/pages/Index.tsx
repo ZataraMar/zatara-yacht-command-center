@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/SecureAuthContext';
 import { SecureRoleBasedRoute } from '@/components/auth/SecureRoleBasedRoute';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { isManagementOrOwner, isStaffOrHigher, isClientRole } from '@/utils/authSecurity';
+import { isOwner, isClientRole } from '@/utils/authSecurity';
 import { Home, Calendar, Anchor, Users, BarChart3, TrendingUp } from 'lucide-react';
 
 const Index = () => {
@@ -13,8 +13,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   const userRole = profile?.role || '';
-  const canViewFinancials = isManagementOrOwner(userRole);
-  const canViewOperations = isStaffOrHigher(userRole);
+  const userIsOwner = isOwner(userRole);
 
   // SIMPLIFIED: Only redirect clients, let all staff/management stay on Index
   useEffect(() => {
@@ -95,9 +94,9 @@ const Index = () => {
       </header>
 
       <main className="container mx-auto px-6 sm:px-8 py-8 sm:py-12">
-        {/* Luxury stats grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
-          {canViewOperations && (
+        {/* Luxury stats grid - Only show if owner */}
+        {userIsOwner && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
             <Card className="bg-white/90 backdrop-blur-sm shadow-luxury border-2 border-zatara-blue/20 hover:shadow-elegant transition-all duration-300 hover:scale-105 rounded-luxury animate-fade-in">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
@@ -113,9 +112,7 @@ const Index = () => {
                 <p className="text-luxury-xs text-zatara-navy/70 font-medium">charters scheduled</p>
               </CardContent>
             </Card>
-          )}
 
-          {canViewOperations && (
             <Card className="bg-white/90 backdrop-blur-sm shadow-luxury border-2 border-zatara-blue/20 hover:shadow-elegant transition-all duration-300 hover:scale-105 rounded-luxury animate-fade-in">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
@@ -131,9 +128,7 @@ const Index = () => {
                 <p className="text-luxury-xs text-zatara-navy/70 font-medium">boats available</p>
               </CardContent>
             </Card>
-          )}
 
-          {canViewFinancials && (
             <Card className="bg-white/90 backdrop-blur-sm shadow-gold border-2 border-zatara-gold/30 hover:shadow-elegant transition-all duration-300 hover:scale-105 rounded-luxury animate-fade-in sm:col-span-2 lg:col-span-1">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
@@ -149,8 +144,8 @@ const Index = () => {
                 <p className="text-luxury-xs text-green-600 font-semibold">+12% from last month</p>
               </CardContent>
             </Card>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Luxury quick actions */}
         <Card className="bg-white/90 backdrop-blur-sm shadow-elegant border-2 border-zatara-gold/20 mb-8 sm:mb-12 rounded-luxury animate-slide-up">
@@ -160,7 +155,7 @@ const Index = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {canViewOperations && (
+              {userIsOwner && (
                 <>
                   <Button 
                     asChild
@@ -181,36 +176,30 @@ const Index = () => {
                       <span className="text-luxury-xs font-semibold">Fleet</span>
                     </Link>
                   </Button>
+                  <Button 
+                    variant="outline" 
+                    asChild
+                    className="h-20 sm:h-24 flex-col border-2 border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury"
+                  >
+                    <Link to="/dashboard/team">
+                      <Users className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
+                      <span className="text-luxury-xs font-semibold">Team</span>
+                    </Link>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    asChild
+                    className="h-20 sm:h-24 flex-col border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury"
+                  >
+                    <Link to="/dashboard/analytics">
+                      <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
+                      <span className="text-luxury-xs font-semibold">Analytics</span>
+                    </Link>
+                  </Button>
                 </>
               )}
-              
-              {canViewOperations && (
-                <Button 
-                  variant="outline" 
-                  asChild
-                  className="h-20 sm:h-24 flex-col border-2 border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury"
-                >
-                  <Link to="/dashboard/team">
-                    <Users className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
-                    <span className="text-luxury-xs font-semibold">Team</span>
-                  </Link>
-                </Button>
-              )}
-              
-              {canViewFinancials && (
-                <Button 
-                  variant="outline" 
-                  asChild
-                  className="h-20 sm:h-24 flex-col border-2 border-zatara-gold text-zatara-gold hover:bg-zatara-gold hover:text-zatara-navy transition-all duration-300 hover:scale-105 luxury-touch-target rounded-luxury"
-                >
-                  <Link to="/dashboard/analytics">
-                    <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 mb-2 sm:mb-3" />
-                    <span className="text-luxury-xs font-semibold">Analytics</span>
-                  </Link>
-                </Button>
-              )}
 
-              {!canViewOperations && (
+              {!userIsOwner && (
                 <div className="col-span-2 lg:col-span-4 p-6 sm:p-8 text-center bg-zatara-cream/50 rounded-luxury border-2 border-zatara-gold/20">
                   <p className="text-zatara-navy font-semibold mb-3 text-luxury-sm">Welcome to Zatara Mar!</p>
                   <p className="text-luxury-xs text-zatara-blue leading-relaxed">
@@ -222,16 +211,16 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        {/* Management-only luxury section */}
-        <SecureRoleBasedRoute allowedRoles={['management', 'owners']}>
+        {/* Owner-only luxury section */}
+        {userIsOwner && (
           <Card className="gradient-luxury text-white shadow-elegant rounded-luxury animate-slide-up border-2 border-zatara-gold/30">
             <CardHeader className="pb-6">
-              <CardTitle className="text-white text-luxury-xl font-playfair">Management Dashboard</CardTitle>
-              <CardDescription className="text-zatara-blue-light text-luxury-sm font-medium">Executive overview and controls</CardDescription>
+              <CardTitle className="text-white text-luxury-xl font-playfair">Owner Dashboard</CardTitle>
+              <CardDescription className="text-zatara-blue-light text-luxury-sm font-medium">Full system control and oversight</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-zatara-blue-light mb-6 text-luxury-sm leading-relaxed">
-                Management-only features and analytics go here.
+                Complete access to all system features and analytics.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
                 <Button 
@@ -261,7 +250,7 @@ const Index = () => {
               </div>
             </CardContent>
           </Card>
-        </SecureRoleBasedRoute>
+        )}
       </main>
     </div>
   );

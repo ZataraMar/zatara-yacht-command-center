@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/SecureAuthContext';
-import { canManageUsers } from '@/utils/authSecurity';
+import { isOwner } from '@/utils/authSecurity';
 import { Shield } from 'lucide-react';
 import { AddUserDialog } from './AddUserDialog';
 import { UserList } from './UserList';
@@ -69,12 +69,12 @@ export const UserManagement = () => {
   };
 
   useEffect(() => {
-    if (canManageUsers(profile?.role || null)) {
+    if (isOwner(profile?.role || null)) {
       fetchUsers();
     }
   }, [profile]);
 
-  if (!canManageUsers(profile?.role || null)) {
+  if (!isOwner(profile?.role || null)) {
     return (
       <Card>
         <CardContent className="p-6 text-center">
