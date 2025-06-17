@@ -60,7 +60,7 @@ export const secureSignUp = async (email: string, password: string, userData: an
   
   // Validate role assignment - allow all account types
   const requestedRole = userData.role;
-  const allowedRoles = ['charter_clients', 'boat_club_clients', 'agency', 'team'];
+  const allowedRoles = ['charter_clients', 'boat_club_clients', 'agency', 'boat_owners'];
   
   if (!allowedRoles.includes(requestedRole)) {
     userData.role = 'charter_clients'; // Default to charter clients
@@ -127,11 +127,12 @@ export const secureSignOut = async () => {
 const ROLE_LEVELS = {
   'owners': 100,
   'management': 80,
-  'team': 60,
+  'boat_owners': 60,
   'agency': 60,
   'skippers': 50,
   'staff': 40,
   'casual_staff': 30,
+  'charter_brokers': 25,
   'charter_clients': 20,
   'boat_club_clients': 20
 };
@@ -161,7 +162,7 @@ export const isManagementOrOwner = (userRole: string | null): boolean => {
 };
 
 export const isStaffOrHigher = (userRole: string | null): boolean => {
-  return hasRole(userRole, ['staff', 'skippers', 'management', 'owners', 'casual_staff', 'team']);
+  return hasRole(userRole, ['staff', 'skippers', 'management', 'owners', 'casual_staff', 'boat_owners']);
 };
 
 export const isClientRole = (userRole: string | null): boolean => {
@@ -169,7 +170,7 @@ export const isClientRole = (userRole: string | null): boolean => {
 };
 
 export const isAgencyOrTeam = (userRole: string | null): boolean => {
-  return hasRole(userRole, ['agency', 'team']);
+  return hasRole(userRole, ['agency', 'boat_owners']);
 };
 
 export const canManageUsers = (userRole: string | null): boolean => {

@@ -57,10 +57,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
     // Operational staff navigation
     const operationalItems = [
-      { icon: Activity, label: 'Operations Center', href: '/dashboard/operations', roles: ['team', 'agency', 'management', 'owners', 'staff', 'skippers'] },
-      { icon: Anchor, label: 'Fleet Management', href: '/dashboard/fleet', roles: ['team', 'management', 'owners', 'staff', 'skippers'] },
-      { icon: UserCheck, label: 'Guest Experience', href: '/dashboard/guests', roles: ['team', 'agency', 'management', 'owners', 'staff'] },
-      { icon: Shield, label: 'Operational Excellence', href: '/dashboard/operations-excellence', roles: ['team', 'management', 'owners', 'staff', 'skippers'] },
+      { icon: Activity, label: 'Operations Center', href: '/dashboard/operations', roles: ['boat_owners', 'agency', 'management', 'owners', 'staff', 'skippers'] },
+      { icon: Anchor, label: 'Fleet Management', href: '/dashboard/fleet', roles: ['boat_owners', 'management', 'owners', 'staff', 'skippers'] },
+      { icon: UserCheck, label: 'Guest Experience', href: '/dashboard/guests', roles: ['boat_owners', 'agency', 'management', 'owners', 'staff'] },
+      { icon: Shield, label: 'Operational Excellence', href: '/dashboard/operations-excellence', roles: ['boat_owners', 'management', 'owners', 'staff', 'skippers'] },
     ];
 
     // Management navigation
