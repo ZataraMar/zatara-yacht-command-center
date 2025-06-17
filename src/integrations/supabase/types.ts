@@ -3852,6 +3852,599 @@ export type Database = {
         }
         Relationships: []
       }
+      service_assignments: {
+        Row: {
+          acceptance_timestamp: string | null
+          assigned_by: string | null
+          assigned_role: string | null
+          assigned_to: string
+          assignment_accepted: boolean | null
+          assignment_date: string | null
+          assignment_type: string | null
+          available_from: string | null
+          available_until: string | null
+          bonus_earned: number | null
+          completed_work: string | null
+          created_at: string | null
+          flat_fee: number | null
+          hourly_rate: number | null
+          hours_worked: number | null
+          id: number
+          language_requirements: string[] | null
+          quality_rating: number | null
+          required_certifications: string[] | null
+          required_experience_years: number | null
+          service_request_id: number | null
+          started_work: string | null
+          travel_compensation: number | null
+          travel_time_minutes: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          acceptance_timestamp?: string | null
+          assigned_by?: string | null
+          assigned_role?: string | null
+          assigned_to: string
+          assignment_accepted?: boolean | null
+          assignment_date?: string | null
+          assignment_type?: string | null
+          available_from?: string | null
+          available_until?: string | null
+          bonus_earned?: number | null
+          completed_work?: string | null
+          created_at?: string | null
+          flat_fee?: number | null
+          hourly_rate?: number | null
+          hours_worked?: number | null
+          id?: number
+          language_requirements?: string[] | null
+          quality_rating?: number | null
+          required_certifications?: string[] | null
+          required_experience_years?: number | null
+          service_request_id?: number | null
+          started_work?: string | null
+          travel_compensation?: number | null
+          travel_time_minutes?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          acceptance_timestamp?: string | null
+          assigned_by?: string | null
+          assigned_role?: string | null
+          assigned_to?: string
+          assignment_accepted?: boolean | null
+          assignment_date?: string | null
+          assignment_type?: string | null
+          available_from?: string | null
+          available_until?: string | null
+          bonus_earned?: number | null
+          completed_work?: string | null
+          created_at?: string | null
+          flat_fee?: number | null
+          hourly_rate?: number | null
+          hours_worked?: number | null
+          id?: number
+          language_requirements?: string[] | null
+          quality_rating?: number | null
+          required_certifications?: string[] | null
+          required_experience_years?: number | null
+          service_request_id?: number | null
+          started_work?: string | null
+          travel_compensation?: number | null
+          travel_time_minutes?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_assignments_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_categories: {
+        Row: {
+          active: boolean | null
+          advance_booking_hours: number | null
+          category_description: string | null
+          category_icon: string | null
+          category_name: string
+          created_at: string | null
+          emergency_service: boolean | null
+          estimated_duration_hours: number | null
+          id: number
+          pricing_model: string | null
+          recurring_service: boolean | null
+          requires_boat_access: boolean | null
+          requires_scheduling: boolean | null
+          requires_specialist: boolean | null
+          seasonal_service: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          advance_booking_hours?: number | null
+          category_description?: string | null
+          category_icon?: string | null
+          category_name: string
+          created_at?: string | null
+          emergency_service?: boolean | null
+          estimated_duration_hours?: number | null
+          id?: number
+          pricing_model?: string | null
+          recurring_service?: boolean | null
+          requires_boat_access?: boolean | null
+          requires_scheduling?: boolean | null
+          requires_specialist?: boolean | null
+          seasonal_service?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          advance_booking_hours?: number | null
+          category_description?: string | null
+          category_icon?: string | null
+          category_name?: string
+          created_at?: string | null
+          emergency_service?: boolean | null
+          estimated_duration_hours?: number | null
+          id?: number
+          pricing_model?: string | null
+          recurring_service?: boolean | null
+          requires_boat_access?: boolean | null
+          requires_scheduling?: boolean | null
+          requires_specialist?: boolean | null
+          seasonal_service?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      service_contracts: {
+        Row: {
+          additional_travel_charges: boolean | null
+          annual_fee: number | null
+          auto_renew: boolean | null
+          billing_contact: string | null
+          boat_access_instructions: string | null
+          boat_id: number | null
+          contract_number: string
+          contract_status: string | null
+          contract_type: string
+          created_at: string | null
+          customer_id: number | null
+          customer_satisfaction_score: number | null
+          detailed_logs: boolean | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          emergency_response_time_hours: number | null
+          end_date: string | null
+          id: number
+          last_service_date: string | null
+          late_payment_fee: number | null
+          monthly_fee: number | null
+          next_scheduled_service: string | null
+          payment_due_day: number | null
+          payment_frequency: string | null
+          penalty_clauses: string | null
+          performance_metrics: Json | null
+          photo_reporting: boolean | null
+          primary_contact_name: string | null
+          primary_contact_phone: string | null
+          renewal_period_months: number | null
+          reporting_frequency: string | null
+          response_time_hours: number | null
+          security_codes: string | null
+          service_area: string | null
+          service_frequency: Json | null
+          service_level_agreement: string | null
+          services_completed: number | null
+          services_included: string[] | null
+          setup_fee: number | null
+          start_date: string
+          termination_notice_days: number | null
+          total_value: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          additional_travel_charges?: boolean | null
+          annual_fee?: number | null
+          auto_renew?: boolean | null
+          billing_contact?: string | null
+          boat_access_instructions?: string | null
+          boat_id?: number | null
+          contract_number: string
+          contract_status?: string | null
+          contract_type: string
+          created_at?: string | null
+          customer_id?: number | null
+          customer_satisfaction_score?: number | null
+          detailed_logs?: boolean | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_response_time_hours?: number | null
+          end_date?: string | null
+          id?: number
+          last_service_date?: string | null
+          late_payment_fee?: number | null
+          monthly_fee?: number | null
+          next_scheduled_service?: string | null
+          payment_due_day?: number | null
+          payment_frequency?: string | null
+          penalty_clauses?: string | null
+          performance_metrics?: Json | null
+          photo_reporting?: boolean | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
+          renewal_period_months?: number | null
+          reporting_frequency?: string | null
+          response_time_hours?: number | null
+          security_codes?: string | null
+          service_area?: string | null
+          service_frequency?: Json | null
+          service_level_agreement?: string | null
+          services_completed?: number | null
+          services_included?: string[] | null
+          setup_fee?: number | null
+          start_date: string
+          termination_notice_days?: number | null
+          total_value?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          additional_travel_charges?: boolean | null
+          annual_fee?: number | null
+          auto_renew?: boolean | null
+          billing_contact?: string | null
+          boat_access_instructions?: string | null
+          boat_id?: number | null
+          contract_number?: string
+          contract_status?: string | null
+          contract_type?: string
+          created_at?: string | null
+          customer_id?: number | null
+          customer_satisfaction_score?: number | null
+          detailed_logs?: boolean | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_response_time_hours?: number | null
+          end_date?: string | null
+          id?: number
+          last_service_date?: string | null
+          late_payment_fee?: number | null
+          monthly_fee?: number | null
+          next_scheduled_service?: string | null
+          payment_due_day?: number | null
+          payment_frequency?: string | null
+          penalty_clauses?: string | null
+          performance_metrics?: Json | null
+          photo_reporting?: boolean | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
+          renewal_period_months?: number | null
+          reporting_frequency?: string | null
+          response_time_hours?: number | null
+          security_codes?: string | null
+          service_area?: string | null
+          service_frequency?: Json | null
+          service_level_agreement?: string | null
+          services_completed?: number | null
+          services_included?: string[] | null
+          setup_fee?: number | null
+          start_date?: string
+          termination_notice_days?: number | null
+          total_value?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_contracts_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_contracts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_contracts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_offerings: {
+        Row: {
+          active: boolean | null
+          base_price: number | null
+          boat_type_restrictions: string[] | null
+          category_id: number | null
+          consumables_included: string[] | null
+          created_at: string | null
+          crew_required: number | null
+          currency: string | null
+          detailed_scope: string | null
+          duration_hours: number | null
+          equipment_required: string[] | null
+          id: number
+          insurance_coverage: boolean | null
+          maximum_charge: number | null
+          minimum_charge: number | null
+          quality_guarantee: boolean | null
+          seasonal_pricing: Json | null
+          service_code: string | null
+          service_description: string | null
+          service_level: string | null
+          service_name: string
+          size_restrictions: Json | null
+          travel_surcharge_per_km: number | null
+          updated_at: string | null
+          volume_discounts: Json | null
+        }
+        Insert: {
+          active?: boolean | null
+          base_price?: number | null
+          boat_type_restrictions?: string[] | null
+          category_id?: number | null
+          consumables_included?: string[] | null
+          created_at?: string | null
+          crew_required?: number | null
+          currency?: string | null
+          detailed_scope?: string | null
+          duration_hours?: number | null
+          equipment_required?: string[] | null
+          id?: number
+          insurance_coverage?: boolean | null
+          maximum_charge?: number | null
+          minimum_charge?: number | null
+          quality_guarantee?: boolean | null
+          seasonal_pricing?: Json | null
+          service_code?: string | null
+          service_description?: string | null
+          service_level?: string | null
+          service_name: string
+          size_restrictions?: Json | null
+          travel_surcharge_per_km?: number | null
+          updated_at?: string | null
+          volume_discounts?: Json | null
+        }
+        Update: {
+          active?: boolean | null
+          base_price?: number | null
+          boat_type_restrictions?: string[] | null
+          category_id?: number | null
+          consumables_included?: string[] | null
+          created_at?: string | null
+          crew_required?: number | null
+          currency?: string | null
+          detailed_scope?: string | null
+          duration_hours?: number | null
+          equipment_required?: string[] | null
+          id?: number
+          insurance_coverage?: boolean | null
+          maximum_charge?: number | null
+          minimum_charge?: number | null
+          quality_guarantee?: boolean | null
+          seasonal_pricing?: Json | null
+          service_code?: string | null
+          service_description?: string | null
+          service_level?: string | null
+          service_name?: string
+          size_restrictions?: Json | null
+          travel_surcharge_per_km?: number | null
+          updated_at?: string | null
+          volume_discounts?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_offerings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_requests: {
+        Row: {
+          access_instructions: string | null
+          actual_duration_hours: number | null
+          actual_price: number | null
+          additional_charges: number | null
+          approved_price: number | null
+          assigned_team: string[] | null
+          assigned_vendor_id: number | null
+          boat_id: number | null
+          boat_location_coordinates: string | null
+          completion_notes: string | null
+          completion_status: string | null
+          contract_id: number | null
+          created_at: string | null
+          customer_feedback: string | null
+          customer_id: number | null
+          customer_rating: number | null
+          discount_applied: number | null
+          documentation_provided: boolean | null
+          environmental_considerations: string | null
+          equipment_assigned: string[] | null
+          estimated_duration_hours: number | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          id: number
+          next_recommended_service: string | null
+          photos_taken: number | null
+          priority_level: number | null
+          quoted_price: number | null
+          request_number: string
+          request_status: string | null
+          request_type: string | null
+          requested_date: string | null
+          requested_time_end: string | null
+          requested_time_start: string | null
+          safety_requirements: string | null
+          scheduled_date: string | null
+          scheduled_time_end: string | null
+          scheduled_time_start: string | null
+          service_description: string | null
+          service_location: string | null
+          service_offering_id: number | null
+          special_requirements: string | null
+          specialist_required: boolean | null
+          tax_amount: number | null
+          team_leader: string | null
+          travel_distance_km: number | null
+          travel_required: boolean | null
+          updated_at: string | null
+          warranty_period_days: number | null
+        }
+        Insert: {
+          access_instructions?: string | null
+          actual_duration_hours?: number | null
+          actual_price?: number | null
+          additional_charges?: number | null
+          approved_price?: number | null
+          assigned_team?: string[] | null
+          assigned_vendor_id?: number | null
+          boat_id?: number | null
+          boat_location_coordinates?: string | null
+          completion_notes?: string | null
+          completion_status?: string | null
+          contract_id?: number | null
+          created_at?: string | null
+          customer_feedback?: string | null
+          customer_id?: number | null
+          customer_rating?: number | null
+          discount_applied?: number | null
+          documentation_provided?: boolean | null
+          environmental_considerations?: string | null
+          equipment_assigned?: string[] | null
+          estimated_duration_hours?: number | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: number
+          next_recommended_service?: string | null
+          photos_taken?: number | null
+          priority_level?: number | null
+          quoted_price?: number | null
+          request_number: string
+          request_status?: string | null
+          request_type?: string | null
+          requested_date?: string | null
+          requested_time_end?: string | null
+          requested_time_start?: string | null
+          safety_requirements?: string | null
+          scheduled_date?: string | null
+          scheduled_time_end?: string | null
+          scheduled_time_start?: string | null
+          service_description?: string | null
+          service_location?: string | null
+          service_offering_id?: number | null
+          special_requirements?: string | null
+          specialist_required?: boolean | null
+          tax_amount?: number | null
+          team_leader?: string | null
+          travel_distance_km?: number | null
+          travel_required?: boolean | null
+          updated_at?: string | null
+          warranty_period_days?: number | null
+        }
+        Update: {
+          access_instructions?: string | null
+          actual_duration_hours?: number | null
+          actual_price?: number | null
+          additional_charges?: number | null
+          approved_price?: number | null
+          assigned_team?: string[] | null
+          assigned_vendor_id?: number | null
+          boat_id?: number | null
+          boat_location_coordinates?: string | null
+          completion_notes?: string | null
+          completion_status?: string | null
+          contract_id?: number | null
+          created_at?: string | null
+          customer_feedback?: string | null
+          customer_id?: number | null
+          customer_rating?: number | null
+          discount_applied?: number | null
+          documentation_provided?: boolean | null
+          environmental_considerations?: string | null
+          equipment_assigned?: string[] | null
+          estimated_duration_hours?: number | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: number
+          next_recommended_service?: string | null
+          photos_taken?: number | null
+          priority_level?: number | null
+          quoted_price?: number | null
+          request_number?: string
+          request_status?: string | null
+          request_type?: string | null
+          requested_date?: string | null
+          requested_time_end?: string | null
+          requested_time_start?: string | null
+          safety_requirements?: string | null
+          scheduled_date?: string | null
+          scheduled_time_end?: string | null
+          scheduled_time_start?: string | null
+          service_description?: string | null
+          service_location?: string | null
+          service_offering_id?: number | null
+          special_requirements?: string | null
+          specialist_required?: boolean | null
+          tax_amount?: number | null
+          team_leader?: string | null
+          travel_distance_km?: number | null
+          travel_required?: boolean | null
+          updated_at?: string | null
+          warranty_period_days?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_requests_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "service_contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_service_offering_id_fkey"
+            columns: ["service_offering_id"]
+            isOneToOne: false
+            referencedRelation: "service_offerings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       system_backups: {
         Row: {
           auto_delete: boolean | null

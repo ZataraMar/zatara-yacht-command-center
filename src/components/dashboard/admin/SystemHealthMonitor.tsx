@@ -1,76 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
-  Database, 
-  Activity, 
-  CheckCircle2, 
-  AlertTriangle, 
-  XCircle,
-  RefreshCw,
-  Server,
-  Users,
-  Calendar,
-  DollarSign,
-  Clock,
-  AlertCircle
-} from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
-// ... keep existing code (interfaces and component logic)
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { RefreshCw, Database, CheckCircle2 } from 'lucide-react';
+import { useSystemHealthData } from '@/hooks/useSystemHealthData';
+import { SyncStatusSection } from './components/SyncStatusSection';
+import { PerformanceMetrics } from './components/PerformanceMetrics';
+import { HealthChecksSection } from './components/HealthChecksSection';
 
 export const SystemHealthMonitor = () => {
-  // ... keep existing code (state and useEffect)
-
-  const refreshHealth = async () => {
-    setRefreshing(true);
-    await fetchAllSystemData();
-    setRefreshing(false);
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'healthy':
-        return <CheckCircle2 className="h-5 w-5 text-green-600" />;
-      case 'warning':
-        return <AlertTriangle className="h-5 w-5 text-yellow-600" />;
-      case 'action_required':
-        return <XCircle className="h-5 w-5 text-red-600" />;
-      default:
-        return <Activity className="h-5 w-5 text-gray-600" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'healthy':
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'warning':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'action_required':
-      case 'error':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getSyncStatusIcon = (status: string, consecutiveFailures: number) => {
-    if (consecutiveFailures > 0) {
-      return <AlertCircle className="h-5 w-5 text-red-600" />;
-    }
-    
-    switch (status) {
-      case 'active':
-        return <CheckCircle2 className="h-5 w-5 text-green-600" />;
-      case 'syncing':
-        return <RefreshCw className="h-5 w-5 text-blue-600 animate-spin" />;
-      default:
-        return <Clock className="h-5 w-5 text-gray-600" />;
-    }
-  };
+  const {
+    loading,
+    refreshing,
+    syncingManually,
+    syncStatus,
+    importLogs,
+    performance,
+    healthChecks,
+    triggerManualSync,
+    refreshHealth
+  } = useSystemHealthData();
 
   if (loading) {
     return (
@@ -99,60 +48,7 @@ export const SystemHealthMonitor = () => {
         </div>
       </div>
 
-      {/* Auto-Sync Status Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <RefreshCw className="h-5 w-5" />
-            <span>Andronautic Auto-Sync Status</span>
-          </CardTitle>
-          <CardDescription>
-            Real-time data integration monitoring
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {syncStatus.length > 0 ? (
-            <div className="space-y-4">
-              {syncStatus.map((sync, index) => (
-                <div key={index} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      {getSyncStatusIcon(sync.sync_status, sync.consecutive_failures)}
-                      <div>
-                        <h3 className="font-medium capitalize">
-                          {sync.platform_name} Integration
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          Last sync: {sync.records_synced_last_run} records
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge className={getStatusColor(sync.sync_status)}>
-                        {sync.sync_status}
-                      </Badge>
-                      <span className="text-xs text-gray-500">
-                        {sync.last_successful_sync ? new Date(sync.last_successful_sync).toLocaleString() : 'Never'}
-                      </span>
-                    </div>
-                  </div>
-                  {sync.consecutive_failures > 0 && (
-                    <div className="mt-2 p-2 bg-red-50 rounded text-red-700 text-sm">
-                      ⚠️ {sync.consecutive_failures} consecutive sync failures detected
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center text-gray-500 py-8">
-              <RefreshCw className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p>No sync configurations found</p>
-              <p className="text-sm">Auto-sync may not be configured</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <SyncStatusSection syncStatus={syncStatus} />
 
       {/* Recent Import Activity */}
       {importLogs.length > 0 && (
@@ -189,106 +85,8 @@ export const SystemHealthMonitor = () => {
         </Card>
       )}
 
-      {/* System Performance Overview */}
-      {performance && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Database Size</p>
-                  <p className="text-2xl font-bold text-zatara-navy">{performance.database_size}</p>
-                </div>
-                <Database className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Active Connections</p>
-                  <p className="text-2xl font-bold text-zatara-navy">{performance.active_connections}</p>
-                </div>
-                <Server className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Bookings</p>
-                  <p className="text-2xl font-bold text-zatara-navy">{performance.total_bookings}</p>
-                </div>
-                <Calendar className="h-8 w-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Active Customers</p>
-                  <p className="text-2xl font-bold text-zatara-navy">{performance.active_customers}</p>
-                </div>
-                <Users className="h-8 w-8 text-orange-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* System Health Checks */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Activity className="h-5 w-5" />
-            <span>System Health Checks</span>
-          </CardTitle>
-          <CardDescription>
-            Automated monitoring of critical system components
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {healthChecks.length > 0 ? (
-            <div className="space-y-4">
-              {healthChecks.map((check, index) => (
-                <div key={index} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      {getStatusIcon(check.status)}
-                      <div>
-                        <h3 className="font-medium capitalize">
-                          {check.component.replace('_', ' ')}
-                        </h3>
-                        <p className="text-sm text-gray-600">{check.details}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge className={getStatusColor(check.status)}>
-                        {check.status}
-                      </Badge>
-                      <span className="text-xs text-gray-500">
-                        {new Date(check.last_updated).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center text-gray-500 py-8">
-              <Activity className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p>No health check data available</p>
-              <p className="text-sm">System monitoring may not be configured</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <PerformanceMetrics performance={performance} />
+      <HealthChecksSection healthChecks={healthChecks} />
 
       {/* System Maintenance Actions */}
       <Card>
