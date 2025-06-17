@@ -98,10 +98,10 @@ export const YearOverYearAnalytics = () => {
         comparisons.push({
           currentYear,
           previousYear,
-          bookingsChange: ((current.totalBookings - previous.totalBookings) / previous.totalBookings) * 100,
-          revenueChange: ((current.totalRevenue - previous.totalRevenue) / previous.totalRevenue) * 100,
-          guestsChange: ((current.totalGuests - previous.totalGuests) / previous.totalGuests) * 100,
-          avgValueChange: ((current.avgBookingValue - previous.avgBookingValue) / previous.avgBookingValue) * 100
+          bookingsChange: previous.totalBookings > 0 ? ((current.totalBookings - previous.totalBookings) / previous.totalBookings) * 100 : 0,
+          revenueChange: previous.totalRevenue > 0 ? ((current.totalRevenue - previous.totalRevenue) / previous.totalRevenue) * 100 : 0,
+          guestsChange: previous.totalGuests > 0 ? ((current.totalGuests - previous.totalGuests) / previous.totalGuests) * 100 : 0,
+          avgValueChange: previous.avgBookingValue > 0 ? ((current.avgBookingValue - previous.avgBookingValue) / previous.avgBookingValue) * 100 : 0
         });
       }
     }
@@ -163,6 +163,11 @@ export const YearOverYearAnalytics = () => {
           <h1 className="text-3xl font-bold text-zatara-navy">Year-over-Year Analytics</h1>
           <p className="text-zatara-blue">Compare business performance across multiple years</p>
         </div>
+        <DateRangePicker
+          date={dateRange}
+          onDateChange={setDateRange}
+          placeholder="Filter date range"
+        />
       </div>
 
       {/* Year Overview Cards */}
@@ -305,7 +310,7 @@ export const YearOverYearAnalytics = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value: any) => [`€${value.toLocaleString()}`, 'Revenue']} />
+                  <Tooltip formatter={(value: any) => [`€${Number(value).toLocaleString()}`, 'Revenue']} />
                   {years.map((year, index) => (
                     <Line 
                       key={year}
@@ -333,7 +338,7 @@ export const YearOverYearAnalytics = () => {
                 <div className="space-y-4">
                   {years.map(year => {
                     const sources = yearlyMetrics[year]?.sourceBreakdown || {};
-                    const total = Object.values(sources).reduce((sum: number, count: any) => sum + count, 0);
+                    const total = Object.values(sources).reduce((sum: number, count: any) => sum + Number(count), 0);
                     
                     return (
                       <div key={year} className="border rounded-lg p-3">
@@ -343,9 +348,9 @@ export const YearOverYearAnalytics = () => {
                             <div key={source} className="flex items-center justify-between text-sm">
                               <span>{source}</span>
                               <div className="flex items-center space-x-2">
-                                <span>{count}</span>
+                                <span>{Number(count)}</span>
                                 <Badge variant="outline">
-                                  {((count / total) * 100).toFixed(1)}%
+                                  {total > 0 ? ((Number(count) / total) * 100).toFixed(1) : '0'}%
                                 </Badge>
                               </div>
                             </div>
@@ -367,7 +372,7 @@ export const YearOverYearAnalytics = () => {
                 <div className="space-y-4">
                   {years.map(year => {
                     const boats = yearlyMetrics[year]?.boatBreakdown || {};
-                    const total = Object.values(boats).reduce((sum: number, count: any) => sum + count, 0);
+                    const total = Object.values(boats).reduce((sum: number, count: any) => sum + Number(count), 0);
                     
                     return (
                       <div key={year} className="border rounded-lg p-3">
@@ -377,9 +382,9 @@ export const YearOverYearAnalytics = () => {
                             <div key={boat} className="flex items-center justify-between text-sm">
                               <span>{boat}</span>
                               <div className="flex items-center space-x-2">
-                                <span>{count}</span>
+                                <span>{Number(count)}</span>
                                 <Badge variant="outline">
-                                  {((count / total) * 100).toFixed(1)}%
+                                  {total > 0 ? ((Number(count) / total) * 100).toFixed(1) : '0'}%
                                 </Badge>
                               </div>
                             </div>
