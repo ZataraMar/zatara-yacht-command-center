@@ -12,7 +12,6 @@ import { roleOptions } from '@/utils/userRoleUtils';
 import type { Database } from '@/integrations/supabase/types';
 
 type UserRole = Database['public']['Enums']['user_role'];
-type UserProfileInsert = Database['public']['Tables']['profiles']['Insert'];
 
 interface AddUserDialogProps {
   onUserAdded: () => void;
@@ -21,6 +20,7 @@ interface AddUserDialogProps {
 export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onUserAdded }) => {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [newUser, setNewUser] = useState({
     first_name: '',
     last_name: '',
@@ -31,47 +31,53 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onUserAdded }) => 
   });
 
   const handleAddUser = async () => {
+    if (!newUser.email || !newUser.first_name || !newUser.last_name) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
     try {
-      // Generate a UUID for the new profile
-      const { data: { user }, error: createError } = await supabase.auth.admin.createUser({
+      // Use standard signup with metadata - the database trigger will create the profile
+      const { data, error } = await supabase.auth.signUp({
         email: newUser.email,
-        email_confirm: true,
-        user_metadata: {
-          first_name: newUser.first_name,
-          last_name: newUser.last_name,
-          role: newUser.role,
-          company: newUser.company,
-          phone: newUser.phone
+        password: Math.random().toString(36).slice(-12), // Temporary password
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth`,
+          data: {
+            first_name: newUser.first_name,
+            last_name: newUser.last_name,
+            role: newUser.role,
+            company: newUser.company,
+            phone: newUser.phone
+          }
         }
       });
 
-      if (createError) throw createError;
+      if (error) {
+        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
+          toast({
+            title: "User Already Exists",
+            description: `A user with email ${newUser.email} already exists in the system.`,
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+        return;
+      }
 
-      if (user) {
-        // Create the profile entry with the user ID
-        const profileData: UserProfileInsert = {
-          id: user.id,
-          first_name: newUser.first_name,
-          last_name: newUser.last_name,
-          email: newUser.email,
-          role: newUser.role,
-          company: newUser.company,
-          phone: newUser.phone,
-          active: true,
-          whatsapp_enabled: false
-        };
-
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert(profileData);
-
-        if (profileError) throw profileError;
-
+      if (data.user) {
         toast({
-          title: "User Added",
-          description: `${newUser.first_name} ${newUser.last_name} has been added successfully.`,
+          title: "User Invitation Sent",
+          description: `An invitation email has been sent to ${newUser.email}. They will need to confirm their email and set their password.`,
         });
 
+        // Reset form
         setNewUser({
           first_name: '',
           last_name: '',
@@ -81,15 +87,21 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onUserAdded }) => 
           phone: ''
         });
         setIsOpen(false);
-        onUserAdded();
+        
+        // Refresh the user list after a short delay to allow for database trigger
+        setTimeout(() => {
+          onUserAdded();
+        }, 1000);
       }
     } catch (error: any) {
-      console.error('Error adding user:', error);
+      console.error('Error creating user invitation:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to add user. Please try again.",
+        description: error.message || "Failed to send user invitation. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,45 +110,48 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onUserAdded }) => 
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
           <UserPlus className="h-4 w-4" />
-          Add User
+          Invite User
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New User</DialogTitle>
+          <DialogTitle>Invite New User</DialogTitle>
           <DialogDescription>
-            Create a new user account. They will receive their login credentials via email.
+            Send an invitation email to create a new user account. They will receive an email to confirm and set their password.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="first_name">First Name</Label>
+              <Label htmlFor="first_name">First Name *</Label>
               <Input
                 id="first_name"
                 value={newUser.first_name}
                 onChange={(e) => setNewUser({ ...newUser, first_name: e.target.value })}
                 placeholder="First name"
+                required
               />
             </div>
             <div>
-              <Label htmlFor="last_name">Last Name</Label>
+              <Label htmlFor="last_name">Last Name *</Label>
               <Input
                 id="last_name"
                 value={newUser.last_name}
                 onChange={(e) => setNewUser({ ...newUser, last_name: e.target.value })}
                 placeholder="Last name"
+                required
               />
             </div>
           </div>
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Email *</Label>
             <Input
               id="email"
               type="email"
               value={newUser.email}
               onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
               placeholder="email@zatara.es"
+              required
             />
           </div>
           <div>
@@ -168,11 +183,14 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onUserAdded }) => 
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
+          <Button variant="outline" onClick={() => setIsOpen(false)} disabled={loading}>
             Cancel
           </Button>
-          <Button onClick={handleAddUser} disabled={!newUser.email || !newUser.first_name}>
-            Add User
+          <Button 
+            onClick={handleAddUser} 
+            disabled={loading || !newUser.email || !newUser.first_name || !newUser.last_name}
+          >
+            {loading ? 'Sending...' : 'Send Invitation'}
           </Button>
         </DialogFooter>
       </DialogContent>
