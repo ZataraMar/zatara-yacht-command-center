@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { useComprehensiveBookings } from '@/hooks/useComprehensiveBookings';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { DateRange } from 'react-day-picker';
 import { calculateYearlyMetrics, calculateYearComparisons, generateMonthlyComparisonData } from './year-over-year/utils';
 import { YearOverviewCards } from './year-over-year/YearOverviewCards';
@@ -10,10 +11,31 @@ import { ChartTabs } from './year-over-year/ChartTabs';
 
 export const YearOverYearAnalytics = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const { bookings, loading } = useComprehensiveBookings();
 
-  // Calculate year-over-year metrics
-  const yearlyMetrics = useMemo(() => calculateYearlyMetrics(bookings), [bookings]);
+  // Get unique booking statuses for the multi-select
+  const statusOptions = useMemo(() => {
+    const uniqueStatuses = Array.from(new Set(bookings.map(booking => booking.booking_status)))
+      .filter(status => status && status.trim() !== '')
+      .sort();
+    
+    return uniqueStatuses.map(status => ({
+      label: status.charAt(0).toUpperCase() + status.slice(1),
+      value: status
+    }));
+  }, [bookings]);
+
+  // Filter bookings based on selected statuses
+  const filteredBookings = useMemo(() => {
+    if (selectedStatuses.length === 0) {
+      return bookings;
+    }
+    return bookings.filter(booking => selectedStatuses.includes(booking.booking_status));
+  }, [bookings, selectedStatuses]);
+
+  // Calculate year-over-year metrics with filtered data
+  const yearlyMetrics = useMemo(() => calculateYearlyMetrics(filteredBookings), [filteredBookings]);
 
   const years = Object.keys(yearlyMetrics).map(Number).sort((a, b) => b - a);
   
@@ -41,11 +63,22 @@ export const YearOverYearAnalytics = () => {
           <h1 className="text-3xl font-bold text-zatara-navy">Year-over-Year Analytics</h1>
           <p className="text-zatara-blue">Compare business performance across multiple years</p>
         </div>
-        <DateRangePicker
-          date={dateRange}
-          onDateChange={setDateRange}
-          placeholder="Filter date range"
-        />
+        <div className="flex items-center gap-4">
+          <div className="min-w-[200px]">
+            <MultiSelect
+              options={statusOptions}
+              selected={selectedStatuses}
+              onChange={setSelectedStatuses}
+              placeholder="Filter by status..."
+              className="w-full"
+            />
+          </div>
+          <DateRangePicker
+            date={dateRange}
+            onDateChange={setDateRange}
+            placeholder="Filter date range"
+          />
+        </div>
       </div>
 
       <YearOverviewCards yearlyMetrics={yearlyMetrics} years={years} />
