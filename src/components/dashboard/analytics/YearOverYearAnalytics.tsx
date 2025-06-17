@@ -16,16 +16,32 @@ export const YearOverYearAnalytics = () => {
 
   // Get unique booking statuses for the multi-select
   const statusOptions = useMemo(() => {
-    if (!bookings || bookings.length === 0) {
+    // More aggressive checks to prevent any undefined values
+    if (!bookings || !Array.isArray(bookings) || bookings.length === 0) {
       return [];
     }
     
     try {
-      const uniqueStatuses = Array.from(new Set(
-        bookings
-          .map(booking => booking?.booking_status)
-          .filter(status => status && typeof status === 'string' && status.trim() !== '')
-      )).sort();
+      const validBookings = bookings.filter(booking => booking && typeof booking === 'object');
+      if (validBookings.length === 0) {
+        return [];
+      }
+
+      const statuses = validBookings
+        .map(booking => booking?.booking_status)
+        .filter(status => 
+          status && 
+          typeof status === 'string' && 
+          status.trim() !== '' && 
+          status !== 'undefined' && 
+          status !== 'null'
+        );
+
+      if (statuses.length === 0) {
+        return [];
+      }
+
+      const uniqueStatuses = Array.from(new Set(statuses)).sort();
       
       return uniqueStatuses.map(status => ({
         label: status.charAt(0).toUpperCase() + status.slice(1),
@@ -39,7 +55,7 @@ export const YearOverYearAnalytics = () => {
 
   // Filter bookings based on selected statuses
   const filteredBookings = useMemo(() => {
-    if (!bookings || bookings.length === 0) {
+    if (!bookings || !Array.isArray(bookings) || bookings.length === 0) {
       return [];
     }
     if (!selectedStatuses || selectedStatuses.length === 0) {
@@ -63,8 +79,14 @@ export const YearOverYearAnalytics = () => {
 
   // Safe handler for status selection changes
   const handleStatusChange = (newStatuses: string[]) => {
-    setSelectedStatuses(newStatuses || []);
+    setSelectedStatuses(Array.isArray(newStatuses) ? newStatuses : []);
   };
+
+  // Check if we have enough data to show the MultiSelect
+  const shouldShowMultiSelect = !loading && 
+    Array.isArray(statusOptions) && 
+    statusOptions.length > 0 && 
+    Array.isArray(selectedStatuses);
 
   if (loading) {
     return (
@@ -86,7 +108,7 @@ export const YearOverYearAnalytics = () => {
         </div>
         <div className="flex items-center gap-4">
           <div className="min-w-[200px]">
-            {statusOptions.length > 0 && (
+            {shouldShowMultiSelect && (
               <MultiSelect
                 options={statusOptions}
                 selected={selectedStatuses}
