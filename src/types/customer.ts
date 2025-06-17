@@ -32,7 +32,7 @@ export interface Customer {
   marketing_consent: boolean;
   data_source: string;
   // Additional optional fields for completeness
-  dietary_restrictions: string;
+  dietary_restrictions: string[];
   favorite_boat: string;
   last_contact_date: string;
   last_contact_method: string;
