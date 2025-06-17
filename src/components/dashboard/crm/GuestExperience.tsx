@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -12,15 +11,14 @@ import {
   Star, 
   Heart, 
   MessageCircle, 
-  Calendar, 
   Mail,
   Phone,
   MapPin,
   Gift,
   Search,
   Plus,
-  Filter,
-  AlertTriangle
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -39,6 +37,7 @@ interface Guest {
   special_requests: string[];
   dietary_requirements: string;
   vip_status: boolean;
+  locator?: string;
 }
 
 export const GuestExperience = () => {
@@ -50,6 +49,23 @@ export const GuestExperience = () => {
 
   useEffect(() => {
     fetchGuests();
+    
+    // Set up real-time subscription for bookings changes
+    const channel = supabase
+      .channel('guest-data-updates')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'bookings'
+      }, () => {
+        console.log('Bookings updated, refreshing guest data');
+        fetchGuests();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchGuests = async () => {
@@ -57,34 +73,78 @@ export const GuestExperience = () => {
       setLoading(true);
       setError(null);
       
-      const { data: bookings, error } = await supabase
+      console.log('Fetching guest data from bookings...');
+      
+      // Get bookings data directly
+      const { data: bookings, error: bookingsError } = await supabase
         .from('bookings')
         .select('*')
-        .not('guest_email', 'is', null);
+        .not('guest_email', 'is', null)
+        .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching guests:', error);
-        setError('Failed to fetch guest data');
+      if (bookingsError) {
+        console.error('Error fetching bookings:', bookingsError);
+        setError('Failed to fetch booking data: ' + bookingsError.message);
         return;
       }
 
+      console.log('Fetched bookings:', bookings?.length || 0);
+
       if (!bookings || bookings.length === 0) {
-        console.warn('No guest data found');
-        setError('No guest data available');
-        return;
+        console.log('No bookings found, trying to fetch any available data...');
+        
+        // Try to get from customers table as fallback
+        const { data: customers, error: customersError } = await supabase
+          .from('customers')
+          .select('*')
+          .limit(50);
+
+        if (customersError) {
+          console.error('Error fetching customers:', customersError);
+          setError('No guest data available - no bookings or customers found');
+          setGuests([]);
+          return;
+        }
+
+        if (customers && customers.length > 0) {
+          console.log('Found customers data:', customers.length);
+          const transformedGuests = customers.map(customer => ({
+            id: customer.customer_key || customer.id.toString(),
+            first_name: customer.first_name || 'Unknown',
+            last_name: customer.last_name || '',
+            email: customer.email_primary || '',
+            phone: customer.phone_primary || '',
+            nationality: customer.nationality || '',
+            total_charters: customer.total_bookings || 0,
+            total_spent: customer.total_spent || 0,
+            last_charter: customer.last_booking_date || '',
+            favorite_boat: customer.preferred_boat || '',
+            satisfaction_rating: customer.average_review_rating || 4.5,
+            special_requests: customer.special_requirements || [],
+            dietary_requirements: customer.dietary_restrictions?.join(', ') || '',
+            vip_status: customer.vip_status || false
+          }));
+          setGuests(transformedGuests);
+          return;
+        } else {
+          setError('No guest data available in the system');
+          setGuests([]);
+          return;
+        }
       }
 
       // Process bookings into guest profiles
       const guestMap = new Map();
       
       bookings.forEach(booking => {
-        const key = booking.guest_email;
+        const key = booking.guest_email || `${booking.guest_first_name}_${booking.guest_phone}` || booking.locator;
+        
         if (!guestMap.has(key)) {
           guestMap.set(key, {
             id: key,
             first_name: booking.guest_first_name || 'Unknown',
             last_name: booking.guest_surname || '',
-            email: booking.guest_email,
+            email: booking.guest_email || '',
             phone: booking.guest_phone || '',
             nationality: booking.nationality || '',
             total_charters: 0,
@@ -94,7 +154,8 @@ export const GuestExperience = () => {
             satisfaction_rating: 4.5,
             special_requests: [],
             dietary_requirements: booking.health_allergies || '',
-            vip_status: false
+            vip_status: false,
+            locator: booking.locator
           });
         }
 
@@ -102,20 +163,25 @@ export const GuestExperience = () => {
         guest.total_charters += 1;
         guest.total_spent += booking.charter_total || 0;
         
-        if (!guest.last_charter || booking.start_date > guest.last_charter) {
+        if (!guest.last_charter || (booking.start_date && booking.start_date > guest.last_charter)) {
           guest.last_charter = booking.start_date;
           guest.favorite_boat = booking.boat;
         }
 
-        if (guest.total_spent > 10000) {
+        // Mark as VIP if total spending > 5000
+        if (guest.total_spent > 5000) {
           guest.vip_status = true;
         }
       });
 
-      setGuests(Array.from(guestMap.values()));
+      const guestList = Array.from(guestMap.values());
+      console.log('Processed guests:', guestList.length);
+      setGuests(guestList);
+
     } catch (error) {
-      console.error('Error fetching guests:', error);
-      setError('Failed to load guest data');
+      console.error('Error in fetchGuests:', error);
+      setError('Failed to load guest data: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      setGuests([]);
     } finally {
       setLoading(false);
     }
@@ -135,7 +201,7 @@ export const GuestExperience = () => {
 
   const getVIPBadge = (guest: Guest) => {
     if (guest.vip_status) {
-      return <Badge className="bg-gold-500 text-white">VIP</Badge>;
+      return <Badge className="bg-yellow-500 text-white">VIP</Badge>;
     }
     if (guest.total_charters >= 3) {
       return <Badge className="bg-blue-500 text-white">Loyal</Badge>;
@@ -150,7 +216,10 @@ export const GuestExperience = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zatara-blue"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zatara-blue mx-auto mb-4"></div>
+          <p className="text-sm text-gray-600">Loading guest data...</p>
+        </div>
       </div>
     );
   }
@@ -162,13 +231,11 @@ export const GuestExperience = () => {
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <p className="text-red-600 mb-2">Error loading guest data</p>
-            <p className="text-sm text-gray-600">{error}</p>
-            <button 
-              onClick={fetchGuests}
-              className="mt-4 px-4 py-2 bg-zatara-blue text-white rounded hover:bg-zatara-blue/90"
-            >
+            <p className="text-sm text-gray-600 mb-4">{error}</p>
+            <Button onClick={fetchGuests} className="mr-2">
+              <RefreshCw className="h-4 w-4 mr-2" />
               Retry
-            </button>
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -180,12 +247,20 @@ export const GuestExperience = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-zatara-navy">Guest Experience & CRM</h2>
-          <p className="text-zatara-blue">Manage guest relationships and experiences</p>
+          <p className="text-zatara-blue">
+            Manage guest relationships and experiences ({guests.length} guests found)
+          </p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Guest
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={fetchGuests} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Guest
+          </Button>
+        </div>
       </div>
 
       {/* CRM Overview */}
@@ -211,7 +286,7 @@ export const GuestExperience = () => {
                   {guests.filter(g => g.vip_status).length}
                 </p>
               </div>
-              <Star className="h-8 w-8 text-gold-500" />
+              <Star className="h-8 w-8 text-yellow-500" />
             </div>
           </CardContent>
         </Card>
@@ -243,162 +318,97 @@ export const GuestExperience = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="guests" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="guests">Guest Directory</TabsTrigger>
-          <TabsTrigger value="feedback">Feedback & Reviews</TabsTrigger>
-          <TabsTrigger value="loyalty">Loyalty Program</TabsTrigger>
-          <TabsTrigger value="communications">Communications</TabsTrigger>
-        </TabsList>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          placeholder="Search guests by name or email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
+      </div>
 
-        <TabsContent value="guests" className="space-y-6">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search guests by name or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-
-          {/* Guest Grid */}
-          {filteredGuests.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredGuests.map((guest) => (
-                <Card key={guest.id} className="hover:shadow-lg transition-shadow cursor-pointer"
-                      onClick={() => setSelectedGuest(guest)}>
-                  <CardHeader>
-                    <div className="flex items-start space-x-4">
-                      <Avatar>
-                        <AvatarFallback>
-                          {getInitials(guest.first_name, guest.last_name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <CardTitle className="text-lg">
-                          {guest.first_name} {guest.last_name}
-                        </CardTitle>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {getVIPBadge(guest)}
-                          <Badge variant="outline" className="text-xs">
-                            {guest.total_charters} charter{guest.total_charters !== 1 ? 's' : ''}
-                          </Badge>
-                        </div>
-                      </div>
+      {/* Guest Grid */}
+      {filteredGuests.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredGuests.map((guest) => (
+            <Card key={guest.id} className="hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => setSelectedGuest(guest)}>
+              <CardHeader>
+                <div className="flex items-start space-x-4">
+                  <Avatar>
+                    <AvatarFallback>
+                      {getInitials(guest.first_name, guest.last_name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg">
+                      {guest.first_name} {guest.last_name}
+                    </CardTitle>
+                    <div className="flex items-center space-x-2 mt-1">
+                      {getVIPBadge(guest)}
+                      <Badge variant="outline" className="text-xs">
+                        {guest.total_charters} charter{guest.total_charters !== 1 ? 's' : ''}
+                      </Badge>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2 text-sm">
-                        <Mail className="h-4 w-4 text-gray-500" />
-                        <span className="truncate">{guest.email}</span>
-                      </div>
-                      {guest.phone && (
-                        <div className="flex items-center space-x-2 text-sm">
-                          <Phone className="h-4 w-4 text-gray-500" />
-                          <span>{guest.phone}</span>
-                        </div>
-                      )}
-                      {guest.nationality && (
-                        <div className="flex items-center space-x-2 text-sm">
-                          <MapPin className="h-4 w-4 text-gray-500" />
-                          <span>{guest.nationality}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between items-center pt-2">
-                        <span className="text-sm font-medium">Total Spent:</span>
-                        <span className="text-sm font-bold text-green-600">
-                          {formatCurrency(guest.total_spent)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">Last Charter:</span>
-                        <span className="text-sm">
-                          {guest.last_charter ? new Date(guest.last_charter).toLocaleDateString() : 'N/A'}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-1 pt-2">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            className={`h-4 w-4 ${star <= guest.satisfaction_rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                          />
-                        ))}
-                        <span className="text-sm text-gray-600 ml-2">
-                          {guest.satisfaction_rating.toFixed(1)}
-                        </span>
-                      </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-sm">
+                    <Mail className="h-4 w-4 text-gray-500" />
+                    <span className="truncate">{guest.email || 'No email'}</span>
+                  </div>
+                  {guest.phone && (
+                    <div className="flex items-center space-x-2 text-sm">
+                      <Phone className="h-4 w-4 text-gray-500" />
+                      <span>{guest.phone}</span>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No guests found matching your search</p>
+                  )}
+                  {guest.nationality && (
+                    <div className="flex items-center space-x-2 text-sm">
+                      <MapPin className="h-4 w-4 text-gray-500" />
+                      <span>{guest.nationality}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="text-sm font-medium">Total Spent:</span>
+                    <span className="text-sm font-bold text-green-600">
+                      {formatCurrency(guest.total_spent)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Last Charter:</span>
+                    <span className="text-sm">
+                      {guest.last_charter ? new Date(guest.last_charter).toLocaleDateString() : 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-1 pt-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={`h-4 w-4 ${star <= guest.satisfaction_rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                      />
+                    ))}
+                    <span className="text-sm text-gray-600 ml-2">
+                      {guest.satisfaction_rating.toFixed(1)}
+                    </span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="feedback" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Guest Feedback & Reviews</CardTitle>
-              <CardDescription>Customer satisfaction and review management</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="text-center text-gray-500 py-8">
-                  <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>Feedback collection system will be integrated here</p>
-                  <p className="text-sm">Connect with review platforms and feedback forms</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="loyalty" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Loyalty Program</CardTitle>
-              <CardDescription>Reward repeat customers and build loyalty</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="text-center text-gray-500 py-8">
-                  <Gift className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>Loyalty program management will be integrated here</p>
-                  <p className="text-sm">Points, rewards, and special offers for repeat guests</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="communications" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Guest Communications</CardTitle>
-              <CardDescription>Manage communications and marketing campaigns</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="text-center text-gray-500 py-8">
-                  <Mail className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>Communication management system will be integrated here</p>
-                  <p className="text-sm">Email campaigns, newsletters, and personalized messaging</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-8 text-center">
+            <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600">No guests found matching your search</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Guest Detail Modal */}
       {selectedGuest && (
@@ -411,6 +421,11 @@ export const GuestExperience = () => {
                 </h3>
                 <div className="flex items-center space-x-2 mt-2">
                   {getVIPBadge(selectedGuest)}
+                  {selectedGuest.locator && (
+                    <Badge variant="outline" className="text-xs">
+                      {selectedGuest.locator}
+                    </Badge>
+                  )}
                 </div>
               </div>
               <Button variant="outline" onClick={() => setSelectedGuest(null)}>
@@ -422,7 +437,7 @@ export const GuestExperience = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">Email</label>
-                  <p className="text-sm text-gray-600">{selectedGuest.email}</p>
+                  <p className="text-sm text-gray-600">{selectedGuest.email || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">Phone</label>
