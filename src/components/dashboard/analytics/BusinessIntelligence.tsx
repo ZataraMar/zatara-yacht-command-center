@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,11 +40,34 @@ interface TargetData {
   progress: number;
 }
 
+interface KPIs {
+  totalRevenue: number;
+  totalCharters: number;
+  totalGuests: number;
+  avgCharterValue: number;
+  outstandingPayments: number;
+  conversionRate: number;
+}
+
 export const BusinessIntelligence = () => {
-  const { bookings, loading } = useComprehensiveBookings();
+  const { bookings, loading, error } = useComprehensiveBookings();
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [comparisonYear, setComparisonYear] = useState<string>('');
+  
+  // State declarations that were missing
+  const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
+  const [boatPerformance, setBoatPerformance] = useState<BoatPerformance[]>([]);
+  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
+  const [targetData, setTargetData] = useState<TargetData[]>([]);
+  const [kpis, setKpis] = useState<KPIs>({
+    totalRevenue: 0,
+    totalCharters: 0,
+    totalGuests: 0,
+    avgCharterValue: 0,
+    outstandingPayments: 0,
+    conversionRate: 0
+  });
   
   // Get available years from bookings data
   const availableYears = useMemo(() => {
