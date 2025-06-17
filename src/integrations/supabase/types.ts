@@ -3781,6 +3781,95 @@ export type Database = {
         }
         Relationships: []
       }
+      sales_leads: {
+        Row: {
+          assigned_broker: string | null
+          budget_range_max: number | null
+          budget_range_min: number | null
+          contact_email: string | null
+          contact_name: string
+          contact_nationality: string | null
+          contact_phone: string | null
+          conversion_probability: number | null
+          created_at: string | null
+          first_contact_date: string | null
+          id: number
+          intended_use: string | null
+          interested_in_yacht_id: number | null
+          last_contact_date: string | null
+          lead_score: number | null
+          lead_source: string | null
+          lead_status: string | null
+          next_followup_date: string | null
+          notes: string | null
+          preferred_length_max: number | null
+          preferred_length_min: number | null
+          priority_level: number | null
+          timeline: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_broker?: string | null
+          budget_range_max?: number | null
+          budget_range_min?: number | null
+          contact_email?: string | null
+          contact_name: string
+          contact_nationality?: string | null
+          contact_phone?: string | null
+          conversion_probability?: number | null
+          created_at?: string | null
+          first_contact_date?: string | null
+          id?: number
+          intended_use?: string | null
+          interested_in_yacht_id?: number | null
+          last_contact_date?: string | null
+          lead_score?: number | null
+          lead_source?: string | null
+          lead_status?: string | null
+          next_followup_date?: string | null
+          notes?: string | null
+          preferred_length_max?: number | null
+          preferred_length_min?: number | null
+          priority_level?: number | null
+          timeline?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_broker?: string | null
+          budget_range_max?: number | null
+          budget_range_min?: number | null
+          contact_email?: string | null
+          contact_name?: string
+          contact_nationality?: string | null
+          contact_phone?: string | null
+          conversion_probability?: number | null
+          created_at?: string | null
+          first_contact_date?: string | null
+          id?: number
+          intended_use?: string | null
+          interested_in_yacht_id?: number | null
+          last_contact_date?: string | null
+          lead_score?: number | null
+          lead_source?: string | null
+          lead_status?: string | null
+          next_followup_date?: string | null
+          notes?: string | null
+          preferred_length_max?: number | null
+          preferred_length_min?: number | null
+          priority_level?: number | null
+          timeline?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_leads_interested_in_yacht_id_fkey"
+            columns: ["interested_in_yacht_id"]
+            isOneToOne: false
+            referencedRelation: "yacht_inventory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seasonal_performance: {
         Row: {
           actual_average_charter_value: number | null
@@ -5086,6 +5175,192 @@ export type Database = {
         }
         Relationships: []
       }
+      yacht_inventory: {
+        Row: {
+          active: boolean | null
+          beam_meters: number | null
+          broker_assigned: string | null
+          commission_rate: number | null
+          condition_rating: number | null
+          created_at: string | null
+          current_location: string | null
+          draft_meters: number | null
+          engine_hp: number | null
+          engine_type: string | null
+          fuel_capacity_liters: number | null
+          id: number
+          inquiry_count: number | null
+          key_features: string[] | null
+          length_meters: number | null
+          listing_date: string | null
+          listing_status: string | null
+          listing_type: string | null
+          make_model: string | null
+          marketing_description: string | null
+          owner_contact: string | null
+          owner_location: string | null
+          photos_count: number | null
+          price_eur: number | null
+          survey_date: string | null
+          survey_report_url: string | null
+          target_sale_date: string | null
+          updated_at: string | null
+          viewing_count: number | null
+          water_capacity_liters: number | null
+          yacht_name: string
+          year_built: number | null
+        }
+        Insert: {
+          active?: boolean | null
+          beam_meters?: number | null
+          broker_assigned?: string | null
+          commission_rate?: number | null
+          condition_rating?: number | null
+          created_at?: string | null
+          current_location?: string | null
+          draft_meters?: number | null
+          engine_hp?: number | null
+          engine_type?: string | null
+          fuel_capacity_liters?: number | null
+          id?: number
+          inquiry_count?: number | null
+          key_features?: string[] | null
+          length_meters?: number | null
+          listing_date?: string | null
+          listing_status?: string | null
+          listing_type?: string | null
+          make_model?: string | null
+          marketing_description?: string | null
+          owner_contact?: string | null
+          owner_location?: string | null
+          photos_count?: number | null
+          price_eur?: number | null
+          survey_date?: string | null
+          survey_report_url?: string | null
+          target_sale_date?: string | null
+          updated_at?: string | null
+          viewing_count?: number | null
+          water_capacity_liters?: number | null
+          yacht_name: string
+          year_built?: number | null
+        }
+        Update: {
+          active?: boolean | null
+          beam_meters?: number | null
+          broker_assigned?: string | null
+          commission_rate?: number | null
+          condition_rating?: number | null
+          created_at?: string | null
+          current_location?: string | null
+          draft_meters?: number | null
+          engine_hp?: number | null
+          engine_type?: string | null
+          fuel_capacity_liters?: number | null
+          id?: number
+          inquiry_count?: number | null
+          key_features?: string[] | null
+          length_meters?: number | null
+          listing_date?: string | null
+          listing_status?: string | null
+          listing_type?: string | null
+          make_model?: string | null
+          marketing_description?: string | null
+          owner_contact?: string | null
+          owner_location?: string | null
+          photos_count?: number | null
+          price_eur?: number | null
+          survey_date?: string | null
+          survey_report_url?: string | null
+          target_sale_date?: string | null
+          updated_at?: string | null
+          viewing_count?: number | null
+          water_capacity_liters?: number | null
+          yacht_name?: string
+          year_built?: number | null
+        }
+        Relationships: []
+      }
+      yacht_viewings: {
+        Row: {
+          attendees_count: number | null
+          broker_assigned: string | null
+          created_at: string | null
+          duration_hours: number | null
+          follow_up_required: boolean | null
+          id: number
+          interest_level: number | null
+          lead_id: number | null
+          offer_potential: boolean | null
+          preparation_notes: string | null
+          updated_at: string | null
+          viewer_contact: string | null
+          viewer_name: string
+          viewing_date: string
+          viewing_feedback: string | null
+          viewing_status: string | null
+          viewing_time: string
+          viewing_type: string | null
+          yacht_id: number
+        }
+        Insert: {
+          attendees_count?: number | null
+          broker_assigned?: string | null
+          created_at?: string | null
+          duration_hours?: number | null
+          follow_up_required?: boolean | null
+          id?: number
+          interest_level?: number | null
+          lead_id?: number | null
+          offer_potential?: boolean | null
+          preparation_notes?: string | null
+          updated_at?: string | null
+          viewer_contact?: string | null
+          viewer_name: string
+          viewing_date: string
+          viewing_feedback?: string | null
+          viewing_status?: string | null
+          viewing_time: string
+          viewing_type?: string | null
+          yacht_id: number
+        }
+        Update: {
+          attendees_count?: number | null
+          broker_assigned?: string | null
+          created_at?: string | null
+          duration_hours?: number | null
+          follow_up_required?: boolean | null
+          id?: number
+          interest_level?: number | null
+          lead_id?: number | null
+          offer_potential?: boolean | null
+          preparation_notes?: string | null
+          updated_at?: string | null
+          viewer_contact?: string | null
+          viewer_name?: string
+          viewing_date?: string
+          viewing_feedback?: string | null
+          viewing_status?: string | null
+          viewing_time?: string
+          viewing_type?: string | null
+          yacht_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "yacht_viewings_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "yacht_viewings_yacht_id_fkey"
+            columns: ["yacht_id"]
+            isOneToOne: false
+            referencedRelation: "yacht_inventory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       zatara_2023_charters: {
         Row: {
           boat: string | null
@@ -5558,6 +5833,16 @@ export type Database = {
       }
       calculate_customer_lifetime_value: {
         Args: { customer_id_param: number }
+        Returns: number
+      }
+      calculate_lead_score: {
+        Args: {
+          p_budget_min: number
+          p_budget_max: number
+          p_timeline: string
+          p_contact_quality?: number
+          p_viewing_count?: number
+        }
         Returns: number
       }
       calculate_seasonal_forecast: {

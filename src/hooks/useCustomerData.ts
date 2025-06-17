@@ -39,6 +39,11 @@ interface Customer {
   favorite_boat?: string;
   last_contact_date?: string;
   last_contact_method?: string;
+  latest_review_date?: string;
+  preferred_season?: string;
+  total_charter_hours?: number;
+  total_charters?: number;
+  total_reviews_given?: number;
 }
 
 interface CustomerHistory {
@@ -105,7 +110,14 @@ export const useCustomerData = (customerId?: number) => {
           dietary_restrictions: '',
           favorite_boat: '',
           last_contact_date: '',
-          last_contact_method: ''
+          last_contact_method: '',
+          latest_review_date: '',
+          nationality: '',
+          preferred_season: '',
+          special_requirements: '',
+          total_charter_hours: 0,
+          total_charters: 0,
+          total_reviews_given: 0
         };
       }
 
@@ -176,7 +188,14 @@ export const useCustomerData = (customerId?: number) => {
           dietary_restrictions: '',
           favorite_boat: '',
           last_contact_date: '',
-          last_contact_method: ''
+          last_contact_method: '',
+          latest_review_date: '',
+          nationality: '',
+          preferred_season: '',
+          special_requirements: '',
+          total_charter_hours: 0,
+          total_charters: 0,
+          total_reviews_given: 0
         })) || [];
       }
 
