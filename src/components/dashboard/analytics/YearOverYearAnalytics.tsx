@@ -20,14 +20,21 @@ export const YearOverYearAnalytics = () => {
       return [];
     }
     
-    const uniqueStatuses = Array.from(new Set(bookings.map(booking => booking.booking_status)))
-      .filter(status => status && status.trim() !== '')
-      .sort();
-    
-    return uniqueStatuses.map(status => ({
-      label: status.charAt(0).toUpperCase() + status.slice(1),
-      value: status
-    }));
+    try {
+      const uniqueStatuses = Array.from(new Set(
+        bookings
+          .map(booking => booking?.booking_status)
+          .filter(status => status && typeof status === 'string' && status.trim() !== '')
+      )).sort();
+      
+      return uniqueStatuses.map(status => ({
+        label: status.charAt(0).toUpperCase() + status.slice(1),
+        value: status
+      }));
+    } catch (error) {
+      console.error('Error calculating status options:', error);
+      return [];
+    }
   }, [bookings]);
 
   // Filter bookings based on selected statuses
@@ -35,10 +42,12 @@ export const YearOverYearAnalytics = () => {
     if (!bookings || bookings.length === 0) {
       return [];
     }
-    if (selectedStatuses.length === 0) {
+    if (!selectedStatuses || selectedStatuses.length === 0) {
       return bookings;
     }
-    return bookings.filter(booking => selectedStatuses.includes(booking.booking_status));
+    return bookings.filter(booking => 
+      booking?.booking_status && selectedStatuses.includes(booking.booking_status)
+    );
   }, [bookings, selectedStatuses]);
 
   // Calculate year-over-year metrics with filtered data
@@ -51,6 +60,11 @@ export const YearOverYearAnalytics = () => {
 
   // Monthly comparison data for charts
   const monthlyComparisonData = useMemo(() => generateMonthlyComparisonData(yearlyMetrics, years), [yearlyMetrics, years]);
+
+  // Safe handler for status selection changes
+  const handleStatusChange = (newStatuses: string[]) => {
+    setSelectedStatuses(newStatuses || []);
+  };
 
   if (loading) {
     return (
@@ -72,13 +86,15 @@ export const YearOverYearAnalytics = () => {
         </div>
         <div className="flex items-center gap-4">
           <div className="min-w-[200px]">
-            <MultiSelect
-              options={statusOptions}
-              selected={selectedStatuses}
-              onChange={setSelectedStatuses}
-              placeholder="Filter by status..."
-              className="w-full"
-            />
+            {statusOptions.length > 0 && (
+              <MultiSelect
+                options={statusOptions}
+                selected={selectedStatuses}
+                onChange={handleStatusChange}
+                placeholder="Filter by status..."
+                className="w-full"
+              />
+            )}
           </div>
           <DateRangePicker
             date={dateRange}
