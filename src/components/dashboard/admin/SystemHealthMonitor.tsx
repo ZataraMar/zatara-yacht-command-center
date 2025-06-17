@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,176 +13,15 @@ import {
   Users,
   Calendar,
   DollarSign,
-  Sync,
   Clock,
   AlertCircle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
-interface SystemHealth {
-  component: string;
-  status: string;
-  details: string;
-  last_updated: string;
-}
-
-interface SystemPerformance {
-  database_size: string;
-  active_connections: number;
-  table_count: number;
-  total_bookings: number;
-  active_customers: number;
-  last_updated: string;
-}
-
-interface SyncStatus {
-  platform_name: string;
-  sync_status: string;
-  last_successful_sync: string;
-  records_synced_last_run: number;
-  next_scheduled_sync: string;
-  consecutive_failures: number;
-}
-
-interface ImportLog {
-  import_session_id: string;
-  platform_source: string;
-  import_status: string;
-  records_successful: number;
-  import_trigger: string;
-  created_at: string;
-}
+// ... keep existing code (interfaces and component logic)
 
 export const SystemHealthMonitor = () => {
-  const [healthChecks, setHealthChecks] = useState<SystemHealth[]>([]);
-  const [performance, setPerformance] = useState<SystemPerformance | null>(null);
-  const [syncStatus, setSyncStatus] = useState<SyncStatus[]>([]);
-  const [importLogs, setImportLogs] = useState<ImportLog[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [syncingManually, setSyncingManually] = useState(false);
-
-  useEffect(() => {
-    fetchAllSystemData();
-  }, []);
-
-  const fetchAllSystemData = async () => {
-    await Promise.all([
-      fetchSystemHealth(),
-      fetchSystemPerformance(),
-      fetchSyncStatus(),
-      fetchImportLogs()
-    ]);
-  };
-
-  const fetchSystemHealth = async () => {
-    try {
-      const { data, error } = await supabase.rpc('system_health_check');
-      
-      if (error) {
-        console.error('Error fetching system health:', error);
-        return;
-      }
-
-      setHealthChecks(data || []);
-    } catch (error) {
-      console.error('Error fetching system health:', error);
-    }
-  };
-
-  const fetchSystemPerformance = async () => {
-    try {
-      // Calculate basic metrics from existing tables since system_performance_monitor
-      // table structure doesn't match our interface
-      const [bookingsResult, customersResult] = await Promise.all([
-        supabase.from('bookings').select('id', { count: 'exact', head: true }),
-        supabase.from('customers').select('id', { count: 'exact', head: true })
-      ]);
-
-      const performanceData: SystemPerformance = {
-        database_size: 'Unknown',
-        active_connections: 0,
-        table_count: 47, // Known from schema
-        total_bookings: bookingsResult.count || 0,
-        active_customers: customersResult.count || 0,
-        last_updated: new Date().toISOString()
-      };
-
-      setPerformance(performanceData);
-    } catch (error) {
-      console.error('Error fetching system performance:', error);
-      // Set minimal fallback data
-      setPerformance({
-        database_size: 'Unknown',
-        active_connections: 0,
-        table_count: 47,
-        total_bookings: 0,
-        active_customers: 0,
-        last_updated: new Date().toISOString()
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchSyncStatus = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('api_sync_status')
-        .select('*')
-        .order('last_successful_sync', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching sync status:', error);
-        return;
-      }
-
-      setSyncStatus(data || []);
-    } catch (error) {
-      console.error('Error fetching sync status:', error);
-    }
-  };
-
-  const fetchImportLogs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('data_import_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) {
-        console.error('Error fetching import logs:', error);
-        return;
-      }
-
-      setImportLogs(data || []);
-    } catch (error) {
-      console.error('Error fetching import logs:', error);
-    }
-  };
-
-  const triggerManualSync = async () => {
-    try {
-      setSyncingManually(true);
-      const { data, error } = await supabase.rpc('trigger_manual_sync');
-      
-      if (error) {
-        console.error('Manual sync failed:', error);
-        return;
-      }
-
-      console.log('Manual sync result:', data);
-      
-      // Refresh all data after sync
-      await fetchAllSystemData();
-      
-    } catch (error) {
-      console.error('Error triggering manual sync:', error);
-    } finally {
-      setSyncingManually(false);
-    }
-  };
+  // ... keep existing code (state and useEffect)
 
   const refreshHealth = async () => {
     setRefreshing(true);
@@ -228,7 +66,7 @@ export const SystemHealthMonitor = () => {
       case 'active':
         return <CheckCircle2 className="h-5 w-5 text-green-600" />;
       case 'syncing':
-        return <Sync className="h-5 w-5 text-blue-600 animate-spin" />;
+        return <RefreshCw className="h-5 w-5 text-blue-600 animate-spin" />;
       default:
         return <Clock className="h-5 w-5 text-gray-600" />;
     }
@@ -251,7 +89,7 @@ export const SystemHealthMonitor = () => {
         </div>
         <div className="flex space-x-2">
           <Button onClick={triggerManualSync} disabled={syncingManually} variant="outline">
-            <Sync className={`h-4 w-4 mr-2 ${syncingManually ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 ${syncingManually ? 'animate-spin' : ''}`} />
             Manual Sync
           </Button>
           <Button onClick={refreshHealth} disabled={refreshing}>
@@ -265,7 +103,7 @@ export const SystemHealthMonitor = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Sync className="h-5 w-5" />
+            <RefreshCw className="h-5 w-5" />
             <span>Andronautic Auto-Sync Status</span>
           </CardTitle>
           <CardDescription>
@@ -308,7 +146,7 @@ export const SystemHealthMonitor = () => {
             </div>
           ) : (
             <div className="text-center text-gray-500 py-8">
-              <Sync className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <RefreshCw className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <p>No sync configurations found</p>
               <p className="text-sm">Auto-sync may not be configured</p>
             </div>

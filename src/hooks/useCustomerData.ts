@@ -18,6 +18,22 @@ interface Customer {
   activity_status: string;
   last_booking_date: string;
   created_at: string;
+  updated_at: string;
+  // Additional fields from customer_360_view
+  acquisition_source?: string;
+  acquisition_date?: string;
+  average_booking_value?: number;
+  average_review_rating?: number;
+  avg_satisfaction_score?: number;
+  preferred_boat?: string;
+  preferred_time_slot?: string;
+  communication_preference?: string;
+  nationality?: string;
+  special_requirements?: string;
+  vip_status?: boolean;
+  referral_source?: string;
+  marketing_consent?: boolean;
+  data_source?: string;
 }
 
 interface CustomerHistory {
@@ -54,20 +70,37 @@ export const useCustomerData = (customerId?: number) => {
         .single();
 
       if (customerError) {
-        // Fallback to customers table
+        // Fallback to customers table with basic fields
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('customers')
-          .select('*')
+          .select(`
+            id, customer_key, full_name, first_name, last_name,
+            phone_primary, email_primary, customer_status,
+            total_bookings, total_spent, customer_lifetime_value,
+            created_at, updated_at
+          `)
           .eq('id', id)
           .single();
 
         if (fallbackError) {
           throw fallbackError;
         }
-        customerData = fallbackData;
+        
+        // Map fallback data to include missing fields with defaults
+        customerData = {
+          ...fallbackData,
+          customer_segment: 'standard',
+          activity_status: 'active',
+          last_booking_date: fallbackData.created_at,
+          acquisition_source: 'unknown',
+          acquisition_date: fallbackData.created_at,
+          average_booking_value: 0,
+          average_review_rating: 0,
+          avg_satisfaction_score: 0
+        };
       }
 
-      setCustomer(customerData);
+      setCustomer(customerData as Customer);
 
       // Fetch customer history
       const { data: historyData, error: historyError } = await supabase
@@ -107,17 +140,34 @@ export const useCustomerData = (customerId?: number) => {
         // Fallback to customers table
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('customers')
-          .select('*')
+          .select(`
+            id, customer_key, full_name, first_name, last_name,
+            phone_primary, email_primary, customer_status,
+            total_bookings, total_spent, customer_lifetime_value,
+            created_at, updated_at
+          `)
           .order('total_spent', { ascending: false })
           .limit(50);
 
         if (fallbackError) {
           throw fallbackError;
         }
-        customersData = fallbackData;
+        
+        // Map fallback data to include missing fields with defaults
+        customersData = fallbackData?.map(customer => ({
+          ...customer,
+          customer_segment: 'standard',
+          activity_status: 'active',
+          last_booking_date: customer.created_at,
+          acquisition_source: 'unknown',
+          acquisition_date: customer.created_at,
+          average_booking_value: 0,
+          average_review_rating: 0,
+          avg_satisfaction_score: 0
+        })) || [];
       }
 
-      setCustomers(customersData || []);
+      setCustomers(customersData as Customer[]);
 
     } catch (err) {
       console.error('Error fetching customers:', err);
