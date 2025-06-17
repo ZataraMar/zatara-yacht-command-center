@@ -3,20 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Euro } from 'lucide-react';
-
-interface FinanceViewRow {
-  locator: string;
-  charter_date: string;
-  guest_full_name: string;
-  boat: string;
-  booking_source: string;
-  charter_total: number;
-  outstanding_amount: number;
-  payments_received: number;
-  total_paid: number;
-  balance_due: number;
-  payment_status: string;
-}
+import { FinanceViewRow } from '../types/businessViewTypes';
 
 interface FinanceViewProps {
   data: FinanceViewRow[];

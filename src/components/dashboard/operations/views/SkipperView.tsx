@@ -3,23 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Anchor, Clock, Users, Phone, AlertCircle, CheckCircle2 } from 'lucide-react';
-
-interface SkipperViewRow {
-  locator: string;
-  charter_date: string;
-  guest_full_name: string;
-  guest_phone: string;
-  start_time: string;
-  end_time: string;
-  total_guests: number;
-  booking_status: string;
-  charter_notes: string;
-  fnb_details: string;
-  equipment_required: string;
-  pre_departure_checks: boolean;
-  cleared_for_departure: boolean;
-  gps_coordinates: string;
-}
+import { SkipperViewRow } from '../types/businessViewTypes';
 
 interface SkipperViewProps {
   data: SkipperViewRow[];

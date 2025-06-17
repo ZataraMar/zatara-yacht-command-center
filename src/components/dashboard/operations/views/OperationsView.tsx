@@ -3,28 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Anchor, Clock, MapPin } from 'lucide-react';
-
-interface BusinessViewRow {
-  locator: string;
-  charter_date: string;
-  guest_name: string;
-  booking_source: string;
-  start_time: string;
-  end_time: string;
-  boat: string;
-  status: string;
-  charter_total: number;
-  fnb_details: string;
-  crew_required: string;
-  equipment_required: string;
-  charter_notes: string;
-  pre_departure_checks: boolean;
-  cleared_for_departure: boolean;
-  gps_coordinates: string;
-  total_guests: number;
-  paid_amount: number;
-  outstanding_amount: number;
-}
+import { BusinessViewRow } from '../types/businessViewTypes';
 
 interface OperationsViewProps {
   data: BusinessViewRow[];
