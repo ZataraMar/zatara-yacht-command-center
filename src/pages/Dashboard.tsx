@@ -58,7 +58,7 @@ const Dashboard = () => {
         <Route 
           path="/operations" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owners', 'staff', 'skippers']}>
+            <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owner', 'staff', 'skippers']}>
               <DashboardOperations />
             </SecureRoleBasedRoute>
           } 
@@ -68,7 +68,7 @@ const Dashboard = () => {
         <Route 
           path="/fleet" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'management', 'owners', 'staff', 'skippers']}>
+            <SecureRoleBasedRoute allowedRoles={['team', 'management', 'owner', 'staff', 'skippers']}>
               <FleetOverview />
             </SecureRoleBasedRoute>
           } 
@@ -78,7 +78,7 @@ const Dashboard = () => {
         <Route 
           path="/team" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owners']}>
+            <SecureRoleBasedRoute allowedRoles={['management', 'owner']}>
               <StaffManagement />
             </SecureRoleBasedRoute>
           } 
@@ -88,7 +88,7 @@ const Dashboard = () => {
         <Route 
           path="/users" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owners']}>
+            <SecureRoleBasedRoute allowedRoles={['management', 'owner']}>
               <UserManagement />
             </SecureRoleBasedRoute>
           } 
@@ -98,7 +98,7 @@ const Dashboard = () => {
         <Route 
           path="/financials" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owners', 'agency']}>
+            <SecureRoleBasedRoute allowedRoles={['management', 'owner', 'agency']}>
               <AdvancedFinancials />
             </SecureRoleBasedRoute>
           } 
@@ -108,7 +108,7 @@ const Dashboard = () => {
         <Route 
           path="/guests" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owners', 'staff']}>
+            <SecureRoleBasedRoute allowedRoles={['team', 'agency', 'management', 'owner', 'staff']}>
               <GuestExperience />
             </SecureRoleBasedRoute>
           } 
@@ -118,7 +118,7 @@ const Dashboard = () => {
         <Route 
           path="/operations-excellence" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['team', 'management', 'owners', 'staff', 'skippers']}>
+            <SecureRoleBasedRoute allowedRoles={['team', 'management', 'owner', 'staff', 'skippers']}>
               <OperationalExcellence />
             </SecureRoleBasedRoute>
           } 
@@ -128,7 +128,7 @@ const Dashboard = () => {
         <Route 
           path="/analytics" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owners', 'agency']}>
+            <SecureRoleBasedRoute allowedRoles={['management', 'owner', 'agency']}>
               <AdvancedReporting />
             </SecureRoleBasedRoute>
           } 
@@ -138,7 +138,7 @@ const Dashboard = () => {
         <Route 
           path="/automation" 
           element={
-            <SecureRoleBasedRoute allowedRoles={['management', 'owners', 'agency']}>
+            <SecureRoleBasedRoute allowedRoles={['management', 'owner', 'agency']}>
               <AutomationWorkflows />
             </SecureRoleBasedRoute>
           } 

@@ -28,7 +28,7 @@ export const StaffManagement = () => {
     );
   }
 
-  const isOwnerOrManagement = profile?.role === 'owners' || profile?.role === 'management';
+  const isOwnerOrManagement = profile?.role === 'owner' || profile?.role === 'management';
 
   return (
     <div className="space-y-6">
@@ -60,7 +60,7 @@ export const StaffManagement = () => {
       <StaffOverviewCards metrics={overviewMetrics} />
 
       {/* Welcome message for owners */}
-      {profile?.role === 'owners' && (
+      {profile?.role === 'owner' && (
         <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
           <div className="flex items-center gap-3">
             <Users className="h-6 w-6 text-purple-600" />

@@ -57,23 +57,23 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
     // Operational staff navigation
     const operationalItems = [
-      { icon: Activity, label: 'Operations Center', href: '/dashboard/operations', roles: ['boat_owners', 'agency', 'management', 'owners', 'staff', 'skippers'] },
-      { icon: Anchor, label: 'Fleet Management', href: '/dashboard/fleet', roles: ['boat_owners', 'management', 'owners', 'staff', 'skippers'] },
-      { icon: UserCheck, label: 'Guest Experience', href: '/dashboard/guests', roles: ['boat_owners', 'agency', 'management', 'owners', 'staff'] },
-      { icon: Shield, label: 'Operational Excellence', href: '/dashboard/operations-excellence', roles: ['boat_owners', 'management', 'owners', 'staff', 'skippers'] },
+      { icon: Activity, label: 'Operations Center', href: '/dashboard/operations', roles: ['boat_owners', 'agency', 'management', 'owner', 'staff', 'skippers'] },
+      { icon: Anchor, label: 'Fleet Management', href: '/dashboard/fleet', roles: ['boat_owners', 'management', 'owner', 'staff', 'skippers'] },
+      { icon: UserCheck, label: 'Guest Experience', href: '/dashboard/guests', roles: ['boat_owners', 'agency', 'management', 'owner', 'staff'] },
+      { icon: Shield, label: 'Operational Excellence', href: '/dashboard/operations-excellence', roles: ['boat_owners', 'management', 'owner', 'staff', 'skippers'] },
     ];
 
     // Management navigation
     const managementItems = [
-      { icon: Users, label: 'Team Management', href: '/dashboard/team', roles: ['management', 'owners'] },
-      { icon: UserCog, label: 'User Management', href: '/dashboard/users', roles: ['management', 'owners'] },
-      { icon: DollarSign, label: 'Financial Management', href: '/dashboard/financials', roles: ['management', 'owners', 'agency'] },
+      { icon: Users, label: 'Team Management', href: '/dashboard/team', roles: ['management', 'owner'] },
+      { icon: UserCog, label: 'User Management', href: '/dashboard/users', roles: ['management', 'owner'] },
+      { icon: DollarSign, label: 'Financial Management', href: '/dashboard/financials', roles: ['management', 'owner', 'agency'] },
     ];
 
     // Analytics navigation
     const analyticsItems = [
-      { icon: TrendingUp, label: 'Advanced Analytics', href: '/dashboard/analytics', roles: ['management', 'owners', 'agency'] },
-      { icon: Zap, label: 'Automation & Integration', href: '/dashboard/automation', roles: ['management', 'owners', 'agency'] },
+      { icon: TrendingUp, label: 'Advanced Analytics', href: '/dashboard/analytics', roles: ['management', 'owner', 'agency'] },
+      { icon: Zap, label: 'Automation & Integration', href: '/dashboard/automation', roles: ['management', 'owner', 'agency'] },
     ];
 
     const allItems = [...baseItems, ...operationalItems, ...managementItems, ...analyticsItems];
