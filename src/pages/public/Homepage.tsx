@@ -41,7 +41,7 @@ const Homepage = () => {
             </div>
             <div className="relative">
               <img 
-                src="https://eefenqehcesevuudtpti.supabase.co/storage/v1/object/public/zataraphotos/puravida-hero.jpg"
+                src="https://eefenqehcesevuudtpti.supabase.co/storage/v1/object/public/puravidaphotos/Cristian%20Shoot/Yacht_Charter_Mallorca_PuraVida3.jpg"
                 alt="PuraVida luxury yacht in Mediterranean waters"
                 className="rounded-lg shadow-2xl w-full h-96 object-cover"
                 onError={(e) => {
