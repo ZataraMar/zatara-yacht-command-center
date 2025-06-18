@@ -7002,10 +7002,6 @@ export type Database = {
           operations_created: number
         }[]
       }
-      bytea_to_text: {
-        Args: { data: string }
-        Returns: string
-      }
       calculate_customer_lifetime_value: {
         Args: { customer_id_param: number }
         Returns: number
@@ -7054,6 +7050,10 @@ export type Database = {
           p_special_requirements?: string
         }
         Returns: string
+      }
+      default_staff_access: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
       detect_booking_conflicts: {
         Args: {
@@ -7208,57 +7208,6 @@ export type Database = {
           variables: Json
         }[]
       }
-      http: {
-        Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_delete: {
-        Args:
-          | { uri: string }
-          | { uri: string; content: string; content_type: string }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_get: {
-        Args: { uri: string } | { uri: string; data: Json }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_head: {
-        Args: { uri: string }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_header: {
-        Args: { field: string; value: string }
-        Returns: Database["public"]["CompositeTypes"]["http_header"]
-      }
-      http_list_curlopt: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          curlopt: string
-          value: string
-        }[]
-      }
-      http_patch: {
-        Args: { uri: string; content: string; content_type: string }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_post: {
-        Args:
-          | { uri: string; content: string; content_type: string }
-          | { uri: string; data: Json }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_put: {
-        Args: { uri: string; content: string; content_type: string }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_reset_curlopt: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      http_set_curlopt: {
-        Args: { curlopt: string; value: string }
-        Returns: boolean
-      }
       identify_test_data: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -7313,20 +7262,12 @@ export type Database = {
           last_updated: string
         }[]
       }
-      text_to_bytea: {
-        Args: { data: string }
-        Returns: string
-      }
       trigger_manual_sync: {
         Args: Record<PropertyKey, never>
         Returns: {
           sync_result: string
           details: string
         }[]
-      }
-      urlencode: {
-        Args: { data: Json } | { string: string } | { string: string }
-        Returns: string
       }
     }
     Enums: {
@@ -7342,23 +7283,7 @@ export type Database = {
         | "boat_club_clients"
     }
     CompositeTypes: {
-      http_header: {
-        field: string | null
-        value: string | null
-      }
-      http_request: {
-        method: unknown | null
-        uri: string | null
-        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
-        content_type: string | null
-        content: string | null
-      }
-      http_response: {
-        status: number | null
-        content_type: string | null
-        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
-        content: string | null
-      }
+      [_ in never]: never
     }
   }
 }
