@@ -41,8 +41,8 @@ const Homepage = () => {
             </div>
             <div className="relative">
               <img 
-                src="https://eefenqehcesevuudtpti.supabase.co/storage/v1/object/public/zataraphotos/zatara-hero.jpg" // Update with actual image path
-                alt="Zatara luxury yacht in Mediterranean waters"
+                src="https://eefenqehcesevuudtpti.supabase.co/storage/v1/object/public/zataraphotos/puravida-hero.jpg"
+                alt="PuraVida luxury yacht in Mediterranean waters"
                 className="rounded-lg shadow-2xl w-full h-96 object-cover"
                 onError={(e) => {
                   // Fallback to placeholder if image doesn't load
