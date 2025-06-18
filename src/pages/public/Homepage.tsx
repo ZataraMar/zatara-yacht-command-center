@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navigation } from '@/components/public/Navigation';
@@ -6,14 +5,11 @@ import { Footer } from '@/components/public/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Ship, Users, Award, Star, MessageCircle } from 'lucide-react';
-
 const Homepage = () => {
   const handleWhatsAppClick = () => {
     window.open('https://wa.me/34711013403?text=Hello%20Zatara,%20I%20would%20like%20to%20inquire%20about%20your%20services', '_blank');
   };
-
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       <Navigation />
       
       {/* Hero Section */}
@@ -40,15 +36,10 @@ const Homepage = () => {
               </div>
             </div>
             <div className="relative">
-              <img 
-                src="https://eefenqehcesevuudtpti.supabase.co/storage/v1/object/public/puravidaphotos/Cristian%20Shoot/Yacht_Charter_Mallorca_PuraVida3.jpg"
-                alt="PuraVida luxury yacht in Mediterranean waters"
-                className="rounded-lg shadow-2xl w-full h-96 object-cover"
-                onError={(e) => {
-                  // Fallback to placeholder if image doesn't load
-                  e.currentTarget.src = "https://images.unsplash.com/photo-1540946485063-a40da27545f8?auto=format&fit=crop&w=800&q=80";
-                }}
-              />
+              <img src="https://eefenqehcesevuudtpti.supabase.co/storage/v1/object/public/puravidaphotos/Cristian%20Shoot/Yacht_Charter_Mallorca_PuraVida3.jpg" alt="PuraVida luxury yacht in Mediterranean waters" className="rounded-lg shadow-2xl w-full h-96 object-cover" onError={e => {
+              // Fallback to placeholder if image doesn't load
+              e.currentTarget.src = "https://images.unsplash.com/photo-1540946485063-a40da27545f8?auto=format&fit=crop&w=800&q=80";
+            }} />
             </div>
           </div>
         </div>
@@ -145,18 +136,14 @@ const Homepage = () => {
             <h2 className="text-3xl md:text-4xl font-playfair font-bold text-zatara-navy mb-4">
               What Our Guests Say
             </h2>
-            <p className="text-xl text-gray-600">
-              Highlights from our Google and TripAdvisor reviews
-            </p>
+            
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="bg-white">
               <CardHeader>
                 <div className="flex items-center space-x-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />
-                  ))}
+                  {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />)}
                 </div>
                 <CardDescription className="text-gray-600">
                   "Absolutely incredible experience! The crew was professional and the yacht was beautiful. Perfect day on the water around Mallorca."
@@ -168,9 +155,7 @@ const Homepage = () => {
             <Card className="bg-white">
               <CardHeader>
                 <div className="flex items-center space-x-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />
-                  ))}
+                  {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />)}
                 </div>
                 <CardDescription className="text-gray-600">
                   "Best charter experience we've had! Jules and the team were fantastic. Highly recommend for anyone visiting Mallorca."
@@ -182,9 +167,7 @@ const Homepage = () => {
             <Card className="bg-white">
               <CardHeader>
                 <div className="flex items-center space-x-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />
-                  ))}
+                  {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />)}
                 </div>
                 <CardDescription className="text-gray-600">
                   "Professional service from start to finish. The boat was immaculate and the experience exceeded our expectations."
@@ -211,12 +194,7 @@ const Homepage = () => {
                 Book Charter Now
               </a>
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="bg-transparent border-white text-white hover:bg-white hover:text-zatara-blue"
-              onClick={handleWhatsAppClick}
-            >
+            <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-zatara-blue" onClick={handleWhatsAppClick}>
               <MessageCircle className="mr-2 h-5 w-5" />
               WhatsApp Us
             </Button>
@@ -225,8 +203,6 @@ const Homepage = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Homepage;
