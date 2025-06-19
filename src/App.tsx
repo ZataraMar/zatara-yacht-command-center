@@ -16,6 +16,7 @@ import BoatClub from "./pages/public/BoatClub";
 import Sales from "./pages/public/Sales";
 import Management from "./pages/public/Management";
 import Guides from "./pages/public/Guides";
+import TestBookingIframe from "./pages/public/TestBookingIframe";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,9 @@ const App = () => (
             <Route path="/sales" element={<Sales />} />
             <Route path="/management" element={<Management />} />
             <Route path="/guides" element={<Guides />} />
+            
+            {/* Hidden test page - obscure URL */}
+            <Route path="/test-booking-iframe-zatara-75212" element={<TestBookingIframe />} />
             
             {/* Authentication Route */}
             <Route path="/auth" element={<Auth />} />

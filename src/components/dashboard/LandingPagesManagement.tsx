@@ -1,15 +1,14 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Globe, Eye, Settings, Plus } from 'lucide-react';
+import { Globe, Eye, Settings, Plus, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const LandingPagesManagement = () => {
   const navigate = useNavigate();
 
   const handleViewTestPage = () => {
-    navigate('/dashboard/test-zatara');
+    window.open('/test-booking-iframe-zatara-75212', '_blank');
   };
 
   return (
@@ -27,7 +26,7 @@ export const LandingPagesManagement = () => {
 
       {/* Existing Landing Pages */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Test Zatara Page */}
+        {/* Test Booking Iframe Page */}
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -39,7 +38,7 @@ export const LandingPagesManagement = () => {
                   onClick={handleViewTestPage}
                   className="border-zatara-blue text-zatara-blue hover:bg-zatara-blue hover:text-white"
                 >
-                  <Eye className="h-4 w-4 mr-1" />
+                  <ExternalLink className="h-4 w-4 mr-1" />
                   View
                 </Button>
                 <Button variant="outline" size="sm">
@@ -47,24 +46,24 @@ export const LandingPagesManagement = () => {
                 </Button>
               </div>
             </div>
-            <CardTitle className="text-zatara-navy">Test Zatara Booking</CardTitle>
+            <CardTitle className="text-zatara-navy">Booking Iframe Test</CardTitle>
             <CardDescription>
-              Testing iframe integration for the Zatara booking system
+              Public test page for the Zatara booking system iframe
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">URL:</span>
-                <span className="text-zatara-blue font-mono">/dashboard/test-zatara</span>
+                <span className="text-zatara-blue font-mono text-xs">/test-booking-iframe-zatara-75212</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Status:</span>
-                <span className="text-green-600 font-medium">Active</span>
+                <span className="text-green-600 font-medium">Live</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Type:</span>
-                <span className="text-zatara-blue">Booking Test</span>
+                <span className="text-zatara-blue">Public (Hidden URL)</span>
               </div>
             </div>
           </CardContent>
