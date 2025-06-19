@@ -4755,6 +4755,36 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_history: {
+        Row: {
+          audit_date: string | null
+          audit_details: Json | null
+          high_severity_issues: number | null
+          id: number
+          medium_severity_issues: number | null
+          resolved_since_last_audit: number | null
+          total_issues: number | null
+        }
+        Insert: {
+          audit_date?: string | null
+          audit_details?: Json | null
+          high_severity_issues?: number | null
+          id?: number
+          medium_severity_issues?: number | null
+          resolved_since_last_audit?: number | null
+          total_issues?: number | null
+        }
+        Update: {
+          audit_date?: string | null
+          audit_details?: Json | null
+          high_severity_issues?: number | null
+          id?: number
+          medium_severity_issues?: number | null
+          resolved_since_last_audit?: number | null
+          total_issues?: number | null
+        }
+        Relationships: []
+      }
       service_assignments: {
         Row: {
           acceptance_timestamp: string | null
@@ -6891,6 +6921,16 @@ export type Database = {
         }
         Relationships: []
       }
+      security_dashboard: {
+        Row: {
+          critical_issues: number | null
+          medium_issues: number | null
+          section: string | null
+          status: string | null
+          total_issues: number | null
+        }
+        Relationships: []
+      }
       service_dashboard: {
         Row: {
           active_contracts: number | null
@@ -7040,6 +7080,15 @@ export type Database = {
           p_services_included?: string[]
         }
         Returns: string
+      }
+      create_secure_function: {
+        Args: {
+          function_name: string
+          function_body: string
+          function_args?: string
+          return_type?: string
+        }
+        Returns: undefined
       }
       create_service_request: {
         Args: {
@@ -7244,6 +7293,19 @@ export type Database = {
           records_removed: number
         }[]
       }
+      run_daily_security_audit: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      security_audit_report: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          issue_type: string
+          table_name: string
+          severity: string
+          recommendation: string
+        }[]
+      }
       sync_health_check: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -7267,6 +7329,15 @@ export type Database = {
         Returns: {
           sync_result: string
           details: string
+        }[]
+      }
+      weekly_security_summary: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          metric: string
+          current_value: string
+          week_ago_value: string
+          trend: string
         }[]
       }
     }

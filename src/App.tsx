@@ -16,6 +16,7 @@ import BoatClub from "./pages/public/BoatClub";
 import Sales from "./pages/public/Sales";
 import Management from "./pages/public/Management";
 import Guides from "./pages/public/Guides";
+import TestZatara from "./pages/public/TestZatara";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,9 @@ const App = () => (
             <Route path="/sales" element={<Sales />} />
             <Route path="/management" element={<Management />} />
             <Route path="/guides" element={<Guides />} />
+            
+            {/* Test Landing Page */}
+            <Route path="/test-zatara" element={<TestZatara />} />
             
             {/* Authentication Route */}
             <Route path="/auth" element={<Auth />} />
