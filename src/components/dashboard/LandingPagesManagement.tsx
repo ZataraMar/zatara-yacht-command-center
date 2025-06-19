@@ -1,11 +1,15 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe, Eye, Settings, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const LandingPagesManagement = () => {
+  const navigate = useNavigate();
+
   const handleViewTestPage = () => {
-    window.open('/test-zatara', '_blank');
+    navigate('/dashboard/test-zatara');
   };
 
   return (
@@ -52,7 +56,7 @@ export const LandingPagesManagement = () => {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">URL:</span>
-                <span className="text-zatara-blue font-mono">/test-zatara</span>
+                <span className="text-zatara-blue font-mono">/dashboard/test-zatara</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Status:</span>

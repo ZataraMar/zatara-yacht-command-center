@@ -13,6 +13,7 @@ import { AutomationWorkflows } from '@/components/dashboard/integration/Automati
 import { UserManagement } from '@/components/dashboard/admin/UserManagement';
 import { Phase2Dashboard } from '@/components/dashboard/Phase2Dashboard';
 import { LandingPagesManagement } from '@/components/dashboard/LandingPagesManagement';
+import { TestZataraPage } from '@/components/dashboard/TestZataraPage';
 import { AccessControlRoute } from './AccessControlRoute';
 import { ClientDashboard } from './ClientDashboard';
 import { UserSettings } from './UserSettings';
@@ -124,6 +125,16 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
         element={
           <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
             <LandingPagesManagement />
+          </AccessControlRoute>
+        } 
+      />
+      
+      {/* Test Zatara Page - Owner only */}
+      <Route 
+        path="/test-zatara" 
+        element={
+          <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
+            <TestZataraPage />
           </AccessControlRoute>
         } 
       />

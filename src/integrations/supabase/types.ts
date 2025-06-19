@@ -3691,6 +3691,264 @@ export type Database = {
           },
         ]
       }
+      landing_page_conversions: {
+        Row: {
+          booking_locator: string | null
+          conversion_type: string | null
+          conversion_value: number | null
+          converted_at: string | null
+          id: string
+          landing_page_id: string | null
+          referrer: string | null
+          session_id: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          visitor_ip: unknown | null
+        }
+        Insert: {
+          booking_locator?: string | null
+          conversion_type?: string | null
+          conversion_value?: number | null
+          converted_at?: string | null
+          id?: string
+          landing_page_id?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          visitor_ip?: unknown | null
+        }
+        Update: {
+          booking_locator?: string | null
+          conversion_type?: string | null
+          conversion_value?: number | null
+          converted_at?: string | null
+          id?: string
+          landing_page_id?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          visitor_ip?: unknown | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landing_page_conversions_landing_page_id_fkey"
+            columns: ["landing_page_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      landing_page_images: {
+        Row: {
+          created_at: string | null
+          display_order: number | null
+          id: string
+          image_alt: string | null
+          image_caption: string | null
+          image_type: string | null
+          image_url: string
+          landing_page_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          image_alt?: string | null
+          image_caption?: string | null
+          image_type?: string | null
+          image_url: string
+          landing_page_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          image_alt?: string | null
+          image_caption?: string | null
+          image_type?: string | null
+          image_url?: string
+          landing_page_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landing_page_images_landing_page_id_fkey"
+            columns: ["landing_page_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      landing_page_views: {
+        Row: {
+          id: string
+          landing_page_id: string | null
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          viewed_at: string | null
+          visitor_ip: unknown | null
+        }
+        Insert: {
+          id?: string
+          landing_page_id?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          viewed_at?: string | null
+          visitor_ip?: unknown | null
+        }
+        Update: {
+          id?: string
+          landing_page_id?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          viewed_at?: string | null
+          visitor_ip?: unknown | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landing_page_views_landing_page_id_fkey"
+            columns: ["landing_page_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      landing_pages: {
+        Row: {
+          boat_description: string | null
+          boat_image_url: string | null
+          boat_name: string | null
+          booking_iframe_height: number | null
+          booking_iframe_url: string | null
+          booking_iframe_width: number | null
+          conversion_count: number | null
+          created_at: string | null
+          created_by: string | null
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          includes_catering: boolean | null
+          includes_jetskis: boolean | null
+          includes_other: string | null
+          includes_paddleboards: boolean | null
+          includes_snorkeling: boolean | null
+          is_hidden: boolean | null
+          main_content: string | null
+          meta_description: string | null
+          meta_keywords: string | null
+          og_image_url: string | null
+          package_description: string | null
+          package_name: string | null
+          slug: string
+          special_offer_text: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          updated_by: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          view_count: number | null
+        }
+        Insert: {
+          boat_description?: string | null
+          boat_image_url?: string | null
+          boat_name?: string | null
+          booking_iframe_height?: number | null
+          booking_iframe_url?: string | null
+          booking_iframe_width?: number | null
+          conversion_count?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          includes_catering?: boolean | null
+          includes_jetskis?: boolean | null
+          includes_other?: string | null
+          includes_paddleboards?: boolean | null
+          includes_snorkeling?: boolean | null
+          is_hidden?: boolean | null
+          main_content?: string | null
+          meta_description?: string | null
+          meta_keywords?: string | null
+          og_image_url?: string | null
+          package_description?: string | null
+          package_name?: string | null
+          slug: string
+          special_offer_text?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          updated_by?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          boat_description?: string | null
+          boat_image_url?: string | null
+          boat_name?: string | null
+          booking_iframe_height?: number | null
+          booking_iframe_url?: string | null
+          booking_iframe_width?: number | null
+          conversion_count?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          includes_catering?: boolean | null
+          includes_jetskis?: boolean | null
+          includes_other?: string | null
+          includes_paddleboards?: boolean | null
+          includes_snorkeling?: boolean | null
+          is_hidden?: boolean | null
+          main_content?: string | null
+          meta_description?: string | null
+          meta_keywords?: string | null
+          og_image_url?: string | null
+          package_description?: string | null
+          package_name?: string | null
+          slug?: string
+          special_offer_text?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
+      }
       maintenance_requests: {
         Row: {
           actual_completion: string | null
