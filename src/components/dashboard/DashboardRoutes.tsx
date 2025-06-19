@@ -12,6 +12,7 @@ import { AdvancedReporting } from '@/components/dashboard/analytics/AdvancedRepo
 import { AutomationWorkflows } from '@/components/dashboard/integration/AutomationWorkflows';
 import { UserManagement } from '@/components/dashboard/admin/UserManagement';
 import { Phase2Dashboard } from '@/components/dashboard/Phase2Dashboard';
+import { LandingPagesManagement } from '@/components/dashboard/LandingPagesManagement';
 import { AccessControlRoute } from './AccessControlRoute';
 import { ClientDashboard } from './ClientDashboard';
 import { UserSettings } from './UserSettings';
@@ -113,6 +114,16 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
         element={
           <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
             <AutomationWorkflows />
+          </AccessControlRoute>
+        } 
+      />
+      
+      {/* Landing Pages Management - Owner only */}
+      <Route 
+        path="/landing-pages" 
+        element={
+          <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
+            <LandingPagesManagement />
           </AccessControlRoute>
         } 
       />

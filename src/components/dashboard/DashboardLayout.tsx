@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
@@ -17,7 +16,8 @@ import {
   Target,
   MessageSquare,
   Shield,
-  Database
+  Database,
+  Globe
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -50,6 +50,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       { name: 'Operations Excellence', href: '/dashboard/operations-excellence', icon: Zap, current: location.pathname === '/dashboard/operations-excellence' },
       { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3, current: location.pathname === '/dashboard/analytics' },
       { name: 'Automation', href: '/dashboard/automation', icon: MessageSquare, current: location.pathname === '/dashboard/automation' },
+      { name: 'Landing Pages', href: '/dashboard/landing-pages', icon: Globe, current: location.pathname === '/dashboard/landing-pages' },
       { name: 'Phase 2 Management', href: '/dashboard/phase2', icon: Database, current: location.pathname === '/dashboard/phase2' },
     ] : [
       { name: 'My Bookings', href: '/dashboard/bookings', icon: Calendar, current: location.pathname === '/dashboard/bookings' },
