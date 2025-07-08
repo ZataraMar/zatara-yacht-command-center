@@ -33,8 +33,8 @@ const MallorcanSailing = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
 
-  // Replace with your Google Maps API key
-  const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY';
+  // Google Maps API key
+  const GOOGLE_MAPS_API_KEY = 'AIzaSyChMkFLGf2_7hD5sScSpzChajwq1nH1IoU';
 
   // Palma de Mallorca coordinates and sailing route
   const mapCenter = { lat: 39.5696, lng: 2.6502 };
