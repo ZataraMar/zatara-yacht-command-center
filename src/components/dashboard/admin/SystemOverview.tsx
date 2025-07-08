@@ -29,6 +29,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HealthCheck } from '@/components/admin/HealthCheck';
+import { SecurityMonitor } from '@/components/admin/SecurityMonitor';
 
 interface SystemMetrics {
   totalBookings: number;
@@ -579,6 +580,9 @@ const SystemOverview: React.FC = () => {
             </Card>
           </div>
 
+          {/* Security Monitor */}
+          <SecurityMonitor />
+          
           {/* System Health Check */}
           <Card>
             <CardHeader>

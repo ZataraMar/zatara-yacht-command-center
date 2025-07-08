@@ -9808,6 +9808,17 @@ export type Database = {
           records_removed: number
         }[]
       }
+      comprehensive_security_audit: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_type: string
+          check_name: string
+          status: string
+          severity: string
+          description: string
+          recommendation: string
+        }[]
+      }
       create_customer_from_booking: {
         Args: {
           p_email: string
