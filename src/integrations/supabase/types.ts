@@ -112,6 +112,48 @@ export type Database = {
           },
         ]
       }
+      admin_settings: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: number
+          is_encrypted: boolean | null
+          setting_key: string
+          setting_type: string | null
+          setting_value: string | null
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: number
+          is_encrypted?: boolean | null
+          setting_key: string
+          setting_type?: string | null
+          setting_value?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: number
+          is_encrypted?: boolean | null
+          setting_key?: string
+          setting_type?: string | null
+          setting_value?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       agency_profiles: {
         Row: {
           account_manager: string | null
@@ -4118,6 +4160,8 @@ export type Database = {
           source: string | null
           special_requests: string | null
           status: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
           time_period: string
           time_slot: string
           total_amount: number
@@ -4140,6 +4184,8 @@ export type Database = {
           source?: string | null
           special_requests?: string | null
           status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           time_period: string
           time_slot: string
           total_amount: number
@@ -4162,6 +4208,8 @@ export type Database = {
           source?: string | null
           special_requests?: string | null
           status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           time_period?: string
           time_slot?: string
           total_amount?: number
@@ -6744,6 +6792,48 @@ export type Database = {
           resolution_status?: string | null
           session_date?: string | null
           user_request?: string | null
+        }
+        Relationships: []
+      }
+      stripe_checkout_sessions: {
+        Row: {
+          amount: number
+          booking_reference: string
+          completed_at: string | null
+          created_at: string | null
+          currency: string
+          customer_email: string
+          id: string
+          metadata: Json | null
+          payment_intent_id: string | null
+          session_id: string
+          status: string | null
+        }
+        Insert: {
+          amount: number
+          booking_reference: string
+          completed_at?: string | null
+          created_at?: string | null
+          currency: string
+          customer_email: string
+          id?: string
+          metadata?: Json | null
+          payment_intent_id?: string | null
+          session_id: string
+          status?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_reference?: string
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: string
+          customer_email?: string
+          id?: string
+          metadata?: Json | null
+          payment_intent_id?: string | null
+          session_id?: string
+          status?: string | null
         }
         Relationships: []
       }

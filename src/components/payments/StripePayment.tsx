@@ -177,6 +177,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
         if (data?.url) {
           addDebugLog(`Redirecting to Stripe: ${data.url}`, 'success');
+          // Open Stripe checkout in current tab
           window.location.href = data.url;
         } else {
           throw new Error('No checkout URL received');
