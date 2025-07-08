@@ -21,7 +21,7 @@ interface GoogleReviewsProps {
 }
 
 export const GoogleReviews: React.FC<GoogleReviewsProps> = ({
-  placeId,
+  placeId = "109872317444958228757",
   maxReviews = 6,
   className = ""
 }) => {
