@@ -22,7 +22,33 @@ serve(async (req) => {
     
     // Extract data from either direct call or invoke call format
     const { payment_data, success_url, cancel_url, customer_email } = requestData;
-    console.log("[STRIPE-CHECKOUT] Extracted data:", { payment_data, success_url, cancel_url, customer_email });
+    
+    // Enhanced input validation
+    if (!payment_data || typeof payment_data !== 'object') {
+      throw new Error("Invalid payment_data: must be an object");
+    }
+    
+    if (!payment_data.amount || typeof payment_data.amount !== 'number' || payment_data.amount <= 0) {
+      throw new Error("Invalid amount: must be a positive number");
+    }
+    
+    if (!payment_data.currency || typeof payment_data.currency !== 'string' || payment_data.currency.length !== 3) {
+      throw new Error("Invalid currency: must be a 3-letter currency code");
+    }
+    
+    if (!success_url || typeof success_url !== 'string' || !success_url.startsWith('http')) {
+      throw new Error("Invalid success_url: must be a valid HTTP URL");
+    }
+    
+    if (!cancel_url || typeof cancel_url !== 'string' || !cancel_url.startsWith('http')) {
+      throw new Error("Invalid cancel_url: must be a valid HTTP URL");
+    }
+    
+    if (customer_email && (typeof customer_email !== 'string' || !customer_email.includes('@'))) {
+      throw new Error("Invalid customer_email: must be a valid email address");
+    }
+    
+    console.log("[STRIPE-CHECKOUT] Input validation passed");
 
     // Initialize Stripe
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");

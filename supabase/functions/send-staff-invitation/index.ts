@@ -25,6 +25,30 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { email, firstName, lastName, role, invitedBy }: StaffInvitationRequest = await req.json();
+    
+    // Enhanced input validation
+    if (!email || typeof email !== 'string' || !email.includes('@') || email.length > 254) {
+      throw new Error("Invalid email address");
+    }
+    
+    if (!firstName || typeof firstName !== 'string' || firstName.trim().length < 1 || firstName.length > 50) {
+      throw new Error("Invalid first name: must be 1-50 characters");
+    }
+    
+    if (!lastName || typeof lastName !== 'string' || lastName.trim().length < 1 || lastName.length > 50) {
+      throw new Error("Invalid last name: must be 1-50 characters");
+    }
+    
+    const validRoles = ['owner', 'management', 'operations', 'skippers', 'finance', 'casual_staff'];
+    if (!role || !validRoles.includes(role)) {
+      throw new Error(`Invalid role: must be one of ${validRoles.join(', ')}`);
+    }
+    
+    if (!invitedBy || typeof invitedBy !== 'string' || invitedBy.trim().length < 1) {
+      throw new Error("Invalid invitedBy: must be provided");
+    }
+    
+    console.log("Staff invitation validation passed");
 
     const inviteLink = `${Deno.env.get("SUPABASE_URL")}/auth/v1/signup?email=${encodeURIComponent(email)}&role=${role}`;
 
