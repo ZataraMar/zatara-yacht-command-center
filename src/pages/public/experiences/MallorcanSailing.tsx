@@ -197,7 +197,14 @@ const MallorcanSailing = () => {
             <div className="flex text-yellow-400">
               {'★'.repeat(5)}
             </div>
-            <span className="text-muted-foreground">5.0 (127 reviews)</span>
+            <a 
+              href="https://g.page/r/YOUR_GOOGLE_BUSINESS_URL/review" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-primary transition-colors underline"
+            >
+              See all Google reviews
+            </a>
             <span className="text-muted-foreground">•</span>
             <span className="text-muted-foreground">Palma, Mallorca</span>
           </div>
@@ -406,7 +413,14 @@ const MallorcanSailing = () => {
                     <div className="flex text-yellow-400 text-sm">
                       {'★'.repeat(5)}
                     </div>
-                    <span className="text-sm text-muted-foreground">5.0 (127 reviews)</span>
+                    <a 
+                      href="https://g.page/r/YOUR_GOOGLE_BUSINESS_URL/review" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors underline"
+                    >
+                      View Google reviews
+                    </a>
                   </div>
                 </div>
 
@@ -735,7 +749,7 @@ const MallorcanSailing = () => {
 
             {/* Google Reviews */}
             <GoogleReviews 
-              placeId="ChIJXyHUWcrRQg0Ra6w1FOPMZf0" // Palma de Mallorca - replace with your actual place ID
+              placeId="109872317444958228757"
               maxReviews={6}
               className="mb-8"
             />
