@@ -5570,16 +5570,19 @@ export type Database = {
           andronautic_data: Json
           id: number
           imported_at: string | null
+          processed_at: string | null
         }
         Insert: {
           andronautic_data: Json
           id?: number
           imported_at?: string | null
+          processed_at?: string | null
         }
         Update: {
           andronautic_data?: Json
           id?: number
           imported_at?: string | null
+          processed_at?: string | null
         }
         Relationships: []
       }

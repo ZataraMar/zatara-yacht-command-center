@@ -133,61 +133,205 @@ const MallorcanSailing = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Hero Section with Booking Widget */}
-      <section className="relative h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 flex items-center">
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-        <div className="container relative z-10 mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+      {/* Image Gallery Header */}
+      <section className="relative">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 h-[400px] md:h-[480px] p-6">
+          <div className="md:col-span-2">
+            <img 
+              src="/api/placeholder/800/600" 
+              alt="Mallorcan sailing experience" 
+              className="w-full h-full object-cover rounded-l-xl"
+            />
+          </div>
+          <div className="grid grid-rows-2 gap-2">
+            <img 
+              src="/api/placeholder/400/300" 
+              alt="Traditional Llaut boat" 
+              className="w-full h-full object-cover"
+            />
+            <img 
+              src="/api/placeholder/400/300" 
+              alt="Sailing in Mallorca" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="grid grid-rows-2 gap-2">
+            <img 
+              src="/api/placeholder/400/300" 
+              alt="Local tapas on board" 
+              className="w-full h-full object-cover rounded-tr-xl"
+            />
+            <img 
+              src="/api/placeholder/400/300" 
+              alt="Swimming stop" 
+              className="w-full h-full object-cover rounded-br-xl"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Content */}
+          <div className="lg:col-span-2 space-y-8">
             
-            {/* Hero Text */}
-            <div className="text-white">
-              <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            {/* Header */}
+            <div className="border-b border-border pb-6">
+              <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
                 {t('hero.title')}
               </h1>
-              <p className="text-xl lg:text-2xl mb-8 opacity-95">
+              <p className="text-lg text-muted-foreground mb-6">
                 {t('hero.subtitle')}
               </p>
               
-              <div className="flex flex-wrap gap-6 mb-8">
-                <div className="flex items-center gap-2 text-lg">
-                  <span className="text-2xl">⛵</span>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+                  <span className="text-lg">⛵</span>
                   <span>{t('hero.classic_llaut')}</span>
                 </div>
-                <div className="flex items-center gap-2 text-lg">
-                  <span className="text-2xl">🥘</span>
+                <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+                  <span className="text-lg">🥘</span>
                   <span>{t('hero.local_tapas')}</span>
                 </div>
-                <div className="flex items-center gap-2 text-lg">
-                  <span className="text-2xl">🏊</span>
+                <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+                  <span className="text-lg">🏊</span>
                   <span>{t('hero.swimming_stop')}</span>
                 </div>
-                <div className="flex items-center gap-2 text-lg">
-                  <span className="text-2xl">👨‍✈️</span>
+                <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+                  <span className="text-lg">👨‍✈️</span>
                   <span>{t('hero.local_skipper')}</span>
                 </div>
               </div>
             </div>
 
-            {/* Booking Widget */}
-            <div className="bg-white p-8 rounded-2xl shadow-2xl">
-              {!showPayment ? (
-                <>
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold text-zatara-blue mb-2">{t('booking.title')}</h3>
-                    <p className="text-gray-600">{t('booking.from_price')}</p>
-                  </div>
+            {/* What You'll Do */}
+            <div className="border-b border-border pb-8">
+              <h2 className="text-2xl font-semibold text-foreground mb-4">What you'll do</h2>
+              <div className="prose prose-gray max-w-none">
+                <p className="text-muted-foreground leading-relaxed">
+                  Experience the authentic charm of Mallorca aboard a traditional Llaut, a local fishing boat that has sailed these waters for generations. Your local skipper will guide you through the island's most beautiful coastline while sharing stories of maritime tradition and local culture.
+                </p>
+                <p className="text-muted-foreground leading-relaxed mt-4">
+                  We'll anchor at secluded coves where you can swim in crystal-clear waters, snorkel among Mediterranean marine life, and enjoy a selection of authentic Mallorcan tapas paired with local wines and fresh fruit.
+                </p>
+              </div>
+            </div>
 
-                  <form onSubmit={handleBookingSubmit} className="space-y-6">
-                    {/* Date & Time Selection */}
-                    <div className="space-y-4">
-                      {/* People Selector */}
-                      <div className="border rounded-xl p-4">
+            {/* What's Included */}
+            <div className="border-b border-border pb-8">
+              <h2 className="text-2xl font-semibold text-foreground mb-6">{t('included.title')}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  { icon: '👨‍✈️', title: t('included.professional_skipper'), desc: t('included.professional_skipper_desc') },
+                  { icon: '🥘', title: t('included.authentic_tapas'), desc: t('included.authentic_tapas_desc') },
+                  { icon: '🍹', title: t('included.drinks_fruit'), desc: t('included.drinks_fruit_desc') },
+                  { icon: '🏊', title: t('included.swimming'), desc: t('included.swimming_desc') },
+                  { icon: '⛵', title: t('included.sailing_instruction'), desc: t('included.sailing_instruction_desc') },
+                  { icon: '📷', title: t('included.memories'), desc: t('included.memories_desc') }
+                ].map((item, index) => (
+                  <div key={index} className="flex gap-3 p-4 rounded-lg border border-border">
+                    <div className="text-2xl flex-shrink-0">{item.icon}</div>
+                    <div>
+                      <h4 className="font-medium text-foreground mb-1">{item.title}</h4>
+                      <p className="text-sm text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Reviews */}
+            <div>
+              <div className="flex items-center gap-4 mb-6">
+                <h2 className="text-2xl font-semibold text-foreground">Reviews</h2>
+                <div className="flex items-center gap-2">
+                  <div className="flex text-yellow-400">
+                    {'★'.repeat(5)}
+                  </div>
+                  <span className="text-sm text-muted-foreground">5.0 · 127 reviews</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  { stars: 5, text: t('reviews.sarah'), author: 'Sarah K.', location: 'United Kingdom' },
+                  { stars: 5, text: t('reviews.marcus'), author: 'Marcus L.', location: 'Germany' },
+                  { stars: 5, text: t('reviews.emma'), author: 'Emma & Tom', location: 'Netherlands' },
+                  { stars: 5, text: "Incredible day on the water! Captain was so knowledgeable about the area.", author: 'James M.', location: 'Australia' }
+                ].map((review, index) => (
+                  <div key={index} className="border border-border rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium">
+                        {review.author.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground">{review.author}</div>
+                        <div className="text-xs text-muted-foreground">{review.location}</div>
+                      </div>
+                    </div>
+                    <div className="flex text-yellow-400 text-sm mb-2">
+                      {'★'.repeat(review.stars)}
+                    </div>
+                    <p className="text-muted-foreground text-sm">{review.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Booking Card */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-6">
+              <div className="border border-border rounded-xl p-6 shadow-lg bg-card">
+                {!showPayment ? (
+                  <>
+                    <div className="mb-6">
+                      <div className="flex items-baseline gap-1 mb-2">
+                        <span className="text-2xl font-semibold text-foreground">
+                          {totalPrice > 0 ? `€${totalPrice}` : 'From €499'}
+                        </span>
+                        <span className="text-muted-foreground text-sm">per person</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <div className="flex text-yellow-400">
+                          {'★'.repeat(5)}
+                        </div>
+                        <span className="text-muted-foreground">5.0 (127 reviews)</span>
+                      </div>
+                    </div>
+
+                    <form onSubmit={handleBookingSubmit} className="space-y-4">
+                      
+                      {/* Date Selection */}
+                      <div className="border border-border rounded-lg p-4">
+                        <Label className="text-sm font-medium text-foreground mb-2 block">Select Date</Label>
+                        <AirbnbStyleCalendar
+                          selectedDate={selectedDate}
+                          onDateSelect={handleDateSelect}
+                          className="border-0 shadow-none"
+                        />
+                      </div>
+
+                      {/* Time Selection */}
+                      <TimeSlotSelector
+                        selectedDate={selectedDate}
+                        selectedTime={selectedTime}
+                        onTimeSelect={handleTimeSelect}
+                        onPriceUpdate={handlePriceUpdate}
+                        currentPeople={currentPeople}
+                        className="border border-border rounded-lg"
+                      />
+
+                      {/* Guests */}
+                      <div className="border border-border rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-sm">{t('booking.guests')}</div>
+                            <Label className="text-sm font-medium text-foreground">{t('booking.guests')}</Label>
                             <div className="text-xs text-muted-foreground">{t('booking.add_children')}</div>
                           </div>
                           <div className="flex items-center gap-3">
@@ -216,226 +360,140 @@ const MallorcanSailing = () => {
                         </div>
                       </div>
 
-                      <AirbnbStyleCalendar
-                        selectedDate={selectedDate}
-                        onDateSelect={handleDateSelect}
+                      {/* Contact Information */}
+                      <div className="space-y-3">
+                        <div>
+                          <Input
+                            type="text"
+                            value={customerName}
+                            onChange={(e) => setCustomerName(e.target.value)}
+                            placeholder={t('common.name_placeholder')}
+                            required
+                            className="w-full"
+                          />
+                        </div>
+                        <div>
+                          <Input
+                            type="email"
+                            value={customerEmail}
+                            onChange={(e) => setCustomerEmail(e.target.value)}
+                            placeholder={t('common.email_placeholder')}
+                            required
+                            className="w-full"
+                          />
+                        </div>
+                        <div>
+                          <Input
+                            type="tel"
+                            value={customerPhone}
+                            onChange={(e) => setCustomerPhone(e.target.value)}
+                            placeholder={t('common.phone_placeholder')}
+                            required
+                            className="w-full"
+                          />
+                        </div>
+                        <div>
+                          <Textarea
+                            value={specialRequests}
+                            onChange={(e) => setSpecialRequests(e.target.value)}
+                            placeholder={t('booking.special_requests_placeholder')}
+                            className="w-full"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Premium Upgrade */}
+                      <div
+                        onClick={toggleUpgrade}
+                        className={`border-2 p-4 rounded-lg cursor-pointer transition-all ${
+                          hasUpgrade ? 'border-primary bg-primary/5' : 'border-border hover:border-primary'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium text-foreground mb-1">{t('booking.premium_upgrade')}</h4>
+                            <p className="text-xs text-muted-foreground">{t('booking.premium_upgrade_desc')}</p>
+                          </div>
+                          <div className="text-sm font-medium text-foreground">+€{currentPeople * 20}</div>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={!selectedDate || !selectedTime || !customerName || !customerEmail || !customerPhone || isSubmitting}
+                        className="w-full h-12 text-base font-medium"
+                      >
+                        {totalPrice > 0 ? `${t('booking.continue_payment')} - €${totalPrice}` : t('booking.fill_details')}
+                      </Button>
+
+                      <div className="text-center text-xs text-muted-foreground">
+                        {t('booking.secure_payment')} • {t('booking.free_cancellation')}
+                      </div>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    {/* Payment Step */}
+                    <div className="text-center mb-6">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={handlePaymentCancel}
                         className="mb-4"
-                      />
-                      
-                      <TimeSlotSelector
-                        selectedDate={selectedDate}
-                        selectedTime={selectedTime}
-                        onTimeSelect={handleTimeSelect}
-                        onPriceUpdate={handlePriceUpdate}
-                        currentPeople={currentPeople}
-                        className="mb-4"
-                      />
+                      >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Booking Details
+                      </Button>
+                      <h3 className="text-xl font-semibold text-foreground mb-2">Secure Payment</h3>
+                      <p className="text-muted-foreground text-sm">Complete your booking with secure payment</p>
                     </div>
 
-                    {/* Customer Information */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">{t('booking.your_name')}</Label>
-                        <Input
-                          type="text"
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          placeholder={t('common.name_placeholder')}
-                          required
-                          className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
-                        />
+                    {/* Booking Summary */}
+                    <div className="bg-muted p-4 rounded-lg mb-6 space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Date & Time:</span>
+                        <span className="font-medium">{selectedDate ? selectedDate.toLocaleDateString() : ''} at {timeSlots[selectedTime as keyof typeof timeSlots]?.label}</span>
                       </div>
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">{t('booking.email')}</Label>
-                        <Input
-                          type="email"
-                          value={customerEmail}
-                          onChange={(e) => setCustomerEmail(e.target.value)}
-                          placeholder={t('common.email_placeholder')}
-                          required
-                          className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
-                        />
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Guests:</span>
+                        <span className="font-medium">{currentPeople} people</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Customer:</span>
+                        <span className="font-medium">{customerName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Booking Ref:</span>
+                        <span className="font-medium font-mono">{bookingReference}</span>
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">{t('booking.phone')}</Label>
-                      <Input
-                        type="tel"
-                        value={customerPhone}
-                        onChange={(e) => setCustomerPhone(e.target.value)}
-                        placeholder={t('common.phone_placeholder')}
-                        required
-                        className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">{t('booking.special_requests')}</Label>
-                      <Textarea
-                        value={specialRequests}
-                        onChange={(e) => setSpecialRequests(e.target.value)}
-                        placeholder={t('booking.special_requests_placeholder')}
-                        className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div className="bg-gray-50 p-5 rounded-xl text-center">
-                      <div className="text-3xl font-bold text-zatara-blue mb-2">
-                        {totalPrice > 0 ? `€${totalPrice}` : '€--'}
-                      </div>
-                      <div className="text-sm text-gray-600">{priceNote}</div>
-                    </div>
-
-                    <div
-                      onClick={toggleUpgrade}
-                      className={`border-2 p-4 rounded-xl cursor-pointer transition-all ${
-                        hasUpgrade ? 'border-zatara-blue bg-blue-50' : 'border-gray-200 hover:border-zatara-blue'
-                      }`}
-                    >
-                      <h4 className="font-semibold text-zatara-blue mb-2">{t('booking.premium_upgrade')}</h4>
-                      <p className="text-sm text-gray-600">{t('booking.premium_upgrade_desc')}</p>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      disabled={!selectedDate || !selectedTime || !customerName || !customerEmail || !customerPhone || isSubmitting}
-                      className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-zatara-blue to-blue-600 hover:from-zatara-blue-dark hover:to-blue-700 text-white disabled:bg-gray-400"
-                    >
-                      {totalPrice > 0 ? `${t('booking.continue_payment')} - €${totalPrice}` : t('booking.fill_details')}
-                    </Button>
-
-                    <div className="flex justify-around text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <span>🛡️</span>
-                        <span>{t('booking.fully_insured')}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>↩️</span>
-                        <span>{t('booking.free_cancellation')}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>💳</span>
-                        <span>{t('booking.secure_payment')}</span>
-                      </div>
-                    </div>
-                  </form>
-                </>
-              ) : (
-                <>
-                  {/* Payment Step */}
-                  <div className="text-center mb-6">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={handlePaymentCancel}
-                      className="mb-4 text-zatara-blue hover:text-zatara-blue-dark"
-                    >
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Back to Booking Details
-                    </Button>
-                    <h3 className="text-2xl font-bold text-zatara-blue mb-2">Secure Payment</h3>
-                    <p className="text-gray-600">Complete your booking with secure payment</p>
-                  </div>
-
-                  {/* Booking Summary */}
-                  <div className="bg-gray-50 p-4 rounded-lg mb-6 space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Date & Time:</span>
-                      <span className="font-medium">{selectedDate ? selectedDate.toLocaleDateString() : ''} at {timeSlots[selectedTime as keyof typeof timeSlots]?.label}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Guests:</span>
-                      <span className="font-medium">{currentPeople} people</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Customer:</span>
-                      <span className="font-medium">{customerName}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Booking Ref:</span>
-                      <span className="font-medium font-mono">{bookingReference}</span>
-                    </div>
-                  </div>
-
-                  <StripePayment
-                    bookingData={{
-                      bookingReference,
-                      customerName,
-                      customerEmail,
-                      customerPhone,
-                      bookingDate: selectedDateString,
-                      timeSlot: timeSlots[selectedTime as keyof typeof timeSlots]?.value || '',
-                      timePeriodLabel: timeSlots[selectedTime as keyof typeof timeSlots]?.label || '',
-                      numberOfPeople: currentPeople,
-                      totalAmount: totalPrice,
-                      hasUpgrade,
-                      upgradeAmount,
-                      specialRequests
-                    }}
-                    onPaymentSuccess={handlePaymentSuccess}
-                    onPaymentCancel={handlePaymentCancel}
-                  />
-                </>
-              )}
+                    <StripePayment
+                      bookingData={{
+                        bookingReference,
+                        customerName,
+                        customerEmail,
+                        customerPhone,
+                        bookingDate: selectedDateString,
+                        timeSlot: timeSlots[selectedTime as keyof typeof timeSlots]?.value || '',
+                        timePeriodLabel: timeSlots[selectedTime as keyof typeof timeSlots]?.label || '',
+                        numberOfPeople: currentPeople,
+                        totalAmount: totalPrice,
+                        hasUpgrade,
+                        upgradeAmount,
+                        specialRequests
+                      }}
+                      onPaymentSuccess={handlePaymentSuccess}
+                      onPaymentCancel={handlePaymentCancel}
+                    />
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* What's Included */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('included.title')}</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t('included.subtitle')}</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: '👨‍✈️', title: t('included.professional_skipper'), desc: t('included.professional_skipper_desc') },
-              { icon: '🥘', title: t('included.authentic_tapas'), desc: t('included.authentic_tapas_desc') },
-              { icon: '🍹', title: t('included.drinks_fruit'), desc: t('included.drinks_fruit_desc') },
-              { icon: '🏊', title: t('included.swimming'), desc: t('included.swimming_desc') },
-              { icon: '⛵', title: t('included.sailing_instruction'), desc: t('included.sailing_instruction_desc') },
-              { icon: '📷', title: t('included.memories'), desc: t('included.memories_desc') }
-            ].map((item, index) => (
-              <div key={index} className="flex gap-4 p-6 bg-gray-50 rounded-xl">
-                <div className="text-4xl">{item.icon}</div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">{item.title}</h4>
-                  <p className="text-gray-600 text-sm">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('reviews.title')}</h2>
-            <p className="text-xl text-gray-600">{t('reviews.subtitle')}</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { stars: '★★★★★', text: t('reviews.sarah'), author: '- Sarah K., UK' },
-              { stars: '★★★★★', text: t('reviews.marcus'), author: '- Marcus L., Germany' },
-              { stars: '★★★★★', text: t('reviews.emma'), author: '- Emma & Tom, Netherlands' }
-            ].map((review, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-md">
-                <div className="text-yellow-400 text-xl mb-4">{review.stars}</div>
-                <p className="text-gray-600 italic mb-4">{review.text}</p>
-                <p className="font-semibold text-gray-900">{review.author}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </div>
 
       <Footer />
       
