@@ -194,23 +194,31 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         };
 
         addDebugLog(`Calling Edge Function with data: ${JSON.stringify(requestData)}`);
+        console.log('🔥 IMMEDIATE: About to call Edge Function with:', requestData);
 
         // Add timeout to detect hanging
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Edge Function call timed out after 30 seconds')), 30000);
+          setTimeout(() => {
+            console.log('🔥 IMMEDIATE: Edge Function call timed out!');
+            reject(new Error('Edge Function call timed out after 30 seconds'));
+          }, 30000);
         });
 
         try {
+          console.log('🔥 IMMEDIATE: Creating invoke promise...');
           const invokePromise = supabase.functions.invoke('create-stripe-checkout', {
             body: requestData,
           });
+          console.log('🔥 IMMEDIATE: Invoke promise created, waiting for response...');
 
           addDebugLog(`Waiting for Edge Function response...`);
           
           const result = await Promise.race([invokePromise, timeoutPromise]);
+          console.log('🔥 IMMEDIATE: Got result from Promise.race:', result);
           const { data, error } = result as any;
 
           addDebugLog(`Edge Function response received: ${JSON.stringify({ data, error })}`);
+          console.log('🔥 IMMEDIATE: Edge Function response:', { data, error });
 
           if (error) {
             addDebugLog(`Edge Function error: ${JSON.stringify(error)}`, 'error');
@@ -226,6 +234,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
           if (data?.url) {
             addDebugLog(`Received Stripe URL, redirecting...`, 'success');
+            console.log('🔥 IMMEDIATE: Redirecting to:', data.url);
             
             // Simple direct redirect to Stripe
             window.location.href = data.url;
@@ -235,6 +244,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
             throw new Error('No checkout URL received from Stripe');
           }
         } catch (invokeError) {
+          console.log('🔥 IMMEDIATE: Edge Function invoke error:', invokeError);
           addDebugLog(`Edge Function invoke error: ${invokeError.message}`, 'error');
           throw new Error(`Edge Function call failed: ${invokeError.message}`);
         }
