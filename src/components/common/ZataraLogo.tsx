@@ -9,10 +9,10 @@ interface ZataraLogoProps {
 
 export const ZataraLogo = ({ size = 'md', variant = 'image', className = '' }: ZataraLogoProps) => {
   const sizeClasses = {
-    sm: 'h-24',      // 3x larger (was h-8)
-    md: 'h-36',      // 3x larger (was h-12)
-    lg: 'h-48',      // 3x larger (was h-16)
-    xl: 'h-72'       // 3x larger (was h-24)
+    sm: 'h-48',      // 6x larger (was h-8, now 192px)
+    md: 'h-72',      // 6x larger (was h-12, now 288px)
+    lg: 'h-96',      // 6x larger (was h-16, now 384px)
+    xl: 'h-[576px]'  // 6x larger (was h-24, now 576px)
   };
 
   if (variant === 'image') {
