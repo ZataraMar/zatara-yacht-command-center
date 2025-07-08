@@ -227,9 +227,17 @@ export class SettingsService {
 
 // Predefined setting keys for type safety
 export const SETTING_KEYS = {
-  // Stripe settings
+  // Stripe settings - Updated to match StripeConfig expectations
   STRIPE_PUBLISHABLE_KEY: 'stripe_publishable_key',
   STRIPE_SECRET_KEY: 'stripe_secret_key',
+  STRIPE_PUBLISHABLE_KEY_TEST: 'stripe_publishable_key_test',
+  STRIPE_SECRET_KEY_TEST: 'stripe_secret_key_test',
+  STRIPE_PUBLISHABLE_KEY_LIVE: 'stripe_publishable_key',  // Use live key as default
+  STRIPE_SECRET_KEY_LIVE: 'stripe_secret_key',            // Use live key as default
+  STRIPE_WEBHOOK_SECRET: 'stripe_webhook_secret',
+  PAYMENT_CURRENCY: 'payment_currency',
+  PAYMENT_COUNTRY: 'payment_country',
+  ENVIRONMENT_MODE: 'environment_mode',
   
   // Email settings
   SENDGRID_API_KEY: 'sendgrid_api_key',
