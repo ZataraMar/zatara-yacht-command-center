@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, CreditCard, Shield, Check, AlertTriangle, Copy } from 'lucide-react';
+import { Loader2, CreditCard, Shield, Check, Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { StripePaymentData, eurosToCents, formatPrice, StripeConfig, getStripeEnvironment } from '@/utils/stripe';
@@ -33,11 +33,9 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [stripeConfigured, setStripeConfigured] = useState(false);
-  const [stripeEnvironment, setStripeEnvironment] = useState<any>(null);
   const [debugLog, setDebugLog] = useState<string[]>([]);
   const { toast } = useToast();
 
-  // Debug logging function
   const addDebugLog = (message: string, type: 'info' | 'success' | 'error' = 'info') => {
     const timestamp = new Date().toLocaleTimeString();
     const emoji = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
@@ -46,127 +44,41 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
     setDebugLog(prev => [...prev, logMessage]);
   };
 
-  // Copy debug log to clipboard
   const copyDebugLog = async () => {
-    const logText = debugLog.join('\n');
     try {
-      await navigator.clipboard.writeText(logText);
-      toast({
-        title: "Debug log copied!",
-        description: "The debug log has been copied to your clipboard.",
-        variant: "default"
-      });
+      await navigator.clipboard.writeText(debugLog.join('\n'));
+      toast({ title: "Debug log copied!", variant: "default" });
     } catch (err) {
-      console.error('Failed to copy log:', err);
-      toast({
-        title: "Copy failed",
-        description: "Could not copy debug log to clipboard.",
-        variant: "destructive"
-      });
+      toast({ title: "Copy failed", variant: "destructive" });
     }
   };
 
   useEffect(() => {
-    // Check Stripe configuration on component mount
-    const checkStripeConfig = async () => {
+    const checkStripe = async () => {
       try {
-        addDebugLog('Checking Stripe configuration...');
         const isConfigured = await StripeConfig.isConfigured();
-        const environment = await getStripeEnvironment();
-        
         setStripeConfigured(isConfigured);
-        setStripeEnvironment(environment);
-        
-        if (!isConfigured) {
-          addDebugLog('Stripe not configured - using simulation mode', 'error');
-        } else {
-          addDebugLog(`Stripe configured for ${environment.mode} payments`, 'success');
-        }
+        addDebugLog(`Stripe: ${isConfigured ? 'LIVE configured' : 'Not configured'}`, isConfigured ? 'success' : 'error');
       } catch (error) {
-        addDebugLog(`Error checking Stripe configuration: ${error}`, 'error');
+        addDebugLog(`Stripe config error: ${error}`, 'error');
         setStripeConfigured(false);
       }
     };
-
-    checkStripeConfig();
+    checkStripe();
   }, []);
-
-  const createStripeCheckout = async (stripePaymentData: StripePaymentData) => {
-    try {
-      addDebugLog('Starting Stripe checkout creation...');
-      
-      // Get the current session for authentication
-      const { data: { session } } = await supabase.auth.getSession();
-      addDebugLog(`Auth session: ${session ? 'Found' : 'None'}`);
-      
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-
-      // Add auth headers if we have a session
-      if (session?.access_token) {
-        headers['Authorization'] = `Bearer ${session.access_token}`;
-        addDebugLog('Added auth headers');
-      }
-
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-stripe-checkout`;
-      addDebugLog(`Calling API: ${apiUrl}`);
-
-      const requestData = {
-        payment_data: stripePaymentData,
-        success_url: `${window.location.origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: window.location.href,
-        customer_email: stripePaymentData.customerEmail,
-      };
-      
-      addDebugLog(`Request data: ${JSON.stringify(requestData, null, 2)}`);
-
-      // Call the Edge Function with proper authentication
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(requestData),
-      });
-
-      addDebugLog(`Response status: ${response.status} ${response.statusText}`);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        addDebugLog(`API Error Response: ${errorText}`, 'error');
-        throw new Error(`Failed to create checkout session: ${response.status} ${errorText}`);
-      }
-
-      const data = await response.json();
-      addDebugLog(`Checkout session created: ${JSON.stringify(data)}`, 'success');
-
-      if (data?.url) {
-        addDebugLog(`Redirecting to Stripe: ${data.url}`, 'success');
-        // Redirect to Stripe Checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL received from Stripe');
-      }
-    } catch (error) {
-      addDebugLog(`Stripe checkout error: ${error}`, 'error');
-      throw error;
-    }
-  };
 
   const handlePayment = async () => {
     setIsProcessing(true);
-    setDebugLog([]); // Clear previous logs
+    setDebugLog([]);
 
     try {
-      addDebugLog('=== PAYMENT PROCESS STARTED ===');
-      addDebugLog(`Booking Reference: ${bookingData.bookingReference}`);
+      addDebugLog('=== PAYMENT STARTED ===');
+      addDebugLog(`Reference: ${bookingData.bookingReference}`);
       addDebugLog(`Amount: €${bookingData.totalAmount}`);
-      addDebugLog(`Customer: ${bookingData.customerEmail}`);
 
-      // Use the correct experience UUID from database
-      const MALLORCAN_EXPERIENCE_ID = '58b151d4-57e5-4d2c-8883-4d9968cc4c0f';
-
+      // 1. Save booking with correct values
       const bookingRecord = {
-        experience_id: MALLORCAN_EXPERIENCE_ID,
+        experience_id: '58b151d4-57e5-4d2c-8883-4d9968cc4c0f',
         booking_reference: bookingData.bookingReference,
         booking_date: bookingData.bookingDate,
         time_slot: bookingData.timeSlot,
@@ -180,22 +92,11 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         total_amount: bookingData.totalAmount,
         currency: 'EUR',
         source: 'mallorcan_sailing_stripe',
-        status: 'pending', // Fixed: Use valid status value
-        payment_status: 'pending' // This is valid according to constraint
+        status: 'pending',
+        payment_status: 'pending'
       };
 
-      addDebugLog('Saving booking to database...', 'info');
-      addDebugLog(`Booking record: ${JSON.stringify(bookingRecord, null, 2)}`);
-
-      // Check current user session first
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      addDebugLog(`Current session: ${session ? `User ${session.user.email}` : 'Anonymous'}`);
-      
-      if (sessionError) {
-        addDebugLog(`Session error: ${JSON.stringify(sessionError)}`, 'error');
-      }
-
-      // Save booking to database
+      addDebugLog('Saving booking...');
       const { data: savedBooking, error: bookingError } = await supabase
         .from('landing_page_bookings')
         .insert([bookingRecord])
@@ -203,70 +104,113 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         .single();
 
       if (bookingError) {
-        addDebugLog(`Booking save error: ${JSON.stringify(bookingError)}`, 'error');
+        addDebugLog(`Booking error: ${bookingError.message}`, 'error');
         throw new Error('Failed to save booking: ' + bookingError.message);
       }
 
-      addDebugLog(`Booking saved successfully: ${savedBooking.id}`, 'success');
+      addDebugLog(`Booking saved: ${savedBooking.id}`, 'success');
 
-      // Prepare Stripe payment data
-      const stripePaymentData: StripePaymentData = {
-        amount: eurosToCents(bookingData.totalAmount),
-        currency: 'EUR',
-        description: `Mallorcan Sailing Experience - ${bookingData.timePeriodLabel} for ${bookingData.numberOfPeople} people`,
-        customerEmail: bookingData.customerEmail,
-        customerName: bookingData.customerName,
-        bookingReference: bookingData.bookingReference,
-        metadata: {
-          experience: 'mallorcan-sailing',
-          bookingDate: bookingData.bookingDate,
-          timeSlot: bookingData.timeSlot,
-          numberOfPeople: bookingData.numberOfPeople.toString(),
-          upgradeIncluded: bookingData.hasUpgrade.toString(),
-          bookingId: bookingData.bookingReference
-        }
-      };
-
-      addDebugLog(`Stripe payment data prepared (amount: €${bookingData.totalAmount} = ${stripePaymentData.amount} cents)`);
-
+      // 2. Create Stripe checkout
       if (stripeConfigured) {
-        addDebugLog('Creating REAL Stripe checkout session...');
-        // Create real Stripe checkout session and redirect
-        await createStripeCheckout(stripePaymentData);
-        // Note: This will redirect the user to Stripe, so execution stops here
-      } else {
-        addDebugLog('Using SIMULATION mode...');
-        // Simulation mode fallback
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        addDebugLog('Getting Stripe config...');
+        const config = await StripeConfig.getConfig();
         
-        // Simulate successful payment
+        if (!config.publishableKey) {
+          throw new Error('Stripe publishable key not found');
+        }
+
+        addDebugLog('Creating Stripe checkout via Edge Function...');
+        
+        // Get auth session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+
+        if (session?.access_token) {
+          headers['Authorization'] = `Bearer ${session.access_token}`;
+        }
+
+        const stripePaymentData: StripePaymentData = {
+          amount: eurosToCents(bookingData.totalAmount),
+          currency: 'EUR',
+          description: `Mallorcan Sailing Experience - ${bookingData.timePeriodLabel} for ${bookingData.numberOfPeople} people`,
+          customerEmail: bookingData.customerEmail,
+          customerName: bookingData.customerName,
+          bookingReference: bookingData.bookingReference,
+          metadata: {
+            experience: 'mallorcan-sailing',
+            bookingDate: bookingData.bookingDate,
+            timeSlot: bookingData.timeSlot,
+            numberOfPeople: bookingData.numberOfPeople.toString(),
+            upgradeIncluded: bookingData.hasUpgrade.toString(),
+            bookingId: bookingData.bookingReference
+          }
+        };
+
+        const requestData = {
+          payment_data: stripePaymentData,
+          success_url: `${window.location.origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: window.location.href,
+          customer_email: stripePaymentData.customerEmail,
+        };
+
+        addDebugLog(`Calling Edge Function...`);
+
+        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-stripe-checkout`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(requestData),
+        });
+
+        addDebugLog(`Edge Function response: ${response.status}`);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          addDebugLog(`Edge Function error: ${errorText}`, 'error');
+          throw new Error(`Failed to create checkout: ${response.status} ${errorText}`);
+        }
+
+        const data = await response.json();
+        addDebugLog(`Checkout session: ${data.session_id}`, 'success');
+
+        if (data?.url) {
+          addDebugLog(`Redirecting to Stripe: ${data.url}`, 'success');
+          window.location.href = data.url;
+        } else {
+          throw new Error('No checkout URL received');
+        }
+
+      } else {
+        // Simulation mode
+        addDebugLog('SIMULATION MODE - No real payment', 'info');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
         await supabase
           .from('landing_page_bookings')
           .update({
             status: 'confirmed',
             payment_status: 'paid',
-            payment_confirmed_at: new Date().toISOString()
           })
           .eq('booking_reference', bookingData.bookingReference);
 
-        addDebugLog('Simulation payment completed', 'success');
-
+        addDebugLog('Simulation completed', 'success');
+        
         toast({
-          title: "Payment Successful! (Simulation)",
-          description: `Your Mallorcan sailing experience is confirmed for ${bookingData.bookingDate}`,
-          variant: "default"
+          title: "Payment Successful (Simulation)",
+          description: `Your booking is confirmed for ${bookingData.bookingDate}`,
         });
 
         onPaymentSuccess();
       }
 
     } catch (error) {
-      addDebugLog(`=== PAYMENT FAILED ===`, 'error');
-      addDebugLog(`Error: ${error instanceof Error ? error.message : String(error)}`, 'error');
+      addDebugLog(`PAYMENT FAILED: ${error}`, 'error');
       
       toast({
         title: "Payment Failed",
-        description: error instanceof Error ? error.message : "There was an error processing your payment. Please try again.",
+        description: error instanceof Error ? error.message : "Please try again",
         variant: "destructive"
       });
     } finally {
@@ -276,7 +220,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Debug Log Section (only show if there are logs) */}
+      {/* Debug Log */}
       {debugLog.length > 0 && (
         <div className="bg-gray-50 border rounded-lg p-4">
           <div className="flex justify-between items-center mb-2">
