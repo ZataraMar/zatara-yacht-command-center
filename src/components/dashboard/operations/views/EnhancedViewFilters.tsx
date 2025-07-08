@@ -201,10 +201,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="boat-filter" className="text-sm font-semibold text-zatara-navy flex items-center">
-              <Ship className="h-4 w-4 mr-2" />
-              Fleet Filter
-            </Label>
             <select
               id="boat-filter"
               value={boatFilter}
