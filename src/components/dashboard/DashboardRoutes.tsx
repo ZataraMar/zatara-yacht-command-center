@@ -13,7 +13,7 @@ import { UserManagement } from '@/components/dashboard/admin/UserManagement';
 import { AdminSettings } from '@/components/dashboard/admin/AdminSettings';
 import SystemOverview from '@/components/dashboard/admin/SystemOverview';
 import { FieldAnalysisDashboard } from '@/components/dashboard/admin/FieldAnalysisDashboard';
-import { CalendarSync } from '@/components/calendar/CalendarSync';
+import { CompactCalendarSync } from '@/components/calendar/CompactCalendarSync';
 import { Phase2Dashboard } from '@/components/dashboard/Phase2Dashboard';
 import { LandingPagesManagement } from '@/components/dashboard/LandingPagesManagement';
 import { AccessControlRoute } from './AccessControlRoute';
@@ -106,7 +106,7 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
         path="/calendar-sync" 
         element={
           <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
-            <CalendarSync />
+            <CompactCalendarSync />
           </AccessControlRoute>
         } 
       />
