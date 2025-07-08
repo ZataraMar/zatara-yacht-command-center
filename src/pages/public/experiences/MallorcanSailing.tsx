@@ -162,32 +162,66 @@ const MallorcanSailing = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Image Gallery Header */}
+      {/* Image Gallery Header - Airbnb Style */}
       <section className="relative">
-        <div className="relative h-[400px] md:h-[480px] p-6">
-          <div className="grid grid-cols-2 gap-2 h-full max-w-5xl mx-auto">
-            <img 
-              src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop" 
-              alt="Traditional Llaut sailing boat" 
-              className="w-full h-full object-cover rounded-l-xl"
-            />
-            <div className="grid grid-rows-2 gap-2">
+        <div className="relative h-[60vh] max-h-[600px] min-h-[400px] p-6">
+          <div className="grid grid-cols-4 gap-2 h-full max-w-7xl mx-auto">
+            {/* Main large image */}
+            <div className="col-span-2 row-span-2">
               <img 
-                src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=400&h=300&fit=crop" 
-                alt="Mallorcan coastline" 
-                className="w-full h-full object-cover rounded-tr-xl"
-              />
-              <img 
-                src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop" 
-                alt="Swimming in crystal waters" 
-                className="w-full h-full object-cover rounded-br-xl"
+                src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=800&fit=crop" 
+                alt="Traditional Llaut sailing boat" 
+                className="w-full h-full object-cover rounded-l-xl"
               />
             </div>
+            
+            {/* Top right image */}
+            <div className="col-span-1">
+              <img 
+                src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&h=400&fit=crop" 
+                alt="Mallorcan coastline" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Top far right image */}
+            <div className="col-span-1">
+              <img 
+                src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop" 
+                alt="Swimming in crystal waters" 
+                className="w-full h-full object-cover rounded-tr-xl"
+              />
+            </div>
+            
+            {/* Bottom right image */}
+            <div className="col-span-1">
+              <img 
+                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" 
+                alt="Traditional tapas on boat" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Bottom far right image */}
+            <div className="col-span-1 relative">
+              <img 
+                src="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop" 
+                alt="Sunset sailing in Mallorca" 
+                className="w-full h-full object-cover rounded-br-xl"
+              />
+              <div className="absolute inset-0 bg-black/20 rounded-br-xl flex items-center justify-center">
+                <span className="text-white font-medium text-sm">+5 photos</span>
+              </div>
+            </div>
           </div>
+          
           <Button 
             variant="outline" 
-            className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-sm hover:bg-white"
+            className="absolute bottom-8 right-8 bg-white/95 backdrop-blur-sm hover:bg-white border border-gray-300"
           >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
             Show all photos
           </Button>
         </div>
@@ -404,53 +438,86 @@ const MallorcanSailing = () => {
                       </div>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       
-                      {/* Date Selection */}
-                      <div className="border border-border rounded-lg p-4">
-                        <Label className="text-sm font-medium text-foreground mb-2 block">Select Date</Label>
-                        <AirbnbStyleCalendar
+                      {/* Date & Time Selection - Combined */}
+                      <div className="border border-border rounded-xl p-6">
+                        <Label className="text-lg font-medium text-foreground mb-4 block">Choose date and time</Label>
+                        
+                        {/* Calendar */}
+                        <div className="mb-6">
+                          <AirbnbStyleCalendar
+                            selectedDate={selectedDate}
+                            onDateSelect={handleDateSelect}
+                            className="border-0 shadow-none w-full"
+                          />
+                        </div>
+
+                        {/* Quick Date Options */}
+                        <div className="mb-6">
+                          <Label className="text-sm font-medium text-foreground mb-3 block">Upcoming availability</Label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[
+                              { date: 'Jul 12', time: 'Morning', price: '€499', available: true },
+                              { date: 'Jul 13', time: 'Sunset', price: '€599', available: true },
+                              { date: 'Jul 14', time: 'Afternoon', price: '€699', available: false },
+                              { date: 'Jul 15', time: 'Morning', price: '€499', available: true }
+                            ].map((slot, index) => (
+                              <button
+                                key={index}
+                                disabled={!slot.available}
+                                className={`p-3 rounded-lg border text-left transition-all ${
+                                  slot.available 
+                                    ? 'border-border hover:border-primary hover:bg-primary/5' 
+                                    : 'border-border bg-muted text-muted-foreground cursor-not-allowed'
+                                }`}
+                              >
+                                <div className="font-medium text-sm">{slot.date}</div>
+                                <div className="text-xs text-muted-foreground">{slot.time}</div>
+                                <div className="text-sm font-medium mt-1">
+                                  {slot.available ? slot.price : 'Booked'}
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Time Selection */}
+                        <TimeSlotSelector
                           selectedDate={selectedDate}
-                          onDateSelect={handleDateSelect}
+                          selectedTime={selectedTime}
+                          onTimeSelect={handleTimeSelect}
+                          onPriceUpdate={handlePriceUpdate}
+                          currentPeople={currentPeople}
                           className="border-0 shadow-none"
                         />
                       </div>
 
-                      {/* Time Selection */}
-                      <TimeSlotSelector
-                        selectedDate={selectedDate}
-                        selectedTime={selectedTime}
-                        onTimeSelect={handleTimeSelect}
-                        onPriceUpdate={handlePriceUpdate}
-                        currentPeople={currentPeople}
-                        className="border border-border rounded-lg"
-                      />
-
-                      {/* Guests */}
-                      <div className="border border-border rounded-lg p-4">
+                      {/* Guests Selection - Enhanced */}
+                      <div className="border border-border rounded-xl p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <Label className="text-sm font-medium text-foreground">Guests</Label>
-                            <div className="text-xs text-muted-foreground">Ages 2 and up</div>
+                            <Label className="text-lg font-medium text-foreground">Guests</Label>
+                            <div className="text-sm text-muted-foreground">Ages 2 and up, max 12 guests</div>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-4">
                             <Button
                               type="button"
                               variant="outline"
                               size="sm"
                               onClick={() => changePeople(-1)}
-                              className="w-8 h-8 rounded-full p-0"
+                              className="w-10 h-10 rounded-full p-0 border-2"
                               disabled={currentPeople <= 1}
                             >
                               -
                             </Button>
-                            <span className="font-medium min-w-8 text-center">{currentPeople}</span>
+                            <span className="font-semibold text-lg min-w-8 text-center">{currentPeople}</span>
                             <Button
                               type="button"
                               variant="outline"
                               size="sm"
                               onClick={() => changePeople(1)}
-                              className="w-8 h-8 rounded-full p-0"
+                              className="w-10 h-10 rounded-full p-0 border-2"
                               disabled={currentPeople >= 12}
                             >
                               +
@@ -459,6 +526,7 @@ const MallorcanSailing = () => {
                         </div>
                       </div>
 
+                      {/* Continue Button - Enhanced */}
                       <Button
                         onClick={() => {
                           if (!selectedDate || !selectedTime) {
@@ -472,14 +540,24 @@ const MallorcanSailing = () => {
                           setShowBookingReview(true);
                         }}
                         disabled={!selectedDate || !selectedTime}
-                        className="w-full h-12 text-base font-medium"
+                        className="w-full h-14 text-lg font-semibold rounded-xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
                       >
-                        {totalPrice > 0 ? `Continue - €${totalPrice}` : 'Select date and time'}
+                        {totalPrice > 0 ? `Reserve - €${totalPrice}` : 'Select date and time'}
                       </Button>
 
-                      <div className="text-center text-xs text-muted-foreground">
+                      <div className="text-center text-sm text-muted-foreground">
                         You won't be charged yet
                       </div>
+
+                      {/* Price note */}
+                      {totalPrice > 0 && (
+                        <div className="bg-muted/50 p-4 rounded-lg">
+                          <div className="text-sm text-muted-foreground">
+                            Total includes {currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}
+                            {hasUpgrade && ` + premium catering upgrade`}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : showBookingReview && !showPayment ? (

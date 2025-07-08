@@ -1115,12 +1115,21 @@ export type Database = {
           charter_total: number | null
           children_details: string | null
           confirmation_date: string | null
+          confirmation_sent: boolean | null
+          contract_prepared_date: string | null
+          contract_ready: boolean | null
           contract_signed: boolean | null
+          contract_signed_date: string | null
           created_at: string | null
           data_source: string | null
           deposit_amount: number | null
+          deposit_charges: number | null
+          deposit_refund_amount: number | null
+          deposit_returned: boolean | null
           dropoff_location: string | null
+          duration_hours: number | null
           end_date: string | null
+          end_time: string | null
           extras_net: number | null
           extras_tax: number | null
           extras_total: number | null
@@ -1137,6 +1146,7 @@ export type Database = {
           nationality: string | null
           outstanding_amount: number | null
           paid_amount: number | null
+          payment_method: string | null
           pickup_location: string | null
           platform_commission: number | null
           raw_data: Json | null
@@ -1146,6 +1156,7 @@ export type Database = {
           service_tax: number | null
           service_total: number | null
           start_date: string | null
+          start_time: string | null
           total_guests: number | null
           updated_at: string | null
         }
@@ -1164,12 +1175,21 @@ export type Database = {
           charter_total?: number | null
           children_details?: string | null
           confirmation_date?: string | null
+          confirmation_sent?: boolean | null
+          contract_prepared_date?: string | null
+          contract_ready?: boolean | null
           contract_signed?: boolean | null
+          contract_signed_date?: string | null
           created_at?: string | null
           data_source?: string | null
           deposit_amount?: number | null
+          deposit_charges?: number | null
+          deposit_refund_amount?: number | null
+          deposit_returned?: boolean | null
           dropoff_location?: string | null
+          duration_hours?: number | null
           end_date?: string | null
+          end_time?: string | null
           extras_net?: number | null
           extras_tax?: number | null
           extras_total?: number | null
@@ -1186,6 +1206,7 @@ export type Database = {
           nationality?: string | null
           outstanding_amount?: number | null
           paid_amount?: number | null
+          payment_method?: string | null
           pickup_location?: string | null
           platform_commission?: number | null
           raw_data?: Json | null
@@ -1195,6 +1216,7 @@ export type Database = {
           service_tax?: number | null
           service_total?: number | null
           start_date?: string | null
+          start_time?: string | null
           total_guests?: number | null
           updated_at?: string | null
         }
@@ -1213,12 +1235,21 @@ export type Database = {
           charter_total?: number | null
           children_details?: string | null
           confirmation_date?: string | null
+          confirmation_sent?: boolean | null
+          contract_prepared_date?: string | null
+          contract_ready?: boolean | null
           contract_signed?: boolean | null
+          contract_signed_date?: string | null
           created_at?: string | null
           data_source?: string | null
           deposit_amount?: number | null
+          deposit_charges?: number | null
+          deposit_refund_amount?: number | null
+          deposit_returned?: boolean | null
           dropoff_location?: string | null
+          duration_hours?: number | null
           end_date?: string | null
+          end_time?: string | null
           extras_net?: number | null
           extras_tax?: number | null
           extras_total?: number | null
@@ -1235,6 +1266,7 @@ export type Database = {
           nationality?: string | null
           outstanding_amount?: number | null
           paid_amount?: number | null
+          payment_method?: string | null
           pickup_location?: string | null
           platform_commission?: number | null
           raw_data?: Json | null
@@ -1244,6 +1276,7 @@ export type Database = {
           service_tax?: number | null
           service_total?: number | null
           start_date?: string | null
+          start_time?: string | null
           total_guests?: number | null
           updated_at?: string | null
         }
@@ -5002,8 +5035,11 @@ export type Database = {
           catering_details: string | null
           charter_notes: string | null
           cleared_for_departure: boolean | null
+          contract_prepared_date: string | null
+          contract_ready: boolean | null
           created_at: string | null
           data_source: string | null
+          deposit_status: string | null
           extra_staff_count: number | null
           fuel_route: string | null
           gps_coordinates: string | null
@@ -5023,8 +5059,11 @@ export type Database = {
           catering_details?: string | null
           charter_notes?: string | null
           cleared_for_departure?: boolean | null
+          contract_prepared_date?: string | null
+          contract_ready?: boolean | null
           created_at?: string | null
           data_source?: string | null
+          deposit_status?: string | null
           extra_staff_count?: number | null
           fuel_route?: string | null
           gps_coordinates?: string | null
@@ -5044,8 +5083,11 @@ export type Database = {
           catering_details?: string | null
           charter_notes?: string | null
           cleared_for_departure?: boolean | null
+          contract_prepared_date?: string | null
+          contract_ready?: boolean | null
           created_at?: string | null
           data_source?: string | null
+          deposit_status?: string | null
           extra_staff_count?: number | null
           fuel_route?: string | null
           gps_coordinates?: string | null
@@ -8330,6 +8372,17 @@ export type Database = {
             referencedColumns: ["locator"]
           },
         ]
+      }
+      complete_field_mapping_status: {
+        Row: {
+          category: string | null
+          field_name: string | null
+          implementation_status: string | null
+          mapping_status: string | null
+          priority_order: number | null
+          supabase_field: string | null
+        }
+        Relationships: []
       }
       crew_efficiency_metrics: {
         Row: {
