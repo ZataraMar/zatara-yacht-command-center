@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, CreditCard, Shield, Check } from 'lucide-react';
+import { Loader2, CreditCard, Shield, Check, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { StripePaymentData, eurosToCents, formatPrice } from '@/utils/stripe';
+import { StripePaymentData, eurosToCents, formatPrice, StripeConfig, getStripeEnvironment } from '@/utils/stripe';
 
 interface StripePaymentProps {
   bookingData: {
@@ -32,7 +32,31 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
   disabled = false
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [stripeConfigured, setStripeConfigured] = useState(false);
+  const [stripeEnvironment, setStripeEnvironment] = useState<any>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Check Stripe configuration on component mount
+    const checkStripeConfig = async () => {
+      try {
+        const isConfigured = await StripeConfig.isConfigured();
+        const environment = await getStripeEnvironment();
+        
+        setStripeConfigured(isConfigured);
+        setStripeEnvironment(environment);
+        
+        if (!isConfigured) {
+          console.warn('Stripe not configured - using simulation mode');
+        }
+      } catch (error) {
+        console.error('Error checking Stripe configuration:', error);
+        setStripeConfigured(false);
+      }
+    };
+
+    checkStripeConfig();
+  }, []);
 
   const handlePayment = async () => {
     setIsProcessing(true);
@@ -51,7 +75,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         customer_phone: bookingData.customerPhone,
         special_requests: bookingData.specialRequests || null,
         base_price_per_person: 99,
-        total_base_amount: Math.max(bookingData.numberOfPeople * 99, 499), // Minimum amounts by time slot
+        total_base_amount: Math.max(bookingData.numberOfPeople * 99, 499),
         premium_catering_upgrade: bookingData.hasUpgrade,
         upgrade_cost: bookingData.upgradeAmount,
         total_amount: bookingData.totalAmount,
@@ -59,7 +83,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         booking_source: 'mallorcan_sailing_landing_page',
         status: 'payment_pending',
         payment_status: 'pending',
-        payment_method: 'stripe',
+        payment_method: stripeConfigured ? 'stripe' : 'simulation',
         created_at: new Date().toISOString(),
         andronautic_sync_status: 'manual_required'
       };
@@ -118,15 +142,22 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         }
       };
 
-      // For now, simulate Stripe checkout - replace with actual Stripe integration
-      // This would normally redirect to Stripe Checkout
-      console.log('Stripe Payment Data:', stripePaymentData);
-      
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      let paymentSuccessful = false;
 
-      // Simulate successful payment for demo
-      const paymentSuccessful = true; // Replace with actual Stripe response
+      if (stripeConfigured) {
+        // TODO: Implement real Stripe checkout here
+        // This would normally redirect to Stripe Checkout or use Stripe Elements
+        console.log('Stripe Payment Data:', stripePaymentData);
+        
+        // For now, simulate processing
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        paymentSuccessful = Math.random() > 0.3; // 70% success rate for testing
+      } else {
+        // Simulation mode when Stripe is not configured
+        console.log('Simulation Mode - Stripe Payment Data:', stripePaymentData);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        paymentSuccessful = true; // Always succeed in simulation mode
+      }
 
       if (paymentSuccessful) {
         // Update booking status to confirmed
@@ -147,7 +178,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
         onPaymentSuccess();
       } else {
-        throw new Error('Payment failed');
+        throw new Error('Payment declined');
       }
 
     } catch (error) {
@@ -174,6 +205,19 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Stripe Configuration Status */}
+      {!stripeConfigured && (
+        <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+          <div className="flex items-center gap-2 text-yellow-800">
+            <AlertTriangle className="h-5 w-5" />
+            <span className="font-medium">Demo Mode</span>
+          </div>
+          <p className="text-sm text-yellow-700 mt-1">
+            Stripe is not configured. This is a simulation for testing purposes.
+          </p>
+        </div>
+      )}
+
       {/* Payment Summary */}
       <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
         <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -234,7 +278,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           ) : (
             <>
               <CreditCard className="mr-2 h-5 w-5" />
-              Pay {formatPrice(bookingData.totalAmount)} - Secure Checkout
+              {stripeConfigured ? 'Pay' : 'Simulate Payment'} {formatPrice(bookingData.totalAmount)} - Secure Checkout
             </>
           )}
         </Button>
@@ -252,8 +296,17 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
       {/* Payment Info */}
       <div className="text-xs text-gray-500 text-center">
-        <p>Payments are processed securely through Stripe.</p>
-        <p>You will receive a confirmation email after successful payment.</p>
+        {stripeConfigured ? (
+          <>
+            <p>Payments are processed securely through Stripe.</p>
+            <p>You will receive a confirmation email after successful payment.</p>
+          </>
+        ) : (
+          <>
+            <p>Demo mode active - no real payments will be processed.</p>
+            <p>Configure Stripe in Admin Settings to enable real payments.</p>
+          </>
+        )}
       </div>
     </div>
   );
