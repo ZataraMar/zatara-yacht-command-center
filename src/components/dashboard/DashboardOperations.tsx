@@ -10,12 +10,6 @@ import { LiveCharterBoard } from './operations/LiveCharterBoard';
 export const DashboardOperations = () => {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-zatara-navy">Operations Center</h1>
-          <p className="text-zatara-blue">Enhanced charter management with integrated tools</p>
-        </div>
-      </div>
 
       <Tabs defaultValue="enhanced-views" className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
