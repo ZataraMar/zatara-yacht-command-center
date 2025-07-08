@@ -305,6 +305,13 @@ const MallorcanSailing = () => {
                     1
                   </div>
                   <h3 className="text-xl font-semibold">Choose your time</h3>
+                  <div className="text-sm text-muted-foreground">
+                    {selectedDate?.toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      day: 'numeric', 
+                      month: 'long' 
+                    })}
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
