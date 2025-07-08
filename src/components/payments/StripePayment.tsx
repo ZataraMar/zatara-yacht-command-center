@@ -213,15 +213,10 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         addDebugLog(`Checkout session: ${data.session_id}`, 'success');
 
         if (data?.url) {
-          addDebugLog(`Received Stripe URL (${data.url.length} chars)`, 'success');
+          addDebugLog(`Received Stripe URL, redirecting...`, 'success');
           
-          // Use robust redirect function instead of simple window.location.href
-          redirectToStripe(data.url);
-          
-          // Set timeout to detect if redirect failed
-          setTimeout(() => {
-            addDebugLog('Redirect may have failed - still on page after 3 seconds', 'error');
-          }, 3000);
+          // Simple direct redirect to Stripe
+          window.location.href = data.url;
           
         } else {
           throw new Error('No checkout URL received');
