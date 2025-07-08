@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MessageCircle, Mail, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ZataraLogo } from '@/components/common/ZataraLogo';
 
 export const Footer = () => {
   const handleWhatsAppClick = () => {
@@ -17,11 +16,9 @@ export const Footer = () => {
           {/* Company Info with tight cropped logo */}
           <div className="space-y-4">
             <div className="space-y-3">
-              <ZataraLogo 
-                size="xl" 
-                variant="image" 
-                className="brightness-0 invert" 
-              />
+              <div className="text-2xl font-bold text-white">
+                Zatara
+              </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               Small family-run business operating to super yacht standards with a focus on quality service and a love of the sea. Experience luxury charter and exclusive boat club memberships in Mallorca.
