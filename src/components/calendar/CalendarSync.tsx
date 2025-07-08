@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { formatDate, formatCurrency } from '@/utils/formatters';
 
 interface AvailabilityData {
   calendar_date: string;
@@ -392,7 +393,7 @@ export const CalendarSync = ({ boatName = 'Zatara - Myabca Llaut 37TR' }: Calend
                     <div className="flex items-center gap-3">
                       {getStatusIcon(item.availability_status)}
                       <div>
-                        <p className="font-medium">{new Date(item.calendar_date).toLocaleDateString()}</p>
+                        <p className="font-medium">{formatDate(item.calendar_date)}</p>
                         <p className="text-sm text-gray-600">{item.blocking_reason || 'Available'}</p>
                       </div>
                     </div>
@@ -432,12 +433,12 @@ export const CalendarSync = ({ boatName = 'Zatara - Myabca Llaut 37TR' }: Calend
                     <div>
                       <p className="font-medium">{booking.locator}</p>
                       <p className="text-sm text-gray-600">
-                        {booking.guest_first_name} {booking.guest_surname} • {new Date(booking.start_date).toLocaleDateString()}
+                        {booking.guest_first_name} {booking.guest_surname} • {formatDate(booking.start_date)}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">€{booking.charter_total?.toLocaleString()}</p>
+                    <p className="font-medium">{formatCurrency(booking.charter_total)}</p>
                     <Badge variant="default">{booking.booking_status}</Badge>
                   </div>
                 </div>

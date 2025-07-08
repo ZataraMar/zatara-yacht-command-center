@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { RefreshCw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { formatDateTime } from '@/utils/formatters';
 
 interface SecretStatus {
   name: string;
@@ -99,7 +100,7 @@ export const HealthCheck: React.FC = () => {
           </Button>
           {healthData && (
             <div className="text-sm text-muted-foreground">
-              Last check: {new Date(healthData.timestamp).toLocaleString()}
+              Last check: {formatDateTime(healthData.timestamp)}
             </div>
           )}
         </div>

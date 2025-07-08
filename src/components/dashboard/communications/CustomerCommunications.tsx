@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MessageCircle, Phone, Mail, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { WhatsAppGenerator } from './WhatsAppGenerator';
 import { useEnhancedBusinessViews } from '@/hooks/useEnhancedBusinessViews';
+import { formatDate } from '@/utils/formatters';
 
 export const CustomerCommunications = () => {
   const [selectedCharter, setSelectedCharter] = useState<any>(null);
@@ -65,7 +66,7 @@ export const CustomerCommunications = () => {
             </Badge>
           </div>
           <CardDescription>
-            {charter.boat} • {new Date(charter.charter_date).toLocaleDateString()}
+            {charter.boat} • {formatDate(charter.charter_date)}
           </CardDescription>
         </CardHeader>
         <CardContent>

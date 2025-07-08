@@ -4,6 +4,7 @@ import { Clock, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { formatTime } from '@/utils/formatters';
 
 interface TimeSlot {
   id: string;
@@ -86,7 +87,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
 
         const bookedTimes = bookings?.map(booking => {
           const bookingTime = new Date(booking.start_date);
-          return format(bookingTime, 'HH:mm');
+          return formatTime(bookingTime);
         }) || [];
 
         setBookedSlots(bookedTimes);

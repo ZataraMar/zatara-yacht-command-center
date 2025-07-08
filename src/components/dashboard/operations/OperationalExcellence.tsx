@@ -22,6 +22,7 @@ import {
   Edit
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { formatTime } from '@/utils/formatters';
 
 interface InventoryItem {
   id: string;
@@ -360,7 +361,7 @@ export const OperationalExcellence = () => {
                   <p className="text-sm font-medium text-blue-900">Current Conditions</p>
                   <p className="text-lg font-bold text-blue-900">{weather.conditions}</p>
                   <p className="text-xs text-blue-700 mt-1">
-                    Last updated: {new Date(weather.timestamp).toLocaleTimeString()}
+                    Last updated: {formatTime(weather.timestamp)}
                   </p>
                 </div>
               </CardContent>

@@ -9,6 +9,7 @@ import { useDashboardData } from '@/hooks/useDashboardData';
 import { useFinancialData } from '@/hooks/useFinancialData';
 import { DataAuditReport } from './admin/DataAuditReport';
 import { formatCurrency } from '@/utils/financialUtils';
+import { formatDate } from '@/utils/formatters';
 
 export const DashboardHome = () => {
   const { metrics, loading: dashboardLoading } = useDashboardData();
@@ -137,7 +138,7 @@ export const DashboardHome = () => {
                         </div>
                         {boat.nextCharter && (
                           <p className="text-sm text-gray-600">
-                            Next: {new Date(boat.nextCharter.start_date).toLocaleDateString()}
+                            Next: {formatDate(boat.nextCharter.start_date)}
                           </p>
                         )}
                       </div>
@@ -178,7 +179,7 @@ export const DashboardHome = () => {
                         <div>
                           <p className="font-medium">{charter.guest_first_name} {charter.guest_surname}</p>
                           <p className="text-sm text-gray-600">
-                            {charter.boat} • {new Date(charter.start_date).toLocaleDateString()}
+                            {charter.boat} • {formatDate(charter.start_date)}
                           </p>
                         </div>
                         <Badge>{charter.booking_status}</Badge>

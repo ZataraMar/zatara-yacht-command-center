@@ -4,6 +4,7 @@ import { Loader2, CreditCard, Shield, Check, Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { StripePaymentData, eurosToCents, formatPrice, StripeConfig, getStripeEnvironment } from '@/utils/stripe';
+import { formatTime } from '@/utils/formatters';
 
 interface StripePaymentProps {
   bookingData: {
@@ -37,7 +38,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
   const { toast } = useToast();
 
   const addDebugLog = (message: string, type: 'info' | 'success' | 'error' = 'info') => {
-    const timestamp = new Date().toLocaleTimeString();
+    const timestamp = formatTime(new Date());
     const emoji = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
     const logMessage = `${timestamp} ${emoji} ${message}`;
     console.log(logMessage);

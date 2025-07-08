@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, Users, Phone, MapPin, AlertCircle, CheckCircle2, Anchor, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { formatTime } from '@/utils/formatters';
 
 interface Charter {
   id: number;
@@ -167,7 +168,7 @@ export const LiveCharterBoard = () => {
             <div className="flex items-center space-x-2">
               <Clock className="h-4 w-4 text-gray-500" />
               <span className="text-sm">
-                {new Date(charter.start_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {formatTime(charter.start_date)}
               </span>
             </div>
             <div className="flex items-center space-x-2">
@@ -235,7 +236,7 @@ export const LiveCharterBoard = () => {
           <h2 className="text-xl font-bold text-zatara-navy">Live Charter Board</h2>
           {lastUpdate && (
             <p className="text-sm text-zatara-blue">
-              Last updated: {lastUpdate.toLocaleTimeString()}
+              Last updated: {formatTime(lastUpdate)}
             </p>
           )}
         </div>

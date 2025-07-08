@@ -32,6 +32,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { formatTime } from '@/utils/formatters';
 
 const SystemOverviewDashboard = () => {
   const [systemStatus, setSystemStatus] = useState('loading');
@@ -213,7 +214,7 @@ const SystemOverviewDashboard = () => {
         </div>
         <div className="flex items-center space-x-4">
           <Badge variant="outline" className="text-sm">
-            Last updated: {lastUpdated.toLocaleTimeString()}
+            Last updated: {formatTime(lastUpdated)}
           </Badge>
           <Button variant="outline" onClick={() => setLastUpdated(new Date())}>
             <RefreshCw className="h-4 w-4 mr-2" />

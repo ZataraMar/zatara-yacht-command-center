@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { MessageCircle, Send, Copy, Sparkles } from 'lucide-react';
 import { useEnhancedWhatsAppTemplates } from '@/hooks/useEnhancedWhatsAppTemplates';
 import { toast } from '@/hooks/use-toast';
+import { formatDate } from '@/utils/formatters';
 
 interface WhatsAppGeneratorProps {
   charter: {
@@ -120,7 +121,7 @@ export const WhatsAppGenerator: React.FC<WhatsAppGeneratorProps> = ({ charter })
             <label className="text-sm font-medium">Charter Details</label>
             <div className="flex flex-wrap gap-1">
               <Badge variant="outline">{charter.boat}</Badge>
-              <Badge variant="outline">{new Date(charter.charter_date).toLocaleDateString()}</Badge>
+              <Badge variant="outline">{formatDate(charter.charter_date)}</Badge>
               <Badge variant="outline">{charter.total_guests} guests</Badge>
               <Badge variant="outline">€{charter.charter_total}</Badge>
             </div>

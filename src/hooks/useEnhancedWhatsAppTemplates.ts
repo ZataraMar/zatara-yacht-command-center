@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { formatTime } from '@/utils/formatters';
 
 interface WhatsAppTemplate {
   id: number;
@@ -85,7 +86,7 @@ export const useEnhancedWhatsAppTemplates = () => {
         message = message.replace(/\{\{guest_name\}\}/g, charterData.guest_first_name || 'Guest');
         message = message.replace(/\{\{boat_name\}\}/g, charterData.boat || 'our boat');
         message = message.replace(/\{\{charter_date\}\}/g, new Date(charterData.start_date).toLocaleDateString());
-        message = message.replace(/\{\{start_time\}\}/g, new Date(charterData.start_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+        message = message.replace(/\{\{start_time\}\}/g, formatTime(charterData.start_date));
         message = message.replace(/\{\{total_guests\}\}/g, charterData.total_guests?.toString() || '1');
         message = message.replace(/\{\{charter_total\}\}/g, charterData.charter_total?.toString() || '0');
         

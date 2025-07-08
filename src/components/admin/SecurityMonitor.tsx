@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/SecureAuthContext';
+import { formatDateTime } from '@/utils/formatters';
 
 interface SecurityMetric {
   name: string;
@@ -191,7 +192,7 @@ export const SecurityMonitor = () => {
 
       {lastRefresh && (
         <div className="text-xs text-gray-500">
-          Last updated: {new Date(lastRefresh).toLocaleString()}
+          Last updated: {formatDateTime(lastRefresh)}
         </div>
       )}
 
@@ -237,7 +238,7 @@ export const SecurityMonitor = () => {
                   Recommendation: {vuln.recommendation}
                 </p>
                 <div className="text-xs text-gray-500 mt-2">
-                  Detected: {new Date(vuln.detected).toLocaleString()}
+                  Detected: {formatDateTime(vuln.detected)}
                 </div>
               </div>
             ))}
