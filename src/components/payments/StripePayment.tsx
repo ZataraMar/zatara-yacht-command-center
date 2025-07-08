@@ -233,11 +233,11 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           addDebugLog(`Checkout data: ${JSON.stringify(data)}`, 'success');
 
           if (data?.url) {
-            addDebugLog(`Received Stripe URL, redirecting...`, 'success');
-            console.log('🔥 IMMEDIATE: Redirecting to:', data.url);
+            addDebugLog(`Received Stripe URL, opening in new window...`, 'success');
+            console.log('🔥 IMMEDIATE: Opening Stripe in new window:', data.url);
             
-            // Simple direct redirect to Stripe
-            window.location.href = data.url;
+            // Open Stripe checkout in a new window to avoid iframe restrictions
+            window.open(data.url, '_blank');
             
           } else {
             addDebugLog(`No URL in response: ${JSON.stringify(data)}`, 'error');
