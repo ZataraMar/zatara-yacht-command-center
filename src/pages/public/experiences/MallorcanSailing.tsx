@@ -15,7 +15,6 @@ import StripePayment from '@/components/payments/StripePayment';
 import { useTranslation } from '@/contexts/TranslationContext';
 import GoogleMap from '@/components/maps/GoogleMap';
 import { GoogleReviews } from '@/components/reviews/GoogleReviews';
-
 const MallorcanSailing = () => {
   const [currentPeople, setCurrentPeople] = useState(2);
   const [hasUpgrade, setHasUpgrade] = useState(false);
@@ -33,98 +32,130 @@ const MallorcanSailing = () => {
   const [bookingReference, setBookingReference] = useState('');
   const [currentPrice, setCurrentPrice] = useState(0);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-  
-  const { toast } = useToast();
-  const { t } = useTranslation();
+  const {
+    toast
+  } = useToast();
+  const {
+    t
+  } = useTranslation();
 
   // Google Maps API key
   const GOOGLE_MAPS_API_KEY = 'AIzaSyChMkFLGf2_7hD5sScSpzChajwq1nH1IoU';
 
   // Naviera Balear marina coordinates
-  const mapCenter = { lat: 39.567, lng: 2.633 };
-  const pickupLocation = { lat: 39.567, lng: 2.633 };
-  
-  const mapMarkers = [
-    {
-      position: pickupLocation,
-      title: 'Marina Naviera Balear - Meeting Point',
-      description: 'Professional marina in Palma de Mallorca. Detailed meeting instructions will be sent after booking.'
-    }
+  const mapCenter = {
+    lat: 39.567,
+    lng: 2.633
+  };
+  const pickupLocation = {
+    lat: 39.567,
+    lng: 2.633
+  };
+  const mapMarkers = [{
+    position: pickupLocation,
+    title: 'Marina Naviera Balear - Meeting Point',
+    description: 'Professional marina in Palma de Mallorca. Detailed meeting instructions will be sent after booking.'
+  }];
+  const sailingRoute = [{
+    lat: 39.5696,
+    lng: 2.6502
+  },
+  // Port de Palma
+  {
+    lat: 39.5650,
+    lng: 2.6300
+  },
+  // Cala Major
+  {
+    lat: 39.5580,
+    lng: 2.6100
+  },
+  // Swimming cove
+  {
+    lat: 39.5696,
+    lng: 2.6502
+  } // Return to port
   ];
-  
-  const sailingRoute = [
-    { lat: 39.5696, lng: 2.6502 }, // Port de Palma
-    { lat: 39.5650, lng: 2.6300 }, // Cala Major
-    { lat: 39.5580, lng: 2.6100 }, // Swimming cove
-    { lat: 39.5696, lng: 2.6502 }  // Return to port
-  ];
-
   const timeSlots = {
-    'morning': { min: 499, label: 'Morning 8:30-12:00', value: '08:30' },
-    'afternoon': { min: 699, label: 'Afternoon 1:30-17:00', value: '13:30' },
-    'sunset': { min: 599, label: 'Sunset 17:30-21:00', value: '17:30' }
+    'morning': {
+      min: 499,
+      label: 'Morning 8:30-12:00',
+      value: '08:30'
+    },
+    'afternoon': {
+      min: 699,
+      label: 'Afternoon 1:30-17:00',
+      value: '13:30'
+    },
+    'sunset': {
+      min: 599,
+      label: 'Sunset 17:30-21:00',
+      value: '17:30'
+    }
   };
 
   // Set minimum date to today
   const today = new Date().toISOString().split('T')[0];
-
   const getNext4Days = () => {
     const days = [];
     const today = new Date();
-    
     for (let i = 0; i < 4; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      
       days.push({
         date,
-        dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
-        dayMonth: date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+        dayName: date.toLocaleDateString('en-US', {
+          weekday: 'short'
+        }),
+        dayMonth: date.toLocaleDateString('en-US', {
+          day: 'numeric',
+          month: 'short'
+        })
       });
     }
-    
     return days;
   };
-
   const changePeople = (delta: number) => {
     setCurrentPeople(Math.max(1, Math.min(12, currentPeople + delta)));
   };
-
   const toggleUpgrade = () => {
     setHasUpgrade(!hasUpgrade);
   };
-
   const calculatePrice = () => {
-    if (!selectedTime || currentPrice === 0) return { total: currentPrice || 0, note: 'Select date and time' };
-
+    if (!selectedTime || currentPrice === 0) return {
+      total: currentPrice || 0,
+      note: 'Select date and time'
+    };
     const upgradePrice = hasUpgrade ? currentPeople * 20 : 0;
     const totalPrice = currentPrice + upgradePrice;
-
     let priceNote = `${currentPeople} ${currentPeople === 1 ? 'person' : 'people'}`;
-    
     if (hasUpgrade) {
       priceNote += ` + €${upgradePrice} upgrade`;
     }
-
-    return { total: totalPrice, note: priceNote, base: currentPrice, upgrade: upgradePrice };
+    return {
+      total: totalPrice,
+      note: priceNote,
+      base: currentPrice,
+      upgrade: upgradePrice
+    };
   };
-
-  const { total: totalPrice, note: priceNote, base: baseAmount, upgrade: upgradeAmount } = calculatePrice();
-
+  const {
+    total: totalPrice,
+    note: priceNote,
+    base: baseAmount,
+    upgrade: upgradeAmount
+  } = calculatePrice();
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
     setSelectedDateString(date.toISOString().split('T')[0]);
     setShowCalendarModal(false);
   };
-
   const handleTimeSelect = (timeSlot: string) => {
     setSelectedTime(timeSlot);
   };
-
   const handlePriceUpdate = (price: number) => {
     setCurrentPrice(price);
   };
-
   const handlePaymentSuccess = () => {
     console.log("handlePaymentSuccess called - this should only happen after successful Stripe payment");
     // Reset form
@@ -141,13 +172,11 @@ const MallorcanSailing = () => {
     setShowBookingReview(false);
     setShowSuccessModal(true);
   };
-
   const handlePaymentCancel = () => {
     setShowPayment(false);
     setShowBookingReview(true);
     setBookingReference('');
   };
-
   const resetForm = () => {
     setSelectedDate(undefined);
     setSelectedDateString('');
@@ -161,9 +190,7 @@ const MallorcanSailing = () => {
     setShowPayment(false);
     setBookingReference('');
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Navigation />
       
       {/* Main Content Area */}
@@ -197,12 +224,7 @@ const MallorcanSailing = () => {
             <div className="flex text-yellow-400">
               {'★'.repeat(5)}
             </div>
-            <a 
-              href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-primary transition-colors underline"
-            >
+            <a href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors underline">
               See all Google reviews
             </a>
             <span className="text-muted-foreground">•</span>
@@ -212,58 +234,40 @@ const MallorcanSailing = () => {
 
 
         {/* Date Selection Section - Top Priority */}
-        {!selectedDate && !showPayment && (
-          <div className="mb-8">
+        {!selectedDate && !showPayment && <div className="mb-8">
             <h2 className="text-xl font-semibold text-foreground mb-4">Choose your date</h2>
             
             {/* Next 4 Available Dates */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-              {getNext4Days().map((dateInfo, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setSelectedDate(dateInfo.date);
-                    setSelectedDateString(dateInfo.date.toISOString().split('T')[0]);
-                  }}
-                  className="p-3 border border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-left"
-                >
+              {getNext4Days().map((dateInfo, index) => <button key={index} onClick={() => {
+            setSelectedDate(dateInfo.date);
+            setSelectedDateString(dateInfo.date.toISOString().split('T')[0]);
+          }} className="p-3 border border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-left">
                   <div className="text-xs text-muted-foreground">{dateInfo.dayName}</div>
                   <div className="font-medium text-foreground">{dateInfo.dayMonth}</div>
                   <div className="text-xs text-muted-foreground mt-1">From €499</div>
-                </button>
-              ))}
+                </button>)}
             </div>
 
             {/* Show All Dates Button */}
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setShowCalendarModal(true)}
-              className="w-full md:w-auto"
-            >
+            <Button variant="outline" size="sm" onClick={() => setShowCalendarModal(true)} className="w-full md:w-auto">
               Show all dates
             </Button>
-          </div>
-        )}
+          </div>}
 
         {/* Booking Confirmation Layout - After Date Selected */}
-        {selectedDate && !showPayment && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {selectedDate && !showPayment && <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Left Side - Booking Steps */}
             <div className="lg:col-span-2 space-y-4">
               
               {/* Back to Dates */}
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setSelectedDate(undefined);
-                  setSelectedDateString('');
-                  setSelectedTime('');
-                  setShowBookingReview(false);
-                }}
-                className="mb-4"
-              >
+              <Button variant="ghost" onClick={() => {
+            setSelectedDate(undefined);
+            setSelectedDateString('');
+            setSelectedTime('');
+            setShowBookingReview(false);
+          }} className="mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to dates
               </Button>
@@ -276,38 +280,27 @@ const MallorcanSailing = () => {
                   </div>
                   <h3 className="text-base font-semibold">Choose your time</h3>
                   <div className="text-xs text-muted-foreground">
-                    {selectedDate?.toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      day: 'numeric', 
-                      month: 'long' 
-                    })}
+                    {selectedDate?.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long'
+                })}
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  {Object.entries(timeSlots).map(([key, slot]) => (
-                    <button
-                      key={key}
-                      onClick={() => {
-                        setSelectedTime(key);
-                        handlePriceUpdate(slot.min);
-                      }}
-                      className={`p-2 border rounded text-left transition-all ${
-                        selectedTime === key 
-                          ? 'border-primary bg-primary/5' 
-                          : 'border-border hover:border-primary'
-                      }`}
-                    >
+                  {Object.entries(timeSlots).map(([key, slot]) => <button key={key} onClick={() => {
+                setSelectedTime(key);
+                handlePriceUpdate(slot.min);
+              }} className={`p-2 border rounded text-left transition-all ${selectedTime === key ? 'border-primary bg-primary/5' : 'border-border hover:border-primary'}`}>
                       <div className="font-medium text-sm">{slot.label}</div>
                       <div className="text-xs text-muted-foreground">€{slot.min}</div>
-                    </button>
-                  ))}
+                    </button>)}
                 </div>
               </div>
 
               {/* Step 2: Choose Guests */}
-              {selectedTime && (
-                <div className="border border-border rounded-lg p-3">
+              {selectedTime && <div className="border border-border rounded-lg p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
@@ -319,67 +312,38 @@ const MallorcanSailing = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => changePeople(-1)}
-                        className="w-6 h-6 rounded-full p-0"
-                        disabled={currentPeople <= 1}
-                      >
+                      <Button type="button" variant="outline" size="sm" onClick={() => changePeople(-1)} className="w-6 h-6 rounded-full p-0" disabled={currentPeople <= 1}>
                         -
                       </Button>
                       <span className="font-semibold text-sm min-w-4 text-center">{currentPeople}</span>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => changePeople(1)}
-                        className="w-6 h-6 rounded-full p-0"
-                        disabled={currentPeople >= 12}
-                      >
+                      <Button type="button" variant="outline" size="sm" onClick={() => changePeople(1)} className="w-6 h-6 rounded-full p-0" disabled={currentPeople >= 12}>
                         +
                       </Button>
                     </div>
                   </div>
-                </div>
-              )}
+                </div>}
 
               {/* Continue Button */}
-              {selectedTime && (
-                <Button
-                  onClick={() => {
-                    const reference = `MS-${Date.now()}`;
-                    setBookingReference(reference);
-                    setShowPayment(true);
-                  }}
-                  className="w-full h-10 text-sm font-medium"
-                >
+              {selectedTime && <Button onClick={() => {
+            const reference = `MS-${Date.now()}`;
+            setBookingReference(reference);
+            setShowPayment(true);
+          }} className="w-full h-10 text-sm font-medium">
                   Continue to payment
-                </Button>
-              )}
+                </Button>}
             </div>
 
             {/* Right Side - Booking Summary */}
             <div className="lg:col-span-1">
               <div className="sticky top-6 border border-border rounded-lg p-4 bg-card">
                 <div className="flex gap-3 mb-4">
-                  <img 
-                    src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=100&h=80&fit=crop" 
-                    alt="Mallorcan sailing" 
-                    className="w-16 h-12 object-cover rounded-lg"
-                  />
+                  <img src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=100&h=80&fit=crop" alt="Mallorcan sailing" className="w-16 h-12 object-cover rounded-lg" />
                   <div>
                     <h4 className="font-medium text-foreground text-sm">Mallorcan Sailing Experience</h4>
                     <div className="flex text-yellow-400 text-xs">
                       {'★'.repeat(5)}
                     </div>
-                    <a 
-                      href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-xs text-muted-foreground hover:text-primary transition-colors underline"
-                    >
+                    <a href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary transition-colors underline">
                       View reviews
                     </a>
                   </div>
@@ -393,41 +357,30 @@ const MallorcanSailing = () => {
                 </div>
 
 
-                {totalPrice > 0 && (
-                  <div className="border-t border-border pt-3 mt-3">
+                {totalPrice > 0 && <div className="border-t border-border pt-3 mt-3">
                     <div className="space-y-1 text-xs">
                       <div className="flex justify-between">
                         <span>€{currentPrice} x {currentPeople} guests</span>
                         <span>€{currentPrice * currentPeople}</span>
                       </div>
-                      {hasUpgrade && (
-                        <div className="flex justify-between">
+                      {hasUpgrade && <div className="flex justify-between">
                           <span>Premium upgrade</span>
                           <span>€{currentPeople * 20}</span>
-                        </div>
-                      )}
+                        </div>}
                       <div className="border-t border-border pt-1 flex justify-between font-medium text-sm">
                         <span>Total</span>
                         <span>€{totalPrice}</span>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
-          </div>
-        )}
+          </div>}
 
         {/* Payment Step */}
-        {showPayment && (
-          <div className="max-w-2xl mx-auto">
+        {showPayment && <div className="max-w-2xl mx-auto">
             <div className="text-center mb-6">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={handlePaymentCancel}
-                className="mb-4"
-              >
+              <Button type="button" variant="ghost" onClick={handlePaymentCancel} className="mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Booking Details
               </Button>
@@ -445,37 +398,10 @@ const MallorcanSailing = () => {
               </div>
               
               <div className="space-y-4">
-                <Input
-                  type="text"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Full name *"
-                  required
-                  className="w-full"
-                />
-                <Input
-                  type="email"
-                  value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
-                  placeholder="Email address *"
-                  required
-                  className="w-full"
-                />
-                <Input
-                  type="tel"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  placeholder="Phone number *"
-                  required
-                  className="w-full"
-                />
-                <Textarea
-                  value={specialRequests}
-                  onChange={(e) => setSpecialRequests(e.target.value)}
-                  placeholder="Special requests (optional)"
-                  className="w-full"
-                  rows={3}
-                />
+                <Input type="text" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Full name *" required className="w-full" />
+                <Input type="email" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} placeholder="Email address *" required className="w-full" />
+                <Input type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} placeholder="Phone number *" required className="w-full" />
+                <Textarea value={specialRequests} onChange={e => setSpecialRequests(e.target.value)} placeholder="Special requests (optional)" className="w-full" rows={3} />
               </div>
             </div>
 
@@ -499,60 +425,38 @@ const MallorcanSailing = () => {
               </div>
             </div>
 
-            <StripePayment
-              bookingData={{
-                bookingReference,
-                customerName,
-                customerEmail,
-                customerPhone,
-                bookingDate: selectedDateString,
-                timeSlot: timeSlots[selectedTime as keyof typeof timeSlots]?.value || '',
-                timePeriodLabel: timeSlots[selectedTime as keyof typeof timeSlots]?.label || '',
-                numberOfPeople: currentPeople,
-                totalAmount: totalPrice,
-                hasUpgrade,
-                upgradeAmount,
-                specialRequests
-              }}
-              onPaymentSuccess={handlePaymentSuccess}
-              onPaymentCancel={handlePaymentCancel}
-            />
-          </div>
-        )}
+            <StripePayment bookingData={{
+          bookingReference,
+          customerName,
+          customerEmail,
+          customerPhone,
+          bookingDate: selectedDateString,
+          timeSlot: timeSlots[selectedTime as keyof typeof timeSlots]?.value || '',
+          timePeriodLabel: timeSlots[selectedTime as keyof typeof timeSlots]?.label || '',
+          numberOfPeople: currentPeople,
+          totalAmount: totalPrice,
+          hasUpgrade,
+          upgradeAmount,
+          specialRequests
+        }} onPaymentSuccess={handlePaymentSuccess} onPaymentCancel={handlePaymentCancel} />
+          </div>}
 
         {/* Original Content - Only Show When No Date Selected and Not in Payment */}
-        {!selectedDate && !showPayment && (
-          <>
+        {!selectedDate && !showPayment && <>
             {/* Image Gallery - Compact */}
             <div className="relative mb-8">
               <div className="grid grid-cols-2 gap-2 h-[400px] w-1/2">
                 {/* Left images stack */}
                 <div className="space-y-2">
-                  <img 
-                    src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&h=400&fit=crop" 
-                    alt="Mallorcan coastline" 
-                    className="w-full h-[195px] object-cover rounded-l-xl"
-                  />
-                  <img 
-                    src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop" 
-                    alt="Swimming in crystal waters" 
-                    className="w-full h-[195px] object-cover rounded-bl-xl"
-                  />
+                  <img src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&h=400&fit=crop" alt="Mallorcan coastline" className="w-full h-[195px] object-cover rounded-l-xl" />
+                  <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop" alt="Swimming in crystal waters" className="w-full h-[195px] object-cover rounded-bl-xl" />
                 </div>
                 
                 {/* Right images stack */}
                 <div className="space-y-2">
-                  <img 
-                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" 
-                    alt="Traditional tapas on boat" 
-                    className="w-full h-[195px] object-cover rounded-tr-xl"
-                  />
+                  <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" alt="Traditional tapas on boat" className="w-full h-[195px] object-cover rounded-tr-xl" />
                   <div className="relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop" 
-                      alt="Sunset sailing in Mallorca" 
-                      className="w-full h-[195px] object-cover rounded-br-xl"
-                    />
+                    <img src="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop" alt="Sunset sailing in Mallorca" className="w-full h-[195px] object-cover rounded-br-xl" />
                     <div className="absolute inset-0 bg-black/20 rounded-br-xl flex items-center justify-center">
                       <span className="text-white font-medium text-sm">+5 photos</span>
                     </div>
@@ -560,15 +464,7 @@ const MallorcanSailing = () => {
                 </div>
               </div>
               
-              <Button 
-                variant="outline" 
-                className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm hover:bg-white border border-gray-300"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                Show all photos
-              </Button>
+              
             </div>
 
             {/* Quick Info Icons - Airbnb Style */}
@@ -628,13 +524,7 @@ const MallorcanSailing = () => {
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-foreground mb-3">Pickup Location</h3>
                 <div className="mb-4">
-                  <GoogleMap
-                    apiKey={GOOGLE_MAPS_API_KEY}
-                    center={mapCenter}
-                    zoom={15}
-                    markers={mapMarkers}
-                    className="w-full h-40 rounded-lg border border-border"
-                  />
+                  <GoogleMap apiKey={GOOGLE_MAPS_API_KEY} center={mapCenter} zoom={15} markers={mapMarkers} className="w-full h-40 rounded-lg border border-border" />
                 </div>
                 <div className="bg-muted rounded-lg p-4">
                   <p className="text-sm text-muted-foreground mb-2">
@@ -650,18 +540,16 @@ const MallorcanSailing = () => {
               <div>
                 <h3 className="text-lg font-medium text-foreground mb-3">Sailing Route</h3>
                 <div className="mb-4">
-                  <GoogleMap
-                    apiKey={GOOGLE_MAPS_API_KEY}
-                    center={mapCenter}
-                    zoom={12}
-                    polyline={sailingRoute}
-                    markers={[
-                      { position: sailingRoute[0], title: 'Start: Port de Palma' },
-                      { position: sailingRoute[1], title: 'Cala Major' },
-                      { position: sailingRoute[2], title: 'Swimming Cove' }
-                    ]}
-                    className="w-full h-64 rounded-lg border border-border"
-                  />
+                  <GoogleMap apiKey={GOOGLE_MAPS_API_KEY} center={mapCenter} zoom={12} polyline={sailingRoute} markers={[{
+                position: sailingRoute[0],
+                title: 'Start: Port de Palma'
+              }, {
+                position: sailingRoute[1],
+                title: 'Cala Major'
+              }, {
+                position: sailingRoute[2],
+                title: 'Swimming Cove'
+              }]} className="w-full h-64 rounded-lg border border-border" />
                 </div>
                 <h4 className="font-medium text-foreground mb-3">Itinerary</h4>
                 <div className="space-y-4">
@@ -708,32 +596,36 @@ const MallorcanSailing = () => {
             <div className="border-b border-border pb-8 mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-6">{t('included.title')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { title: 'Professional Skipper', desc: 'Experienced local captain with intimate knowledge of Mallorca\'s coastline' },
-                  { title: 'Authentic Tapas', desc: 'Selection of traditional Mallorcan appetizers and local specialties' },
-                  { title: 'Drinks & Fresh Fruit', desc: 'Local wines, soft drinks, water, and seasonal Mediterranean fruit' },
-                  { title: 'Swimming & Snorkeling', desc: 'Equipment provided for exploring secluded coves and crystal-clear waters' },
-                  { title: 'Sailing Instruction', desc: 'Learn traditional sailing techniques on an authentic Llaut boat' },
-                  { title: 'Unforgettable Memories', desc: 'Photo opportunities and stories of maritime heritage' }
-                ].map((item, index) => (
-                  <div key={index} className="flex gap-3 p-4 rounded-lg border border-border">
+                {[{
+              title: 'Professional Skipper',
+              desc: 'Experienced local captain with intimate knowledge of Mallorca\'s coastline'
+            }, {
+              title: 'Authentic Tapas',
+              desc: 'Selection of traditional Mallorcan appetizers and local specialties'
+            }, {
+              title: 'Drinks & Fresh Fruit',
+              desc: 'Local wines, soft drinks, water, and seasonal Mediterranean fruit'
+            }, {
+              title: 'Swimming & Snorkeling',
+              desc: 'Equipment provided for exploring secluded coves and crystal-clear waters'
+            }, {
+              title: 'Sailing Instruction',
+              desc: 'Learn traditional sailing techniques on an authentic Llaut boat'
+            }, {
+              title: 'Unforgettable Memories',
+              desc: 'Photo opportunities and stories of maritime heritage'
+            }].map((item, index) => <div key={index} className="flex gap-3 p-4 rounded-lg border border-border">
                     <div>
                       <h4 className="font-medium text-foreground mb-1">{item.title}</h4>
                       <p className="text-sm text-muted-foreground">{item.desc}</p>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
 
             {/* Google Reviews */}
-            <GoogleReviews 
-              placeId="109872317444958228757"
-              maxReviews={6}
-              className="mb-8"
-            />
-          </>
-        )}
+            <GoogleReviews placeId="109872317444958228757" maxReviews={6} className="mb-8" />
+          </>}
       </div>
 
       {/* Calendar Modal */}
@@ -744,18 +636,10 @@ const MallorcanSailing = () => {
           </DialogHeader>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <AirbnbStyleCalendar
-                selectedDate={selectedDate}
-                onDateSelect={handleDateSelect}
-              />
+              <AirbnbStyleCalendar selectedDate={selectedDate} onDateSelect={handleDateSelect} />
             </div>
             <div>
-              <TimeSlotSelector
-                selectedTime={selectedTime}
-                onTimeSelect={handleTimeSelect}
-                onPriceUpdate={handlePriceUpdate}
-                currentPeople={currentPeople}
-              />
+              <TimeSlotSelector selectedTime={selectedTime} onTimeSelect={handleTimeSelect} onPriceUpdate={handlePriceUpdate} currentPeople={currentPeople} />
             </div>
           </div>
         </DialogContent>
@@ -773,22 +657,13 @@ const MallorcanSailing = () => {
             </p>
           </div>
           
-          <GoogleReviews 
-            placeId="109872317444958228757" 
-            maxReviews={6}
-            className="max-w-4xl mx-auto"
-          />
+          <GoogleReviews placeId="109872317444958228757" maxReviews={6} className="max-w-4xl mx-auto" />
           
           <div className="text-center mt-8">
-            <a 
-              href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
+            <a href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
               View All Reviews on Google
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
               </svg>
             </a>
           </div>
@@ -797,12 +672,7 @@ const MallorcanSailing = () => {
 
       <Footer />
       
-      <SuccessModal 
-        isOpen={showSuccessModal} 
-        onClose={() => setShowSuccessModal(false)} 
-      />
-    </div>
-  );
+      <SuccessModal isOpen={showSuccessModal} onClose={() => setShowSuccessModal(false)} />
+    </div>;
 };
-
 export default MallorcanSailing;
