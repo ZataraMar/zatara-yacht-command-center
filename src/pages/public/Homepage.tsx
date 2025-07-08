@@ -5,6 +5,7 @@ import { Footer } from '@/components/public/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Ship, Users, Award, Star, MessageCircle } from 'lucide-react';
+import { GoogleReviews } from '@/components/reviews/GoogleReviews';
 const Homepage = () => {
   const handleWhatsAppClick = () => {
     window.open('https://wa.me/34711013403?text=Hello%20Zatara,%20I%20would%20like%20to%20inquire%20about%20your%20services', '_blank');
@@ -132,50 +133,7 @@ const Homepage = () => {
       {/* Customer Reviews */}
       <section className="py-20 bg-zatara-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-zatara-navy mb-4">
-              What Our Guests Say
-            </h2>
-            
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="bg-white">
-              <CardHeader>
-                <div className="flex items-center space-x-1 mb-2">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />)}
-                </div>
-                <CardDescription className="text-gray-600">
-                  "Absolutely incredible experience! The crew was professional and the yacht was beautiful. Perfect day on the water around Mallorca."
-                </CardDescription>
-                <div className="text-sm text-zatara-blue font-medium">- Google Review</div>
-              </CardHeader>
-            </Card>
-
-            <Card className="bg-white">
-              <CardHeader>
-                <div className="flex items-center space-x-1 mb-2">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />)}
-                </div>
-                <CardDescription className="text-gray-600">
-                  "Best charter experience we've had! Jules and the team were fantastic. Highly recommend for anyone visiting Mallorca."
-                </CardDescription>
-                <div className="text-sm text-zatara-blue font-medium">- TripAdvisor</div>
-              </CardHeader>
-            </Card>
-
-            <Card className="bg-white">
-              <CardHeader>
-                <div className="flex items-center space-x-1 mb-2">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-zatara-gold fill-current" />)}
-                </div>
-                <CardDescription className="text-gray-600">
-                  "Professional service from start to finish. The boat was immaculate and the experience exceeded our expectations."
-                </CardDescription>
-                <div className="text-sm text-zatara-blue font-medium">- Google Review</div>
-              </CardHeader>
-            </Card>
-          </div>
+          <GoogleReviews placeId="109872317444958228757" className="max-w-6xl mx-auto" />
         </div>
       </section>
 
