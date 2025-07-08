@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SuccessModal } from '@/components/charter/SuccessModal';
@@ -30,6 +31,7 @@ const MallorcanSailing = () => {
   const [showBookingReview, setShowBookingReview] = useState(false);
   const [bookingReference, setBookingReference] = useState('');
   const [currentPrice, setCurrentPrice] = useState(0);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
   
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -65,6 +67,24 @@ const MallorcanSailing = () => {
   // Set minimum date to today
   const today = new Date().toISOString().split('T')[0];
 
+  const getNext4Days = () => {
+    const days = [];
+    const today = new Date();
+    
+    for (let i = 0; i < 4; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      
+      days.push({
+        date,
+        dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        dayMonth: date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+      });
+    }
+    
+    return days;
+  };
+
   const changePeople = (delta: number) => {
     setCurrentPeople(Math.max(1, Math.min(12, currentPeople + delta)));
   };
@@ -93,6 +113,7 @@ const MallorcanSailing = () => {
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
     setSelectedDateString(date.toISOString().split('T')[0]);
+    setShowCalendarModal(false);
   };
 
   const handleTimeSelect = (timeSlot: string) => {
@@ -101,24 +122,6 @@ const MallorcanSailing = () => {
 
   const handlePriceUpdate = (price: number) => {
     setCurrentPrice(price);
-  };
-
-  const handleBookingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedDate || !selectedTime || !customerName || !customerEmail || !customerPhone) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Generate booking reference and proceed to payment
-    const reference = `MS-${Date.now()}`;
-    setBookingReference(reference);
-    setShowPayment(true);
   };
 
   const handlePaymentSuccess = () => {
@@ -162,7 +165,7 @@ const MallorcanSailing = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Main Content Area - Airbnb Style Layout */}
+      {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         
         {/* Header Section */}
@@ -199,13 +202,335 @@ const MallorcanSailing = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          {/* Left Side - Images and Content */}
-          <div className="space-y-8">
+        {/* Date Selection Section - Top Priority */}
+        {!selectedDate && !showPayment && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-foreground mb-6">Choose your date</h2>
             
+            {/* Next 4 Available Dates */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {getNext4Days().map((dateInfo, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setSelectedDate(dateInfo.date);
+                    setSelectedDateString(dateInfo.date.toISOString().split('T')[0]);
+                  }}
+                  className="p-4 border border-border rounded-xl hover:border-primary hover:bg-primary/5 transition-all text-left"
+                >
+                  <div className="text-sm text-muted-foreground">{dateInfo.dayName}</div>
+                  <div className="font-medium text-foreground">{dateInfo.dayMonth}</div>
+                  <div className="text-xs text-muted-foreground mt-1">From €499</div>
+                </button>
+              ))}
+            </div>
+
+            {/* Show All Dates Button */}
+            <Button 
+              variant="outline" 
+              onClick={() => setShowCalendarModal(true)}
+              className="w-full md:w-auto"
+            >
+              Show all dates
+            </Button>
+          </div>
+        )}
+
+        {/* Booking Confirmation Layout - After Date Selected */}
+        {selectedDate && !showPayment && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Left Side - Booking Steps */}
+            <div className="lg:col-span-2 space-y-6">
+              
+              {/* Back to Dates */}
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSelectedDate(undefined);
+                  setSelectedDateString('');
+                  setSelectedTime('');
+                  setShowBookingReview(false);
+                }}
+                className="mb-4"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to dates
+              </Button>
+
+              {/* Step 1: Choose Time */}
+              <div className="border border-border rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                    1
+                  </div>
+                  <h3 className="text-xl font-semibold">Choose your time</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {Object.entries(timeSlots).map(([key, slot]) => (
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setSelectedTime(key);
+                        handlePriceUpdate(slot.min);
+                      }}
+                      className={`p-4 border rounded-lg text-left transition-all ${
+                        selectedTime === key 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border hover:border-primary'
+                      }`}
+                    >
+                      <div className="font-medium">{slot.label}</div>
+                      <div className="text-sm text-muted-foreground">€{slot.min}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Step 2: Choose Guests */}
+              {selectedTime && (
+                <div className="border border-border rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                      2
+                    </div>
+                    <h3 className="text-xl font-semibold">Number of guests</h3>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-medium">Guests</div>
+                      <div className="text-sm text-muted-foreground">Ages 2 and up, max 12 guests</div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => changePeople(-1)}
+                        className="w-10 h-10 rounded-full p-0 border-2"
+                        disabled={currentPeople <= 1}
+                      >
+                        -
+                      </Button>
+                      <span className="font-semibold text-lg min-w-8 text-center">{currentPeople}</span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => changePeople(1)}
+                        className="w-10 h-10 rounded-full p-0 border-2"
+                        disabled={currentPeople >= 12}
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Guest Information */}
+              {selectedTime && (
+                <div className="border border-border rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                      3
+                    </div>
+                    <h3 className="text-xl font-semibold">Guest information</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <Input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="Full name *"
+                      required
+                      className="w-full"
+                    />
+                    <Input
+                      type="email"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      placeholder="Email address *"
+                      required
+                      className="w-full"
+                    />
+                    <Input
+                      type="tel"
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder="Phone number *"
+                      required
+                      className="w-full"
+                    />
+                    <Textarea
+                      value={specialRequests}
+                      onChange={(e) => setSpecialRequests(e.target.value)}
+                      placeholder="Special requests (optional)"
+                      className="w-full"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Continue Button */}
+              {selectedTime && customerName && customerEmail && customerPhone && (
+                <Button
+                  onClick={() => {
+                    const reference = `MS-${Date.now()}`;
+                    setBookingReference(reference);
+                    setShowPayment(true);
+                  }}
+                  className="w-full h-12 text-base font-medium"
+                >
+                  Continue to payment
+                </Button>
+              )}
+            </div>
+
+            {/* Right Side - Booking Summary */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-6 border border-border rounded-xl p-6 bg-card">
+                <div className="flex gap-4 mb-6">
+                  <img 
+                    src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=100&h=80&fit=crop" 
+                    alt="Mallorcan sailing" 
+                    className="w-20 h-16 object-cover rounded-lg"
+                  />
+                  <div>
+                    <h4 className="font-medium text-foreground">Mallorcan Sailing Experience</h4>
+                    <div className="flex text-yellow-400 text-sm">
+                      {'★'.repeat(5)}
+                    </div>
+                    <span className="text-sm text-muted-foreground">5.0 (127 reviews)</span>
+                  </div>
+                </div>
+
+                <div className="border-b border-border pb-4 mb-4">
+                  <div className="text-sm font-medium text-foreground mb-2">Free cancellation</div>
+                  <div className="text-xs text-muted-foreground">
+                    Cancel before 24 hours for a full refund
+                  </div>
+                </div>
+
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Date:</span>
+                    <span className="font-medium">
+                      {selectedDate?.toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        day: 'numeric', 
+                        month: 'long' 
+                      })}
+                    </span>
+                  </div>
+                  
+                  {selectedTime && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Time:</span>
+                      <span className="font-medium">
+                        {timeSlots[selectedTime as keyof typeof timeSlots]?.label}
+                      </span>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Guests:</span>
+                    <span className="font-medium">{currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}</span>
+                  </div>
+                </div>
+
+                {totalPrice > 0 && (
+                  <div className="border-t border-border pt-4 mt-4">
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>€{currentPrice} x {currentPeople} guests</span>
+                        <span>€{currentPrice * currentPeople}</span>
+                      </div>
+                      {hasUpgrade && (
+                        <div className="flex justify-between">
+                          <span>Premium upgrade</span>
+                          <span>€{currentPeople * 20}</span>
+                        </div>
+                      )}
+                      <div className="border-t border-border pt-2 flex justify-between font-medium">
+                        <span>Total</span>
+                        <span>€{totalPrice}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Step */}
+        {showPayment && (
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-6">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handlePaymentCancel}
+                className="mb-4"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Booking Details
+              </Button>
+              <h3 className="text-xl font-semibold text-foreground mb-2">Secure Payment</h3>
+              <p className="text-muted-foreground text-sm">Complete your booking with secure payment</p>
+            </div>
+
+            {/* Booking Summary for Payment */}
+            <div className="bg-muted p-4 rounded-lg mb-6 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Date & Time:</span>
+                <span className="font-medium">{selectedDate ? selectedDate.toLocaleDateString() : ''} at {timeSlots[selectedTime as keyof typeof timeSlots]?.label}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Guests:</span>
+                <span className="font-medium">{currentPeople} people</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Customer:</span>
+                <span className="font-medium">{customerName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Booking Ref:</span>
+                <span className="font-medium font-mono">{bookingReference}</span>
+              </div>
+            </div>
+
+            <StripePayment
+              bookingData={{
+                bookingReference,
+                customerName,
+                customerEmail,
+                customerPhone,
+                bookingDate: selectedDateString,
+                timeSlot: timeSlots[selectedTime as keyof typeof timeSlots]?.value || '',
+                timePeriodLabel: timeSlots[selectedTime as keyof typeof timeSlots]?.label || '',
+                numberOfPeople: currentPeople,
+                totalAmount: totalPrice,
+                hasUpgrade,
+                upgradeAmount,
+                specialRequests
+              }}
+              onPaymentSuccess={handlePaymentSuccess}
+              onPaymentCancel={handlePaymentCancel}
+            />
+          </div>
+        )}
+
+        {/* Original Content - Only Show When No Date Selected and Not in Payment */}
+        {!selectedDate && !showPayment && (
+          <>
             {/* Image Gallery - Compact */}
-            <div className="relative">
+            <div className="relative mb-8">
               <div className="grid grid-cols-2 gap-2 h-[400px]">
                 {/* Left images stack */}
                 <div className="space-y-2">
@@ -253,7 +578,7 @@ const MallorcanSailing = () => {
             </div>
 
             {/* Quick Info Icons - Airbnb Style */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all">
                 <svg className="w-6 h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -287,9 +612,9 @@ const MallorcanSailing = () => {
                 <span className="text-xs text-muted-foreground">24h notice</span>
               </button>
             </div>
-            
+
             {/* What You'll Do */}
-            <div className="border-b border-border pb-8">
+            <div className="border-b border-border pb-8 mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-4">What you'll do</h2>
               <div className="prose prose-gray max-w-none">
                 <p className="text-muted-foreground leading-relaxed">
@@ -302,7 +627,7 @@ const MallorcanSailing = () => {
             </div>
 
             {/* Where you'll be */}
-            <div className="border-b border-border pb-8">
+            <div className="border-b border-border pb-8 mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-6">Where you'll be</h2>
               
               {/* Pickup Location */}
@@ -386,7 +711,7 @@ const MallorcanSailing = () => {
             </div>
 
             {/* What's Included */}
-            <div className="border-b border-border pb-8">
+            <div className="border-b border-border pb-8 mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-6">{t('included.title')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
@@ -444,458 +769,34 @@ const MallorcanSailing = () => {
                 ))}
               </div>
             </div>
-          </div>
+          </>
+        )}
+      </div>
 
-          {/* Right Booking Card */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-6">
-              <div className="border border-border rounded-xl p-6 shadow-lg bg-card">
-                {!showBookingReview && !showPayment ? (
-                  <>
-                    <div className="mb-6">
-                      <div className="flex items-baseline gap-1 mb-2">
-                        <span className="text-2xl font-semibold text-foreground">
-                          {totalPrice > 0 ? `€${totalPrice}` : 'From €499'}
-                        </span>
-                        <span className="text-muted-foreground text-sm">per person</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <div className="flex text-yellow-400">
-                          {'★'.repeat(5)}
-                        </div>
-                        <span className="text-muted-foreground">5.0 (127 reviews)</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6">
-                      
-                      {/* Date & Time Selection - Streamlined */}
-                      <div className="border border-border rounded-xl p-4">
-                        <Label className="text-base font-medium text-foreground mb-3 block">Check availability</Label>
-                        
-                        {/* Simple Date Input */}
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                          <div>
-                            <label className="text-xs text-muted-foreground mb-1 block">Date</label>
-                            <Input
-                              type="date"
-                              min={today}
-                              value={selectedDateString}
-                              onChange={(e) => {
-                                setSelectedDateString(e.target.value);
-                                setSelectedDate(new Date(e.target.value));
-                              }}
-                              className="w-full"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs text-muted-foreground mb-1 block">Time</label>
-                            <select
-                              value={selectedTime}
-                              onChange={(e) => {
-                                setSelectedTime(e.target.value);
-                                handlePriceUpdate(timeSlots[e.target.value as keyof typeof timeSlots]?.min || 0);
-                              }}
-                              className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                            >
-                              <option value="">Select time</option>
-                              <option value="morning">Morning (8:30-12:00) - €499</option>
-                              <option value="afternoon">Afternoon (1:30-17:00) - €699</option>
-                              <option value="sunset">Sunset (17:30-21:00) - €599</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* Quick availability check */}
-                        {selectedDate && selectedTime && (
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                            <div className="flex items-center gap-2 text-green-700">
-                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                              </svg>
-                              <span className="text-sm font-medium">Available!</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Guests Selection - Enhanced */}
-                      <div className="border border-border rounded-xl p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <Label className="text-lg font-medium text-foreground">Guests</Label>
-                            <div className="text-sm text-muted-foreground">Ages 2 and up, max 12 guests</div>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => changePeople(-1)}
-                              className="w-10 h-10 rounded-full p-0 border-2"
-                              disabled={currentPeople <= 1}
-                            >
-                              -
-                            </Button>
-                            <span className="font-semibold text-lg min-w-8 text-center">{currentPeople}</span>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => changePeople(1)}
-                              className="w-10 h-10 rounded-full p-0 border-2"
-                              disabled={currentPeople >= 12}
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Continue Button - Enhanced */}
-                      <Button
-                        onClick={() => {
-                          if (!selectedDate || !selectedTime) {
-                            toast({
-                              title: "Please select date and time",
-                              description: "Choose your preferred date and time slot to continue.",
-                              variant: "destructive"
-                            });
-                            return;
-                          }
-                          setShowBookingReview(true);
-                        }}
-                        disabled={!selectedDate || !selectedTime}
-                        className="w-full h-14 text-lg font-semibold rounded-xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
-                      >
-                        {totalPrice > 0 ? `Reserve - €${totalPrice}` : 'Select date and time'}
-                      </Button>
-
-                      <div className="text-center text-sm text-muted-foreground">
-                        You won't be charged yet
-                      </div>
-
-                      {/* Price note */}
-                      {totalPrice > 0 && (
-                        <div className="bg-muted/50 p-4 rounded-lg">
-                          <div className="text-sm text-muted-foreground">
-                            Total includes {currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}
-                            {hasUpgrade && ` + premium catering upgrade`}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                ) : showBookingReview && !showPayment ? (
-                  <>
-                    {/* Booking Review Step */}
-                    <div className="text-center mb-6">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => setShowBookingReview(false)}
-                        className="mb-4"
-                      >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to dates
-                      </Button>
-                      <h3 className="text-xl font-semibold text-foreground mb-2">Review your trip</h3>
-                      <p className="text-muted-foreground text-sm">Check details and add your information</p>
-                    </div>
-
-                    {/* Trip Summary */}
-                    <div className="bg-muted p-4 rounded-lg mb-6">
-                      <h4 className="font-medium text-foreground mb-3">Your trip</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Date:</span>
-                          <span className="font-medium">{selectedDate?.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Time:</span>
-                          <span className="font-medium">{timeSlots[selectedTime as keyof typeof timeSlots]?.label}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Guests:</span>
-                          <span className="font-medium">{currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Login Benefits */}
-                    <div className="border border-primary/20 bg-primary/5 rounded-lg p-4 mb-6">
-                      <h4 className="font-medium text-foreground mb-2">Save time with an account</h4>
-                      <div className="text-sm text-muted-foreground mb-3 space-y-1">
-                        <div>• Faster checkout for future bookings</div>
-                        <div>• Track your bookings and get updates</div>
-                        <div>• Special offers and early access</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button variant="outline" size="sm" className="w-full">Sign up</Button>
-                        <Button variant="outline" size="sm" className="w-full">Log in</Button>
-                      </div>
-                      <div className="text-center mt-3">
-                        <button className="text-xs text-muted-foreground underline">Continue as guest</button>
-                      </div>
-                    </div>
-
-                    {/* Guest Information */}
-                    <div className="space-y-4 mb-6">
-                      <h4 className="font-medium text-foreground">Guest information</h4>
-                      <div>
-                        <Input
-                          type="text"
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          placeholder="Full name *"
-                          required
-                          className="w-full"
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          type="email"
-                          value={customerEmail}
-                          onChange={(e) => setCustomerEmail(e.target.value)}
-                          placeholder="Email address *"
-                          required
-                          className="w-full"
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          type="tel"
-                          value={customerPhone}
-                          onChange={(e) => setCustomerPhone(e.target.value)}
-                          placeholder="Phone number *"
-                          required
-                          className="w-full"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Add-ons / Upsells */}
-                    <div className="space-y-4 mb-6">
-                      <h4 className="font-medium text-foreground">Enhance your experience</h4>
-                      
-                      {/* Premium Catering Upgrade */}
-                      <div
-                        onClick={toggleUpgrade}
-                        className={`border-2 p-4 rounded-lg cursor-pointer transition-all ${
-                          hasUpgrade ? 'border-primary bg-primary/5' : 'border-border hover:border-primary'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h5 className="font-medium text-foreground mb-1">Premium Catering Experience</h5>
-                            <p className="text-sm text-muted-foreground mb-2">Upgrade to our premium selection featuring:</p>
-                            <ul className="text-xs text-muted-foreground space-y-1">
-                              <li>• Premium Mallorcan wines and cavas</li>
-                              <li>• Artisanal tapas with local cheeses and cured meats</li>
-                              <li>• Fresh seafood specialties</li>
-                              <li>• Traditional Mallorcan desserts</li>
-                            </ul>
-                          </div>
-                          <div className="text-right ml-4">
-                            <div className="text-sm font-medium text-foreground">+€{currentPeople * 20}</div>
-                            <div className="text-xs text-muted-foreground">per person</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Photography Service */}
-                      <div className="border-2 border-border hover:border-primary p-4 rounded-lg cursor-pointer transition-all">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h5 className="font-medium text-foreground mb-1">Professional Photography</h5>
-                            <p className="text-sm text-muted-foreground">Capture your memories with 50+ high-quality photos delivered within 24 hours</p>
-                          </div>
-                          <div className="text-right ml-4">
-                            <div className="text-sm font-medium text-foreground">+€75</div>
-                            <div className="text-xs text-muted-foreground">total</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Special Requests */}
-                    <div className="mb-6">
-                      <Label className="text-sm font-medium text-foreground mb-2 block">Special requests</Label>
-                      <Textarea
-                        value={specialRequests}
-                        onChange={(e) => setSpecialRequests(e.target.value)}
-                        placeholder="Dietary restrictions, celebrations, or other special requests..."
-                        className="w-full"
-                        rows={3}
-                      />
-                    </div>
-
-                    {/* Price Breakdown */}
-                    <div className="bg-muted p-4 rounded-lg mb-6">
-                      <h4 className="font-medium text-foreground mb-3">Price details</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span>€{currentPrice} x {currentPeople} guests</span>
-                          <span>€{currentPrice * currentPeople}</span>
-                        </div>
-                        {hasUpgrade && (
-                          <div className="flex justify-between">
-                            <span>Premium catering upgrade</span>
-                            <span>€{currentPeople * 20}</span>
-                          </div>
-                        )}
-                        <div className="border-t border-border pt-2 flex justify-between font-medium">
-                          <span>Total (EUR)</span>
-                          <span>€{totalPrice}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Button
-                      onClick={() => {
-                        if (!customerName || !customerEmail || !customerPhone) {
-                          toast({
-                            title: "Missing Information",
-                            description: "Please fill in all required fields.",
-                            variant: "destructive"
-                          });
-                          return;
-                        }
-                        const reference = `MS-${Date.now()}`;
-                        setBookingReference(reference);
-                        setShowPayment(true);
-                      }}
-                      disabled={!customerName || !customerEmail || !customerPhone}
-                      className="w-full h-12 text-base font-medium"
-                    >
-                      Continue to payment
-                    </Button>
-
-                    <div className="text-center text-xs text-muted-foreground mt-3">
-                      You won't be charged yet
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Payment Step */}
-                    <div className="text-center mb-6">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={handlePaymentCancel}
-                        className="mb-4"
-                      >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Booking Details
-                      </Button>
-                      <h3 className="text-xl font-semibold text-foreground mb-2">Secure Payment</h3>
-                      <p className="text-muted-foreground text-sm">Complete your booking with secure payment</p>
-                    </div>
-
-                    {/* Booking Summary */}
-                    {/* Contact Information */}
-                    <div className="space-y-3 mb-6">
-                      <div>
-                        <Input
-                          type="text"
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          placeholder="Full name"
-                          required
-                          className="w-full"
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          type="email"
-                          value={customerEmail}
-                          onChange={(e) => setCustomerEmail(e.target.value)}
-                          placeholder="Email address"
-                          required
-                          className="w-full"
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          type="tel"
-                          value={customerPhone}
-                          onChange={(e) => setCustomerPhone(e.target.value)}
-                          placeholder="Phone number"
-                          required
-                          className="w-full"
-                        />
-                      </div>
-                      <div>
-                        <Textarea
-                          value={specialRequests}
-                          onChange={(e) => setSpecialRequests(e.target.value)}
-                          placeholder="Special requests (optional)"
-                          className="w-full"
-                          rows={3}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Premium Upgrade */}
-                    <div
-                      onClick={toggleUpgrade}
-                      className={`border-2 p-4 rounded-lg cursor-pointer transition-all mb-6 ${
-                        hasUpgrade ? 'border-primary bg-primary/5' : 'border-border hover:border-primary'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium text-foreground mb-1">Premium Catering Upgrade</h4>
-                          <p className="text-xs text-muted-foreground">Enhanced tapas selection with premium wines and desserts</p>
-                        </div>
-                        <div className="text-sm font-medium text-foreground">+€{currentPeople * 20}</div>
-                      </div>
-                    </div>
-
-                    <div className="bg-muted p-4 rounded-lg mb-6 space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Date & Time:</span>
-                        <span className="font-medium">{selectedDate ? selectedDate.toLocaleDateString() : ''} at {timeSlots[selectedTime as keyof typeof timeSlots]?.label}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Guests:</span>
-                        <span className="font-medium">{currentPeople} people</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Customer:</span>
-                        <span className="font-medium">{customerName}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Booking Ref:</span>
-                        <span className="font-medium font-mono">{bookingReference}</span>
-                      </div>
-                    </div>
-
-                    <StripePayment
-                      bookingData={{
-                        bookingReference,
-                        customerName,
-                        customerEmail,
-                        customerPhone,
-                        bookingDate: selectedDateString,
-                        timeSlot: timeSlots[selectedTime as keyof typeof timeSlots]?.value || '',
-                        timePeriodLabel: timeSlots[selectedTime as keyof typeof timeSlots]?.label || '',
-                        numberOfPeople: currentPeople,
-                        totalAmount: totalPrice,
-                        hasUpgrade,
-                        upgradeAmount,
-                        specialRequests
-                      }}
-                      onPaymentSuccess={handlePaymentSuccess}
-                      onPaymentCancel={handlePaymentCancel}
-                    />
-                  </>
-                )}
-              </div>
+      {/* Calendar Modal */}
+      <Dialog open={showCalendarModal} onOpenChange={setShowCalendarModal}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Select your date and time</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <AirbnbStyleCalendar
+                selectedDate={selectedDate}
+                onDateSelect={handleDateSelect}
+              />
+            </div>
+            <div>
+              <TimeSlotSelector
+                selectedTime={selectedTime}
+                onTimeSelect={handleTimeSelect}
+                onPriceUpdate={handlePriceUpdate}
+                currentPeople={currentPeople}
+              />
             </div>
           </div>
-        </div>
-      </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
       
