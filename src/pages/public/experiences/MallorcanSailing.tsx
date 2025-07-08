@@ -425,46 +425,17 @@ const MallorcanSailing = () => {
 
                     <div className="space-y-6">
                       
-                      {/* Date & Time Selection - Combined */}
-                      <div className="border border-border rounded-xl p-6">
-                        <Label className="text-lg font-medium text-foreground mb-4 block">Choose date and time</Label>
+                      {/* Date & Time Selection - Compact */}
+                      <div className="border border-border rounded-xl p-4">
+                        <Label className="text-base font-medium text-foreground mb-3 block">Date & time</Label>
                         
-                        {/* Calendar */}
-                        <div className="mb-6">
+                        {/* Compact Calendar */}
+                        <div className="mb-4">
                           <AirbnbStyleCalendar
                             selectedDate={selectedDate}
                             onDateSelect={handleDateSelect}
-                            className="border-0 shadow-none w-full"
+                            className="border-0 shadow-none w-full scale-90"
                           />
-                        </div>
-
-                        {/* Quick Date Options */}
-                        <div className="mb-6">
-                          <Label className="text-sm font-medium text-foreground mb-3 block">Upcoming availability</Label>
-                          <div className="grid grid-cols-2 gap-2">
-                            {[
-                              { date: 'Jul 12', time: 'Morning', price: '€499', available: true },
-                              { date: 'Jul 13', time: 'Sunset', price: '€599', available: true },
-                              { date: 'Jul 14', time: 'Afternoon', price: '€699', available: false },
-                              { date: 'Jul 15', time: 'Morning', price: '€499', available: true }
-                            ].map((slot, index) => (
-                              <button
-                                key={index}
-                                disabled={!slot.available}
-                                className={`p-3 rounded-lg border text-left transition-all ${
-                                  slot.available 
-                                    ? 'border-border hover:border-primary hover:bg-primary/5' 
-                                    : 'border-border bg-muted text-muted-foreground cursor-not-allowed'
-                                }`}
-                              >
-                                <div className="font-medium text-sm">{slot.date}</div>
-                                <div className="text-xs text-muted-foreground">{slot.time}</div>
-                                <div className="text-sm font-medium mt-1">
-                                  {slot.available ? slot.price : 'Booked'}
-                                </div>
-                              </button>
-                            ))}
-                          </div>
                         </div>
 
                         {/* Time Selection */}
