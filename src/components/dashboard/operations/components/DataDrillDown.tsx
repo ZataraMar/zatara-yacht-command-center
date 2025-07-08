@@ -134,20 +134,70 @@ export const DataDrillDown: React.FC<DataDrillDownProps> = ({
                         <DialogHeader>
                           <DialogTitle>Record Details: {record.locator}</DialogTitle>
                         </DialogHeader>
-                        <div className="space-y-4">
+                        <div className="space-y-4 max-h-96 overflow-y-auto">
                           {selectedRecord && (
-                            <div className="grid grid-cols-2 gap-4">
-                              {Object.entries(selectedRecord).map(([key, value]) => (
-                                <div key={key} className="space-y-1">
-                                  <div className="text-sm font-medium text-gray-600 capitalize">
-                                    {key.replace(/_/g, ' ')}
-                                  </div>
-                                  <div className="text-sm">
-                                    {value !== null && value !== undefined ? String(value) : 'N/A'}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
+                            <Table>
+                              <TableBody>
+                                {Object.entries(selectedRecord).map(([key, value]) => {
+                                  const getFieldIcon = (fieldName: string) => {
+                                    const field = fieldName.toLowerCase();
+                                    if (field.includes('guest') || field.includes('name')) return '👤';
+                                    if (field.includes('boat')) return '⛵';
+                                    if (field.includes('date')) return '📅';
+                                    if (field.includes('time')) return '⏰';
+                                    if (field.includes('total') || field.includes('amount') || field.includes('price')) return '💰';
+                                    if (field.includes('phone')) return '📞';
+                                    if (field.includes('email')) return '✉️';
+                                    if (field.includes('status')) return '📊';
+                                    if (field.includes('source')) return '🌐';
+                                    if (field.includes('locator')) return '🎫';
+                                    if (field.includes('crew')) return '👥';
+                                    if (field.includes('equipment')) return '🏄';
+                                    if (field.includes('notes')) return '📝';
+                                    if (field.includes('check')) return '✅';
+                                    if (field.includes('gps') || field.includes('coordinates')) return '📍';
+                                    return '📋';
+                                  };
+
+                                  const formatValue = (val: any, fieldName: string) => {
+                                    if (val === null || val === undefined) return 'N/A';
+                                    if (typeof val === 'boolean') return val ? '✅ Yes' : '❌ No';
+                                    if (fieldName.toLowerCase().includes('date') && val) {
+                                      return new Date(val).toLocaleDateString('en-GB');
+                                    }
+                                    if (fieldName.toLowerCase().includes('total') || fieldName.toLowerCase().includes('amount')) {
+                                      const num = parseFloat(val);
+                                      return !isNaN(num) ? `€${num.toLocaleString()}` : val;
+                                    }
+                                    return String(val);
+                                  };
+
+                                  return (
+                                    <TableRow key={key} className="hover:bg-blue-50/50">
+                                      <TableCell className="font-medium text-zatara-navy w-1/3">
+                                        <div className="flex items-center space-x-2">
+                                          <span className="text-sm">{getFieldIcon(key)}</span>
+                                          <span className="capitalize text-sm">
+                                            {key.replace(/_/g, ' ')}
+                                          </span>
+                                        </div>
+                                      </TableCell>
+                                       <TableCell className="text-sm">
+                                         <span className={`${
+                                           key.toLowerCase().includes('outstanding') && typeof value === 'string' && parseFloat(value) > 0 
+                                             ? 'text-red-600 font-medium' 
+                                             : key.toLowerCase().includes('paid') && typeof value === 'string' && parseFloat(value) > 0
+                                             ? 'text-green-600 font-medium'
+                                             : ''
+                                         }`}>
+                                           {formatValue(value, key)}
+                                         </span>
+                                       </TableCell>
+                                    </TableRow>
+                                  );
+                                })}
+                              </TableBody>
+                            </Table>
                           )}
                         </div>
                       </DialogContent>
