@@ -12,10 +12,8 @@ export class StripeConfig {
 
     try {
       this.settings = await SettingsService.getSettings([
-        SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_TEST,
-        SETTING_KEYS.STRIPE_SECRET_KEY_TEST,
-        SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_LIVE,
-        SETTING_KEYS.STRIPE_SECRET_KEY_LIVE,
+        SETTING_KEYS.STRIPE_PUBLISHABLE_KEY,
+        SETTING_KEYS.STRIPE_SECRET_KEY,
         SETTING_KEYS.STRIPE_WEBHOOK_SECRET,
         SETTING_KEYS.PAYMENT_CURRENCY,
         SETTING_KEYS.PAYMENT_COUNTRY,
@@ -24,15 +22,17 @@ export class StripeConfig {
 
       this.initialized = true;
       console.log('Stripe configuration loaded from Supabase');
+      console.log('Environment mode:', this.settings[SETTING_KEYS.ENVIRONMENT_MODE]);
+      console.log('Publishable key configured:', !!this.settings[SETTING_KEYS.STRIPE_PUBLISHABLE_KEY]);
     } catch (error) {
       console.error('Failed to initialize Stripe configuration:', error);
       // Fallback to environment variables if Supabase fails
       this.settings = {
-        [SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_TEST]: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
-        [SETTING_KEYS.STRIPE_SECRET_KEY_TEST]: import.meta.env.VITE_STRIPE_SECRET_KEY || '',
+        [SETTING_KEYS.STRIPE_PUBLISHABLE_KEY]: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
+        [SETTING_KEYS.STRIPE_SECRET_KEY]: import.meta.env.VITE_STRIPE_SECRET_KEY || '',
         [SETTING_KEYS.PAYMENT_CURRENCY]: 'EUR',
         [SETTING_KEYS.PAYMENT_COUNTRY]: 'ES',
-        [SETTING_KEYS.ENVIRONMENT_MODE]: 'test',
+        [SETTING_KEYS.ENVIRONMENT_MODE]: 'live',
       };
     }
   }
@@ -41,19 +41,16 @@ export class StripeConfig {
   static async getConfig() {
     await this.initialize();
     
-    const isLive = this.settings[SETTING_KEYS.ENVIRONMENT_MODE] === 'live';
+    const environmentMode = this.settings[SETTING_KEYS.ENVIRONMENT_MODE] || 'live';
+    const isLive = environmentMode === 'live';
     
     return {
-      publishableKey: isLive 
-        ? this.settings[SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_LIVE]
-        : this.settings[SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_TEST],
-      secretKey: isLive 
-        ? this.settings[SETTING_KEYS.STRIPE_SECRET_KEY_LIVE]
-        : this.settings[SETTING_KEYS.STRIPE_SECRET_KEY_TEST],
+      publishableKey: this.settings[SETTING_KEYS.STRIPE_PUBLISHABLE_KEY],
+      secretKey: this.settings[SETTING_KEYS.STRIPE_SECRET_KEY],
       webhookSecret: this.settings[SETTING_KEYS.STRIPE_WEBHOOK_SECRET],
       currency: this.settings[SETTING_KEYS.PAYMENT_CURRENCY] || 'EUR',
       country: this.settings[SETTING_KEYS.PAYMENT_COUNTRY] || 'ES',
-      mode: this.settings[SETTING_KEYS.ENVIRONMENT_MODE] || 'test',
+      mode: environmentMode,
       isLive,
     };
   }
@@ -61,7 +58,16 @@ export class StripeConfig {
   // Check if Stripe is properly configured
   static async isConfigured(): Promise<boolean> {
     const config = await this.getConfig();
-    return !!(config.publishableKey && config.secretKey);
+    const hasKeys = !!(config.publishableKey && config.secretKey);
+    
+    console.log('Stripe configuration check:', {
+      hasPublishableKey: !!config.publishableKey,
+      hasSecretKey: !!config.secretKey,
+      mode: config.mode,
+      configured: hasKeys
+    });
+    
+    return hasKeys;
   }
 
   // Force refresh settings from Supabase
