@@ -120,6 +120,14 @@ export const CompactCalendarSync = () => {
     }
   };
 
+  const totalRevenue = bookings
+    .filter(b => new Date(b.start_date) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
+    .reduce((acc, booking) => acc + (booking.charter_total || 0), 0);
+
+  const todayBooking = bookings.find(b => 
+    new Date(b.start_date).toDateString() === new Date().toDateString()
+  );
+
   return (
     <div className="space-y-4">
       {/* Header with Stats */}
@@ -193,14 +201,9 @@ export const CompactCalendarSync = () => {
               Next 7 Days Revenue
             </h3>
             <div className="space-y-1">
-              {bookings
-                .filter(b => new Date(b.start_date) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
-                .reduce((acc, booking) => acc + (booking.charter_total || 0), 0) > 0 && (
+              {totalRevenue > 0 && (
                 <div className="text-2xl font-bold text-zatara-blue">
-                  {formatCurrency(bookings
-                    .filter(b => new Date(b.start_date) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
-                    .reduce((acc, booking) => acc + (booking.charter_total || 0), 0)
-                  )}
+                  {formatCurrency(totalRevenue)}
                 </div>
               )}
               <div className="text-xs text-gray-600">
@@ -217,20 +220,15 @@ export const CompactCalendarSync = () => {
               <Clock className="w-4 h-4 mr-2" />
               Today ({new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })})
             </h3>
-            {(() => {
-              const todayBooking = bookings.find(b => 
-                new Date(b.start_date).toDateString() === new Date().toDateString()
-              );
-              return todayBooking ? (
-                <div className="space-y-1">
-                  <div className="font-medium text-sm">{todayBooking.guest_first_name} {todayBooking.guest_surname}</div>
-                  <div className="text-xs text-gray-600">{todayBooking.locator}</div>
-                  <div className="font-semibold text-zatara-blue">{formatCurrency(todayBooking.charter_total)}</div>
-                </div>
-              ) : (
-                <div className="text-sm text-gray-500">No bookings today</div>
-              );
-            })()}
+            {todayBooking ? (
+              <div className="space-y-1">
+                <div className="font-medium text-sm">{todayBooking.guest_first_name} {todayBooking.guest_surname}</div>
+                <div className="text-xs text-gray-600">{todayBooking.locator}</div>
+                <div className="font-semibold text-zatara-blue">{formatCurrency(todayBooking.charter_total)}</div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">No bookings today</div>
+            )}
           </div>
         </Card>
       </div>
