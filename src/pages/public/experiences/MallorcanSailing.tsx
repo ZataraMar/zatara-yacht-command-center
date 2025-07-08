@@ -210,6 +210,38 @@ const MallorcanSailing = () => {
           </div>
         </div>
 
+        {/* Permanent Booking Summary - Always Visible */}
+        {selectedDate && (
+          <div className="bg-muted rounded-lg p-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex justify-between md:flex-col md:justify-start">
+                <span className="text-muted-foreground">Date:</span>
+                <span className="font-medium">
+                  {selectedDate?.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    day: 'numeric', 
+                    month: 'long' 
+                  })}
+                </span>
+              </div>
+              
+              {selectedTime && (
+                <div className="flex justify-between md:flex-col md:justify-start">
+                  <span className="text-muted-foreground">Time:</span>
+                  <span className="font-medium">
+                    {timeSlots[selectedTime as keyof typeof timeSlots]?.label}
+                  </span>
+                </div>
+              )}
+              
+              <div className="flex justify-between md:flex-col md:justify-start">
+                <span className="text-muted-foreground">Guests:</span>
+                <span className="font-medium">{currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Date Selection Section - Top Priority */}
         {!selectedDate && !showPayment && (
           <div className="mb-12">
@@ -294,33 +326,6 @@ const MallorcanSailing = () => {
                     </button>
                   ))}
                 </div>
-                
-                {selectedTime && (
-                  <div className="bg-muted rounded-lg p-4 space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Date:</span>
-                      <span className="font-medium">
-                        {selectedDate?.toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          day: 'numeric', 
-                          month: 'long' 
-                        })}
-                      </span>
-                    </div>
-                    
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Time:</span>
-                      <span className="font-medium">
-                        {timeSlots[selectedTime as keyof typeof timeSlots]?.label}
-                      </span>
-                    </div>
-                    
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Guests:</span>
-                      <span className="font-medium">{currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}</span>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Step 2: Choose Guests */}
