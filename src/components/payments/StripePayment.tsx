@@ -195,26 +195,38 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
         addDebugLog(`Calling Edge Function...`);
 
-        const { data, error } = await supabase.functions.invoke('create-stripe-checkout', {
-          body: requestData,
-        });
+        try {
+          const { data, error } = await supabase.functions.invoke('create-stripe-checkout', {
+            body: requestData,
+          });
 
-        addDebugLog(`Edge Function response received`);
+          addDebugLog(`Edge Function response received`);
 
-        if (error) {
-          addDebugLog(`Edge Function error: ${error.message}`, 'error');
-          throw new Error(`Failed to create checkout: ${error.message}`);
-        }
-        addDebugLog(`Checkout session: ${data.session_id}`, 'success');
+          if (error) {
+            addDebugLog(`Edge Function error: ${JSON.stringify(error)}`, 'error');
+            throw new Error(`Failed to create checkout: ${error.message || JSON.stringify(error)}`);
+          }
 
-        if (data?.url) {
-          addDebugLog(`Received Stripe URL, redirecting...`, 'success');
-          
-          // Simple direct redirect to Stripe
-          window.location.href = data.url;
-          
-        } else {
-          throw new Error('No checkout URL received');
+          if (!data) {
+            addDebugLog(`No data returned from Edge Function`, 'error');
+            throw new Error('No data returned from Edge Function');
+          }
+
+          addDebugLog(`Checkout data: ${JSON.stringify(data)}`, 'success');
+
+          if (data?.url) {
+            addDebugLog(`Received Stripe URL, redirecting...`, 'success');
+            
+            // Simple direct redirect to Stripe
+            window.location.href = data.url;
+            
+          } else {
+            addDebugLog(`No URL in response: ${JSON.stringify(data)}`, 'error');
+            throw new Error('No checkout URL received from Stripe');
+          }
+        } catch (invokeError) {
+          addDebugLog(`Edge Function invoke error: ${invokeError.message}`, 'error');
+          throw new Error(`Edge Function call failed: ${invokeError.message}`);
         }
 
       } else {
