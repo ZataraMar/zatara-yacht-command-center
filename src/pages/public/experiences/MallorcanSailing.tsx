@@ -27,6 +27,7 @@ const MallorcanSailing = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [showBookingReview, setShowBookingReview] = useState(false);
   const [bookingReference, setBookingReference] = useState('');
   const [currentPrice, setCurrentPrice] = useState(0);
   
@@ -133,11 +134,13 @@ const MallorcanSailing = () => {
     setCustomerPhone('');
     setSpecialRequests('');
     setShowPayment(false);
+    setShowBookingReview(false);
     setShowSuccessModal(true);
   };
 
   const handlePaymentCancel = () => {
     setShowPayment(false);
+    setShowBookingReview(true);
     setBookingReference('');
   };
 
@@ -384,7 +387,7 @@ const MallorcanSailing = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-6">
               <div className="border border-border rounded-xl p-6 shadow-lg bg-card">
-                {!showPayment ? (
+                {!showBookingReview && !showPayment ? (
                   <>
                     <div className="mb-6">
                       <div className="flex items-baseline gap-1 mb-2">
@@ -466,10 +469,7 @@ const MallorcanSailing = () => {
                             });
                             return;
                           }
-                          // Generate booking reference and proceed to payment
-                          const reference = `MS-${Date.now()}`;
-                          setBookingReference(reference);
-                          setShowPayment(true);
+                          setShowBookingReview(true);
                         }}
                         disabled={!selectedDate || !selectedTime}
                         className="w-full h-12 text-base font-medium"
@@ -480,6 +480,195 @@ const MallorcanSailing = () => {
                       <div className="text-center text-xs text-muted-foreground">
                         You won't be charged yet
                       </div>
+                    </div>
+                  </>
+                ) : showBookingReview && !showPayment ? (
+                  <>
+                    {/* Booking Review Step */}
+                    <div className="text-center mb-6">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => setShowBookingReview(false)}
+                        className="mb-4"
+                      >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to dates
+                      </Button>
+                      <h3 className="text-xl font-semibold text-foreground mb-2">Review your trip</h3>
+                      <p className="text-muted-foreground text-sm">Check details and add your information</p>
+                    </div>
+
+                    {/* Trip Summary */}
+                    <div className="bg-muted p-4 rounded-lg mb-6">
+                      <h4 className="font-medium text-foreground mb-3">Your trip</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Date:</span>
+                          <span className="font-medium">{selectedDate?.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Time:</span>
+                          <span className="font-medium">{timeSlots[selectedTime as keyof typeof timeSlots]?.label}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Guests:</span>
+                          <span className="font-medium">{currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Login Benefits */}
+                    <div className="border border-primary/20 bg-primary/5 rounded-lg p-4 mb-6">
+                      <h4 className="font-medium text-foreground mb-2">Save time with an account</h4>
+                      <div className="text-sm text-muted-foreground mb-3 space-y-1">
+                        <div>• Faster checkout for future bookings</div>
+                        <div>• Track your bookings and get updates</div>
+                        <div>• Special offers and early access</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" size="sm" className="w-full">Sign up</Button>
+                        <Button variant="outline" size="sm" className="w-full">Log in</Button>
+                      </div>
+                      <div className="text-center mt-3">
+                        <button className="text-xs text-muted-foreground underline">Continue as guest</button>
+                      </div>
+                    </div>
+
+                    {/* Guest Information */}
+                    <div className="space-y-4 mb-6">
+                      <h4 className="font-medium text-foreground">Guest information</h4>
+                      <div>
+                        <Input
+                          type="text"
+                          value={customerName}
+                          onChange={(e) => setCustomerName(e.target.value)}
+                          placeholder="Full name *"
+                          required
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          type="email"
+                          value={customerEmail}
+                          onChange={(e) => setCustomerEmail(e.target.value)}
+                          placeholder="Email address *"
+                          required
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          type="tel"
+                          value={customerPhone}
+                          onChange={(e) => setCustomerPhone(e.target.value)}
+                          placeholder="Phone number *"
+                          required
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Add-ons / Upsells */}
+                    <div className="space-y-4 mb-6">
+                      <h4 className="font-medium text-foreground">Enhance your experience</h4>
+                      
+                      {/* Premium Catering Upgrade */}
+                      <div
+                        onClick={toggleUpgrade}
+                        className={`border-2 p-4 rounded-lg cursor-pointer transition-all ${
+                          hasUpgrade ? 'border-primary bg-primary/5' : 'border-border hover:border-primary'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h5 className="font-medium text-foreground mb-1">Premium Catering Experience</h5>
+                            <p className="text-sm text-muted-foreground mb-2">Upgrade to our premium selection featuring:</p>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Premium Mallorcan wines and cavas</li>
+                              <li>• Artisanal tapas with local cheeses and cured meats</li>
+                              <li>• Fresh seafood specialties</li>
+                              <li>• Traditional Mallorcan desserts</li>
+                            </ul>
+                          </div>
+                          <div className="text-right ml-4">
+                            <div className="text-sm font-medium text-foreground">+€{currentPeople * 20}</div>
+                            <div className="text-xs text-muted-foreground">per person</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Photography Service */}
+                      <div className="border-2 border-border hover:border-primary p-4 rounded-lg cursor-pointer transition-all">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h5 className="font-medium text-foreground mb-1">Professional Photography</h5>
+                            <p className="text-sm text-muted-foreground">Capture your memories with 50+ high-quality photos delivered within 24 hours</p>
+                          </div>
+                          <div className="text-right ml-4">
+                            <div className="text-sm font-medium text-foreground">+€75</div>
+                            <div className="text-xs text-muted-foreground">total</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Special Requests */}
+                    <div className="mb-6">
+                      <Label className="text-sm font-medium text-foreground mb-2 block">Special requests</Label>
+                      <Textarea
+                        value={specialRequests}
+                        onChange={(e) => setSpecialRequests(e.target.value)}
+                        placeholder="Dietary restrictions, celebrations, or other special requests..."
+                        className="w-full"
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Price Breakdown */}
+                    <div className="bg-muted p-4 rounded-lg mb-6">
+                      <h4 className="font-medium text-foreground mb-3">Price details</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span>€{currentPrice} x {currentPeople} guests</span>
+                          <span>€{currentPrice * currentPeople}</span>
+                        </div>
+                        {hasUpgrade && (
+                          <div className="flex justify-between">
+                            <span>Premium catering upgrade</span>
+                            <span>€{currentPeople * 20}</span>
+                          </div>
+                        )}
+                        <div className="border-t border-border pt-2 flex justify-between font-medium">
+                          <span>Total (EUR)</span>
+                          <span>€{totalPrice}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        if (!customerName || !customerEmail || !customerPhone) {
+                          toast({
+                            title: "Missing Information",
+                            description: "Please fill in all required fields.",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        const reference = `MS-${Date.now()}`;
+                        setBookingReference(reference);
+                        setShowPayment(true);
+                      }}
+                      disabled={!customerName || !customerEmail || !customerPhone}
+                      className="w-full h-12 text-base font-medium"
+                    >
+                      Continue to payment
+                    </Button>
+
+                    <div className="text-center text-xs text-muted-foreground mt-3">
+                      You won't be charged yet
                     </div>
                   </>
                 ) : (

@@ -2877,6 +2877,13 @@ export type Database = {
             foreignKeyName: "customer_communications_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "bookings_management_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "business_view_finance"
             referencedColumns: ["locator"]
           },
@@ -2899,6 +2906,34 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "calendar_availability"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "operations_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "purser_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "skipper_dashboard"
             referencedColumns: ["locator"]
           },
         ]
@@ -5044,6 +5079,13 @@ export type Database = {
             foreignKeyName: "operations_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "bookings_management_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "business_view_finance"
             referencedColumns: ["locator"]
           },
@@ -5066,6 +5108,34 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "calendar_availability"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "operations_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "purser_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "skipper_dashboard"
             referencedColumns: ["locator"]
           },
         ]
@@ -7940,6 +8010,54 @@ export type Database = {
       }
     }
     Views: {
+      admin_control_panel: {
+        Row: {
+          active_count: number | null
+          component: string | null
+          description: string | null
+          total_count: number | null
+        }
+        Relationships: []
+      }
+      admin_field_mappings: {
+        Row: {
+          andronautic_field: string | null
+          created_at: string | null
+          default_value: string | null
+          field_type: string | null
+          id: number | null
+          is_mapped: boolean | null
+          mapping_status: string | null
+          supabase_field: string | null
+          transformation_rule: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          andronautic_field?: string | null
+          created_at?: string | null
+          default_value?: string | null
+          field_type?: string | null
+          id?: number | null
+          is_mapped?: boolean | null
+          mapping_status?: never
+          supabase_field?: string | null
+          transformation_rule?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          andronautic_field?: string | null
+          created_at?: string | null
+          default_value?: string | null
+          field_type?: string | null
+          id?: number | null
+          is_mapped?: boolean | null
+          mapping_status?: never
+          supabase_field?: string | null
+          transformation_rule?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       agency_performance_dashboard: {
         Row: {
           account_manager: string | null
@@ -7975,6 +8093,27 @@ export type Database = {
           total_revenue: number | null
           utilization_category: string | null
           utilization_percentage: number | null
+        }
+        Relationships: []
+      }
+      bookings_management_dashboard: {
+        Row: {
+          boat: string | null
+          booking_source: string | null
+          booking_status: string | null
+          charter_date: string | null
+          charter_overview_sent: boolean | null
+          charter_total: number | null
+          client_messaging_status: string | null
+          contract_signed: boolean | null
+          guest_email: string | null
+          guest_name: string | null
+          guest_phone: string | null
+          locator: string | null
+          outstanding_amount: number | null
+          paid_amount: number | null
+          preparation_status: string | null
+          total_guests: number | null
         }
         Relationships: []
       }
@@ -8080,6 +8219,19 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_availability: {
+        Row: {
+          availability_date: string | null
+          boat_name: string | null
+          guest_name: string | null
+          locator: string | null
+          reason: string | null
+          reason_type: string | null
+          status: string | null
+          total_guests: number | null
+        }
+        Relationships: []
+      }
       charter_data: {
         Row: {
           boat: string | null
@@ -8118,6 +8270,13 @@ export type Database = {
             foreignKeyName: "customer_communications_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "bookings_management_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "business_view_finance"
             referencedColumns: ["locator"]
           },
@@ -8140,6 +8299,34 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "calendar_availability"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "operations_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "purser_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "skipper_dashboard"
             referencedColumns: ["locator"]
           },
         ]
@@ -8300,6 +8487,26 @@ export type Database = {
         }
         Relationships: []
       }
+      operations_dashboard: {
+        Row: {
+          boat: string | null
+          booking_status: string | null
+          catering_details: string | null
+          charter_date: string | null
+          charter_notes: string | null
+          charter_overview_sent: boolean | null
+          cleared_for_departure: boolean | null
+          guest_name: string | null
+          locator: string | null
+          operational_status: string | null
+          pre_departure_checks: boolean | null
+          skipper_name: string | null
+          start_time: string | null
+          total_guests: number | null
+          water_toys: string | null
+        }
+        Relationships: []
+      }
       operations_data: {
         Row: {
           boat: string | null
@@ -8322,6 +8529,57 @@ export type Database = {
           three_month_moving_avg: number | null
           trend_direction: string | null
           trend_month: string | null
+        }
+        Relationships: []
+      }
+      purser_dashboard: {
+        Row: {
+          boat: string | null
+          booking_source: string | null
+          card_payment: number | null
+          cash_payment: number | null
+          charter_date: string | null
+          charter_total: number | null
+          deposit_amount: number | null
+          extras_total: number | null
+          guest_name: string | null
+          locator: string | null
+          outstanding_amount: number | null
+          paid_amount: number | null
+          payment_percentage: number | null
+          payment_status: string | null
+        }
+        Insert: {
+          boat?: string | null
+          booking_source?: string | null
+          card_payment?: number | null
+          cash_payment?: number | null
+          charter_date?: never
+          charter_total?: number | null
+          deposit_amount?: number | null
+          extras_total?: number | null
+          guest_name?: never
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          payment_percentage?: never
+          payment_status?: never
+        }
+        Update: {
+          boat?: string | null
+          booking_source?: string | null
+          card_payment?: number | null
+          cash_payment?: number | null
+          charter_date?: never
+          charter_total?: number | null
+          deposit_amount?: number | null
+          extras_total?: number | null
+          guest_name?: never
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          payment_percentage?: never
+          payment_status?: never
         }
         Relationships: []
       }
@@ -8357,6 +8615,28 @@ export type Database = {
           completion_rate_percent: number | null
           total_requests: number | null
           total_revenue: number | null
+        }
+        Relationships: []
+      }
+      skipper_dashboard: {
+        Row: {
+          boat: string | null
+          booking_status: string | null
+          catering_details: string | null
+          charter_date: string | null
+          charter_notes: string | null
+          cleared_for_departure: boolean | null
+          end_time: string | null
+          guest_name: string | null
+          guest_phone: string | null
+          locator: string | null
+          meeting_point: string | null
+          pre_departure_checks: boolean | null
+          skipper_name: string | null
+          start_time: string | null
+          time_category: string | null
+          total_guests: number | null
+          water_toys: string | null
         }
         Relationships: []
       }
@@ -8467,6 +8747,15 @@ export type Database = {
           boat_name_param?: string
         }
         Returns: number
+      }
+      check_availability: {
+        Args: {
+          p_boat_name: string
+          p_start_date: string
+          p_end_date: string
+          p_exclude_locator?: string
+        }
+        Returns: Json
       }
       cleanup_old_data: {
         Args: { days_to_keep?: number }
@@ -8738,6 +9027,10 @@ export type Database = {
           severity: string
           recommendation: string
         }[]
+      }
+      sync_booking_availability: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       sync_health_check: {
         Args: Record<PropertyKey, never>
