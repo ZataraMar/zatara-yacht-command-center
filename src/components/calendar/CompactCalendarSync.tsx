@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { 
   Calendar, 
   RefreshCw, 
-  Block,
+  Ban,
   CheckCircle, 
   XCircle, 
   Anchor,
@@ -151,7 +151,7 @@ export const CompactCalendarSync = () => {
         <Card className="p-4">
           <div className="space-y-3">
             <h3 className="font-semibold text-sm flex items-center">
-              <Block className="w-4 h-4 mr-2" />
+              <Ban className="w-4 h-4 mr-2" />
               Quick Block
             </h3>
             <div className="space-y-2">
