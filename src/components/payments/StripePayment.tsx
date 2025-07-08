@@ -49,7 +49,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         if (!isConfigured) {
           console.warn('Stripe not configured - using simulation mode');
         } else {
-          console.log('Stripe configured for live payments');
+          console.log('✅ Stripe configured for live payments');
         }
       } catch (error) {
         console.error('Error checking Stripe configuration:', error);
@@ -62,35 +62,54 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   const createStripeCheckout = async (stripePaymentData: StripePaymentData) => {
     try {
-      // Get Stripe configuration
-      const config = await StripeConfig.getConfig();
+      console.log('🚀 Starting Stripe checkout creation...');
       
-      if (!config.publishableKey) {
-        throw new Error('Stripe publishable key not found');
+      // Get the current session for authentication
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add auth headers if we have a session
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
       }
 
-      // Create checkout session via Supabase Edge Function
-      const { data: session, error } = await supabase.functions.invoke('create-stripe-checkout', {
-        body: {
+      console.log('📡 Calling Stripe checkout function...');
+
+      // Call the Edge Function with proper authentication
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-stripe-checkout`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
           payment_data: stripePaymentData,
           success_url: `${window.location.origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: window.location.href,
           customer_email: stripePaymentData.customerEmail,
-        }
+        }),
       });
 
-      if (error) {
-        throw error;
+      console.log('📦 Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Checkout API error:', errorText);
+        throw new Error(`Failed to create checkout session: ${response.status} ${errorText}`);
       }
 
-      if (session?.url) {
+      const data = await response.json();
+      console.log('✅ Checkout session created:', data);
+
+      if (data?.url) {
+        console.log('🔄 Redirecting to Stripe checkout:', data.url);
         // Redirect to Stripe Checkout
-        window.location.href = session.url;
+        window.location.href = data.url;
       } else {
         throw new Error('No checkout URL received from Stripe');
       }
     } catch (error) {
-      console.error('Error creating Stripe checkout session:', error);
+      console.error('💥 Error creating Stripe checkout session:', error);
       throw error;
     }
   };
@@ -99,67 +118,43 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
     setIsProcessing(true);
 
     try {
+      console.log('🎯 Starting payment process...');
+
       // First, save the booking with payment_pending status
       const bookingRecord = {
+        experience_id: 'mallorcan-sailing',
         booking_reference: bookingData.bookingReference,
-        experience_name: 'Authentic Mallorcan Sailing Experience',
         booking_date: bookingData.bookingDate,
         time_slot: bookingData.timeSlot,
-        time_period_label: bookingData.timePeriodLabel,
+        time_period: bookingData.timePeriodLabel,
         number_of_people: bookingData.numberOfPeople,
         customer_name: bookingData.customerName,
         customer_email: bookingData.customerEmail,
         customer_phone: bookingData.customerPhone,
         special_requests: bookingData.specialRequests || null,
-        base_price_per_person: 99,
-        total_base_amount: Math.max(bookingData.numberOfPeople * 99, 499),
-        premium_catering_upgrade: bookingData.hasUpgrade,
-        upgrade_cost: bookingData.upgradeAmount,
+        price_per_person: 99,
         total_amount: bookingData.totalAmount,
         currency: 'EUR',
-        booking_source: 'mallorcan_sailing_landing_page',
+        source: 'mallorcan_sailing_stripe',
         status: 'payment_pending',
-        payment_status: 'pending',
-        payment_method: stripeConfigured ? 'stripe' : 'simulation',
-        created_at: new Date().toISOString(),
-        andronautic_sync_status: 'manual_required'
+        payment_status: 'pending'
       };
+
+      console.log('💾 Saving booking to database...');
 
       // Save booking to database first
       const { data: savedBooking, error: bookingError } = await supabase
-        .from('mallorcan_sailing_bookings')
+        .from('landing_page_bookings')
         .insert([bookingRecord])
         .select()
         .single();
 
       if (bookingError) {
-        console.error('Booking save error:', bookingError);
-        // Fallback to landing_page_bookings if mallorcan table doesn't exist
-        const fallbackData = {
-          experience_id: 'mallorcan-sailing',
-          booking_reference: bookingData.bookingReference,
-          booking_date: bookingData.bookingDate,
-          time_slot: bookingData.timeSlot,
-          time_period: bookingData.timePeriodLabel,
-          number_of_people: bookingData.numberOfPeople,
-          customer_name: bookingData.customerName,
-          customer_email: bookingData.customerEmail,
-          customer_phone: bookingData.customerPhone,
-          special_requests: bookingData.specialRequests || null,
-          price_per_person: 99,
-          total_amount: bookingData.totalAmount,
-          currency: 'EUR',
-          source: 'mallorcan_sailing_stripe',
-          status: 'payment_pending',
-          payment_status: 'pending'
-        };
-
-        const { error: fallbackError } = await supabase
-          .from('landing_page_bookings')
-          .insert([fallbackData]);
-
-        if (fallbackError) throw fallbackError;
+        console.error('❌ Booking save error:', bookingError);
+        throw new Error('Failed to save booking: ' + bookingError.message);
       }
+
+      console.log('✅ Booking saved:', savedBooking);
 
       // Prepare Stripe payment data
       const stripePaymentData: StripePaymentData = {
@@ -185,12 +180,12 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         // Note: This will redirect the user to Stripe, so execution stops here
       } else {
         // Simulation mode fallback
-        console.log('Simulation Mode - Stripe Payment Data:', stripePaymentData);
+        console.log('🧪 Simulation Mode - Stripe Payment Data:', stripePaymentData);
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         // Simulate successful payment
         await supabase
-          .from('mallorcan_sailing_bookings')
+          .from('landing_page_bookings')
           .update({
             status: 'confirmed',
             payment_status: 'paid',
@@ -208,11 +203,11 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
       }
 
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('💥 Payment error:', error);
       
       // Update booking status to failed
       await supabase
-        .from('mallorcan_sailing_bookings')
+        .from('landing_page_bookings')
         .update({
           status: 'payment_failed',
           payment_status: 'failed'
