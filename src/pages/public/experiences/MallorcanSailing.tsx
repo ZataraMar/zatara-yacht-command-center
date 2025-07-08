@@ -8,13 +8,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SuccessModal } from '@/components/charter/SuccessModal';
+import { AirbnbStyleCalendar } from '@/components/calendar/AirbnbStyleCalendar';
+import { TimeSlotSelector } from '@/components/calendar/TimeSlotSelector';
 import StripePayment from '@/components/payments/StripePayment';
 
 const MallorcanSailing = () => {
   const [currentPeople, setCurrentPeople] = useState(2);
   const [hasUpgrade, setHasUpgrade] = useState(false);
   const [selectedTime, setSelectedTime] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedDateString, setSelectedDateString] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -23,6 +26,7 @@ const MallorcanSailing = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [bookingReference, setBookingReference] = useState('');
+  const [currentPrice, setCurrentPrice] = useState(0);
   
   const { toast } = useToast();
 
@@ -44,30 +48,34 @@ const MallorcanSailing = () => {
   };
 
   const calculatePrice = () => {
-    if (!selectedTime) return { total: 0, note: 'Select date and time' };
+    if (!selectedTime || currentPrice === 0) return { total: currentPrice || 0, note: 'Select date and time' };
 
-    const basePrice = currentPeople * 99;
-    const minimumPrice = timeSlots[selectedTime as keyof typeof timeSlots].min;
     const upgradePrice = hasUpgrade ? currentPeople * 20 : 0;
-    
-    const totalBase = Math.max(basePrice, minimumPrice);
-    const totalPrice = totalBase + upgradePrice;
+    const totalPrice = currentPrice + upgradePrice;
 
-    let priceNote = '';
-    if (basePrice >= minimumPrice) {
-      priceNote = `€99 per person (${currentPeople} people)`;
-    } else {
-      priceNote = `€${minimumPrice} minimum for ${timeSlots[selectedTime as keyof typeof timeSlots].label}`;
-    }
+    let priceNote = `${currentPeople} ${currentPeople === 1 ? 'person' : 'people'}`;
     
     if (hasUpgrade) {
       priceNote += ` + €${upgradePrice} upgrade`;
     }
 
-    return { total: totalPrice, note: priceNote, base: totalBase, upgrade: upgradePrice };
+    return { total: totalPrice, note: priceNote, base: currentPrice, upgrade: upgradePrice };
   };
 
   const { total: totalPrice, note: priceNote, base: baseAmount, upgrade: upgradeAmount } = calculatePrice();
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+    setSelectedDateString(date.toISOString().split('T')[0]);
+  };
+
+  const handleTimeSelect = (timeSlot: string) => {
+    setSelectedTime(timeSlot);
+  };
+
+  const handlePriceUpdate = (price: number) => {
+    setCurrentPrice(price);
+  };
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +98,8 @@ const MallorcanSailing = () => {
   const handlePaymentSuccess = () => {
     console.log("handlePaymentSuccess called - this should only happen after successful Stripe payment");
     // Reset form
-    setSelectedDate('');
+    setSelectedDate(undefined);
+    setSelectedDateString('');
     setSelectedTime('');
     setCurrentPeople(2);
     setHasUpgrade(false);
@@ -108,7 +117,8 @@ const MallorcanSailing = () => {
   };
 
   const resetForm = () => {
-    setSelectedDate('');
+    setSelectedDate(undefined);
+    setSelectedDateString('');
     setSelectedTime('');
     setCurrentPeople(2);
     setHasUpgrade(false);
@@ -169,35 +179,27 @@ const MallorcanSailing = () => {
                   </div>
 
                   <form onSubmit={handleBookingSubmit} className="space-y-6">
-                    <div className="grid lg:grid-cols-3 gap-4">
+                    {/* Date & Time Selection */}
+                    <div className="space-y-6">
+                      <AirbnbStyleCalendar
+                        selectedDate={selectedDate}
+                        onDateSelect={handleDateSelect}
+                        className="mb-6"
+                      />
+                      
+                      <TimeSlotSelector
+                        selectedDate={selectedDate}
+                        selectedTime={selectedTime}
+                        onTimeSelect={handleTimeSelect}
+                        onPriceUpdate={handlePriceUpdate}
+                        currentPeople={currentPeople}
+                        className="mb-6"
+                      />
+
+                      {/* People Selector */}
                       <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">Date</Label>
-                        <Input
-                          type="date"
-                          value={selectedDate}
-                          onChange={(e) => setSelectedDate(e.target.value)}
-                          min={today}
-                          required
-                          className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">Time</Label>
-                        <select
-                          value={selectedTime}
-                          onChange={(e) => setSelectedTime(e.target.value)}
-                          required
-                          className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
-                        >
-                          <option value="">Select time</option>
-                          <option value="morning">Morning 8:30-12:00</option>
-                          <option value="afternoon">Afternoon 1:30-17:00</option>
-                          <option value="sunset">Sunset 17:30-21:00</option>
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">People</Label>
-                        <div className="flex items-center justify-center gap-3">
+                        <Label className="text-sm font-semibold text-gray-700">Number of People</Label>
+                        <div className="flex items-center justify-center gap-3 bg-gray-50 p-4 rounded-lg">
                           <Button
                             type="button"
                             onClick={() => changePeople(-1)}
@@ -205,7 +207,7 @@ const MallorcanSailing = () => {
                           >
                             -
                           </Button>
-                          <span className="text-xl font-semibold min-w-8 text-center">{currentPeople}</span>
+                          <span className="text-xl font-semibold min-w-8 text-center">{currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}</span>
                           <Button
                             type="button"
                             onClick={() => changePeople(1)}
@@ -328,7 +330,7 @@ const MallorcanSailing = () => {
                   <div className="bg-gray-50 p-4 rounded-lg mb-6 space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Date & Time:</span>
-                      <span className="font-medium">{selectedDate} at {timeSlots[selectedTime as keyof typeof timeSlots].label}</span>
+                      <span className="font-medium">{selectedDate ? selectedDate.toLocaleDateString() : ''} at {timeSlots[selectedTime as keyof typeof timeSlots]?.label}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Guests:</span>
@@ -350,9 +352,9 @@ const MallorcanSailing = () => {
                       customerName,
                       customerEmail,
                       customerPhone,
-                      bookingDate: selectedDate,
-                      timeSlot: timeSlots[selectedTime as keyof typeof timeSlots].value,
-                      timePeriodLabel: timeSlots[selectedTime as keyof typeof timeSlots].label,
+                      bookingDate: selectedDateString,
+                      timeSlot: timeSlots[selectedTime as keyof typeof timeSlots]?.value || '',
+                      timePeriodLabel: timeSlots[selectedTime as keyof typeof timeSlots]?.label || '',
                       numberOfPeople: currentPeople,
                       totalAmount: totalPrice,
                       hasUpgrade,
