@@ -16,9 +16,13 @@ serve(async (req) => {
   try {
     console.log("[STRIPE-CHECKOUT] Function started");
 
-    // Get request data
-    const { payment_data, success_url, cancel_url, customer_email } = await req.json();
-    console.log("[STRIPE-CHECKOUT] Request data received");
+    // Get request data - handle both direct calls and supabase.functions.invoke()
+    const requestData = await req.json();
+    console.log("[STRIPE-CHECKOUT] Raw request:", JSON.stringify(requestData));
+    
+    // Extract data from either direct call or invoke call format
+    const { payment_data, success_url, cancel_url, customer_email } = requestData;
+    console.log("[STRIPE-CHECKOUT] Extracted data:", { payment_data, success_url, cancel_url, customer_email });
 
     // Initialize Stripe
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
