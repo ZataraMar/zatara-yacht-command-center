@@ -243,59 +243,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
           </div>
         </div>
 
-        {/* Advanced Multi-Select Filters */}
-        <div className="border-t pt-4">
-          <Label className="text-sm font-semibold text-zatara-navy mb-3 block">Advanced Multi-Select Filters</Label>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <Label className="text-xs text-gray-600">Custom Date Range</Label>
-              {setDateRange && (
-                <DateRangePicker
-                  date={dateRange}
-                  onDateChange={setDateRange}
-                  placeholder="Select dates"
-                  className="w-full"
-                />
-              )}
-            </div>
-
-            {setSelectedBoats && (
-              <div className="space-y-2">
-                <Label className="text-xs text-gray-600">Specific Boats</Label>
-                <MultiSelect
-                  options={multiSelectBoatOptions}
-                  selected={selectedBoats}
-                  onChange={setSelectedBoats}
-                  placeholder="Select boats"
-                />
-              </div>
-            )}
-
-            {setSelectedSources && (
-              <div className="space-y-2">
-                <Label className="text-xs text-gray-600">Booking Sources</Label>
-                <MultiSelect
-                  options={sourceOptions}
-                  selected={selectedSources}
-                  onChange={setSelectedSources}
-                  placeholder="Select sources"
-                />
-              </div>
-            )}
-
-            {setSelectedStatuses && (
-              <div className="space-y-2">
-                <Label className="text-xs text-gray-600">Detailed Statuses</Label>
-                <MultiSelect
-                  options={multiSelectStatusOptions}
-                  selected={selectedStatuses}
-                  onChange={setSelectedStatuses}
-                  placeholder="Select statuses"
-                />
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Active Filters Display */}
         {hasActiveFilters && (
