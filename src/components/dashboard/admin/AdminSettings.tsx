@@ -30,6 +30,7 @@ export const AdminSettings = () => {
     communications: { icon: Smartphone, label: 'Communications', color: 'text-purple-600' },
     automation: { icon: Cog, label: 'Automation & N8N', color: 'text-orange-600' },
     business: { icon: Building, label: 'Business Settings', color: 'text-gray-600' },
+    formatting: { icon: Globe, label: 'Date & Time Formatting', color: 'text-indigo-600' },
     integrations: { icon: Globe, label: 'Platform Integrations', color: 'text-teal-600' },
     platforms: { icon: Globe, label: 'Booking Platforms', color: 'text-indigo-600' },
     system: { icon: Settings, label: 'System Configuration', color: 'text-red-600' }
