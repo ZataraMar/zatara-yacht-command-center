@@ -11,6 +11,7 @@ import { OperationalExcellence } from '@/components/dashboard/operations/Operati
 import { AdvancedReporting } from '@/components/dashboard/analytics/AdvancedReporting';
 import { AutomationWorkflows } from '@/components/dashboard/integration/AutomationWorkflows';
 import { UserManagement } from '@/components/dashboard/admin/UserManagement';
+import { AdminSettings } from '@/components/dashboard/admin/AdminSettings';
 import { Phase2Dashboard } from '@/components/dashboard/Phase2Dashboard';
 import { LandingPagesManagement } from '@/components/dashboard/LandingPagesManagement';
 import { AccessControlRoute } from './AccessControlRoute';
@@ -64,6 +65,16 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
         element={
           <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
             <UserManagement />
+          </AccessControlRoute>
+        } 
+      />
+      
+      {/* Admin Settings - Owner only */}
+      <Route 
+        path="/admin-settings" 
+        element={
+          <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
+            <AdminSettings />
           </AccessControlRoute>
         } 
       />
