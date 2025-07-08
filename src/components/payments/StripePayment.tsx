@@ -258,29 +258,6 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Debug Log */}
-      {debugLog.length > 0 && (
-        <div className="bg-gray-50 border rounded-lg p-4">
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="font-medium text-sm">Debug Log:</h4>
-            <Button
-              onClick={copyDebugLog}
-              variant="outline"
-              size="sm"
-              className="h-6 px-2 text-xs"
-            >
-              <Copy className="h-3 w-3 mr-1" />
-              Copy
-            </Button>
-          </div>
-          <div className="text-xs font-mono space-y-1 max-h-40 overflow-y-auto">
-            {debugLog.map((log, i) => (
-              <div key={i} className="text-gray-700">{log}</div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Payment Summary */}
       <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
         <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
