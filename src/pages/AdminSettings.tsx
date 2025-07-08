@@ -35,15 +35,18 @@ export const AdminSettings = () => {
     try {
       // Load payment settings
       const paymentData = await SettingsService.getSettingsByCategory('payments');
-      setPaymentSettings(paymentData);
+      const paymentSettings = paymentData.reduce((acc, setting) => ({ ...acc, [setting.setting_key]: setting.setting_value }), {});
+      setPaymentSettings(paymentSettings);
 
       // Load business settings  
       const businessData = await SettingsService.getSettingsByCategory('general');
-      setBusinessSettings(businessData);
+      const businessSettings = businessData.reduce((acc, setting) => ({ ...acc, [setting.setting_key]: setting.setting_value }), {});
+      setBusinessSettings(businessSettings);
 
       // Load communication settings
       const commData = await SettingsService.getSettingsByCategory('communications');
-      setCommunicationSettings(commData);
+      const commSettings = commData.reduce((acc, setting) => ({ ...acc, [setting.setting_key]: setting.setting_value }), {});
+      setCommunicationSettings(commSettings);
 
       // Check Stripe environment
       const stripeEnv = await getStripeEnvironment();
@@ -117,14 +120,14 @@ export const AdminSettings = () => {
         { key: SETTING_KEYS.PAYMENT_CURRENCY, value: 'EUR', category: 'payments', description: 'Default currency for payments' },
         { key: SETTING_KEYS.PAYMENT_COUNTRY, value: 'ES', category: 'payments', description: 'Country code for payment processing' },
         { key: SETTING_KEYS.ENVIRONMENT_MODE, value: 'test', category: 'payments', description: 'Current environment mode (test/live)' },
-        { key: SETTING_KEYS.BUSINESS_NAME, value: 'Zatara Charters', category: 'general', description: 'Business name for invoices and payments' },
-        { key: SETTING_KEYS.BUSINESS_EMAIL, value: 'hello@zatara.es', category: 'general', description: 'Business contact email' },
-        { key: SETTING_KEYS.WHATSAPP_NUMBER, value: '+34711013403', category: 'communications', description: 'Primary WhatsApp number for customer contact' },
-        { key: SETTING_KEYS.BOOKING_CONFIRMATION_EMAIL, value: 'bookings@zatara.es', category: 'communications', description: 'Email for booking confirmations' },
+        { key: SETTING_KEYS.COMPANY_NAME, value: 'Zatara Charters', category: 'general', description: 'Business name for invoices and payments' },
+        { key: SETTING_KEYS.COMPANY_EMAIL, value: 'hello@zatara.es', category: 'general', description: 'Business contact email' },
+        { key: SETTING_KEYS.WHATSAPP_PHONE_NUMBER, value: '+34711013403', category: 'communications', description: 'Primary WhatsApp number for customer contact' },
+        { key: SETTING_KEYS.BOOKING_CONFIRMATION_TEMPLATE, value: 'bookings@zatara.es', category: 'communications', description: 'Email for booking confirmations' },
       ];
 
       for (const setting of defaultSettings) {
-        await SettingsService.createSetting(setting.key, setting.value, setting.category, setting.description);
+        await SettingsService.updateSetting(setting.key, setting.value, 'admin');
       }
 
       toast({
@@ -300,8 +303,8 @@ export const AdminSettings = () => {
                 <div>
                   <Label>Business Name</Label>
                   <Input
-                    value={businessSettings[SETTING_KEYS.BUSINESS_NAME] || ''}
-                    onChange={(e) => updateSetting('business', SETTING_KEYS.BUSINESS_NAME, e.target.value)}
+                    value={businessSettings[SETTING_KEYS.COMPANY_NAME] || ''}
+                    onChange={(e) => updateSetting('business', SETTING_KEYS.COMPANY_NAME, e.target.value)}
                     placeholder="Zatara Charters"
                   />
                 </div>
@@ -309,8 +312,8 @@ export const AdminSettings = () => {
                   <Label>Business Email</Label>
                   <Input
                     type="email"
-                    value={businessSettings[SETTING_KEYS.BUSINESS_EMAIL] || ''}
-                    onChange={(e) => updateSetting('business', SETTING_KEYS.BUSINESS_EMAIL, e.target.value)}
+                    value={businessSettings[SETTING_KEYS.COMPANY_EMAIL] || ''}
+                    onChange={(e) => updateSetting('business', SETTING_KEYS.COMPANY_EMAIL, e.target.value)}
                     placeholder="hello@zatara.es"
                   />
                 </div>
@@ -331,8 +334,8 @@ export const AdminSettings = () => {
                 <div>
                   <Label>WhatsApp Number</Label>
                   <Input
-                    value={communicationSettings[SETTING_KEYS.WHATSAPP_NUMBER] || ''}
-                    onChange={(e) => updateSetting('communications', SETTING_KEYS.WHATSAPP_NUMBER, e.target.value)}
+                    value={communicationSettings[SETTING_KEYS.WHATSAPP_PHONE_NUMBER] || ''}
+                    onChange={(e) => updateSetting('communications', SETTING_KEYS.WHATSAPP_PHONE_NUMBER, e.target.value)}
                     placeholder="+34711013403"
                   />
                 </div>
@@ -340,8 +343,8 @@ export const AdminSettings = () => {
                   <Label>Booking Confirmation Email</Label>
                   <Input
                     type="email"
-                    value={communicationSettings[SETTING_KEYS.BOOKING_CONFIRMATION_EMAIL] || ''}
-                    onChange={(e) => updateSetting('communications', SETTING_KEYS.BOOKING_CONFIRMATION_EMAIL, e.target.value)}
+                    value={communicationSettings[SETTING_KEYS.BOOKING_CONFIRMATION_TEMPLATE] || ''}
+                    onChange={(e) => updateSetting('communications', SETTING_KEYS.BOOKING_CONFIRMATION_TEMPLATE, e.target.value)}
                     placeholder="bookings@zatara.es"
                   />
                 </div>
