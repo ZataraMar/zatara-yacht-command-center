@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Menu, X, ChevronDown } from 'lucide-react';
+import { LanguageToggle } from '@/components/common/LanguageToggle';
 
 export const Navigation = () => {
   const location = useLocation();
@@ -145,6 +146,7 @@ export const Navigation = () => {
                   )}
                 </div>
               ))}
+              <LanguageToggle />
               <Button 
                 variant="outline"
                 size="sm"

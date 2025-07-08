@@ -185,8 +185,8 @@ const MallorcanSailing = () => {
                       <div className="border rounded-xl p-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-sm">Huéspedes</div>
-                            <div className="text-xs text-muted-foreground">Agregar niños</div>
+                            <div className="font-medium text-sm">Guests</div>
+                            <div className="text-xs text-muted-foreground">Add children</div>
                           </div>
                           <div className="flex items-center gap-3">
                             <Button

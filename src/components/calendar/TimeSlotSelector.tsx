@@ -129,9 +129,9 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
     <div className={cn("space-y-3", className)}>
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-1">
-          {format(selectedDate, 'EEEE, d')} de {format(selectedDate, 'MMMM')}
+          {format(selectedDate, 'EEEE, MMMM d')}
         </h3>
-        <p className="text-sm text-muted-foreground">Selecciona la hora</p>
+        <p className="text-sm text-muted-foreground">Select a time</p>
       </div>
 
       <div className="space-y-3">
@@ -172,23 +172,23 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
                     "text-xs text-muted-foreground",
                     isBooked && "text-muted-foreground/60"
                   )}>
-                    {slot.description} • Hasta {currentPeople === 1 ? '12 huéspedes' : '12 huéspedes'}
+                    {slot.description} • Up to 12 guests
                   </p>
                 </div>
 
                 <div className="text-right ml-4">
                   {isBooked ? (
                     <div className="text-muted-foreground text-sm">
-                      No disponible
+                      Unavailable
                     </div>
                   ) : (
                     <div className="font-semibold">
-                      €{price} MXN
+                      €{price}
                     </div>
                   )}
                   {!isBooked && (
                     <div className="text-xs text-muted-foreground">
-                      por grupo
+                      per group
                     </div>
                   )}
                 </div>
