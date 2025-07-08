@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { DashboardHome } from '@/components/dashboard/DashboardHome';
@@ -12,6 +11,7 @@ import { AdvancedReporting } from '@/components/dashboard/analytics/AdvancedRepo
 import { AutomationWorkflows } from '@/components/dashboard/integration/AutomationWorkflows';
 import { UserManagement } from '@/components/dashboard/admin/UserManagement';
 import { AdminSettings } from '@/components/dashboard/admin/AdminSettings';
+import SystemOverview from '@/components/dashboard/admin/SystemOverview';
 import { FieldAnalysisDashboard } from '@/components/dashboard/admin/FieldAnalysisDashboard';
 import { CalendarSync } from '@/components/calendar/CalendarSync';
 import { Phase2Dashboard } from '@/components/dashboard/Phase2Dashboard';
@@ -30,6 +30,16 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
   return (
     <Routes>
       <Route path="/" element={<DashboardHome />} />
+      
+      {/* System Overview - Owner only */}
+      <Route 
+        path="/system-overview" 
+        element={
+          <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
+            <SystemOverview />
+          </AccessControlRoute>
+        } 
+      />
       
       {/* Operations - Available to skippers, staff, management, and owner */}
       <Route 
@@ -179,4 +189,3 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
     </Routes>
   );
 };
-
