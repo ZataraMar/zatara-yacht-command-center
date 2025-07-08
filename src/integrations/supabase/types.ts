@@ -7251,6 +7251,66 @@ export type Database = {
           },
         ]
       }
+      unavailabilities: {
+        Row: {
+          all_day: boolean | null
+          boat_name: string
+          created_at: string | null
+          created_by: string | null
+          end_date: string
+          end_time: string | null
+          id: number
+          notes: string | null
+          priority_level: number | null
+          reason: string
+          reason_type: string | null
+          recurring: boolean | null
+          recurring_pattern: string | null
+          recurring_until: string | null
+          start_date: string
+          start_time: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          all_day?: boolean | null
+          boat_name: string
+          created_at?: string | null
+          created_by?: string | null
+          end_date: string
+          end_time?: string | null
+          id?: number
+          notes?: string | null
+          priority_level?: number | null
+          reason?: string
+          reason_type?: string | null
+          recurring?: boolean | null
+          recurring_pattern?: string | null
+          recurring_until?: string | null
+          start_date: string
+          start_time?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          all_day?: boolean | null
+          boat_name?: string
+          created_at?: string | null
+          created_by?: string | null
+          end_date?: string
+          end_time?: string | null
+          id?: number
+          notes?: string | null
+          priority_level?: number | null
+          reason?: string
+          reason_type?: string | null
+          recurring?: boolean | null
+          recurring_pattern?: string | null
+          recurring_until?: string | null
+          start_date?: string
+          start_time?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_activity_logs: {
         Row: {
           access_method: string | null

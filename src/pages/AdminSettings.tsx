@@ -838,7 +838,7 @@ export const AdminSettings = () => {
                               {fieldPreview.supabase_field}
                             </div>
                             <div className="flex items-center gap-2">
-                              <Badge size="sm" className={getStatusColor(fieldPreview.status)}>
+                              <Badge className={getStatusColor(fieldPreview.status)}>
                                 {fieldPreview.status}
                               </Badge>
                               <span className="text-sm">
@@ -977,12 +977,12 @@ export const AdminSettings = () => {
                             : mapping.andronautic_field
                           }
                         </code>
-                        <Badge size="sm" variant="outline">
+                        <Badge variant="outline">
                           {mapping.field_type}
                         </Badge>
                       </div>
                       {mapping.is_required && (
-                        <Badge size="sm" variant="destructive">Required</Badge>
+                        <Badge variant="destructive">Required</Badge>
                       )}
                     </div>
                     
@@ -1038,7 +1038,6 @@ export const AdminSettings = () => {
                     <div key={index} className="flex justify-between items-center py-1">
                       <span className="font-mono text-sm">{result.locator}</span>
                       <Badge 
-                        size="sm"
                         variant={result.status === 'success' ? 'default' : 'destructive'}
                       >
                         {result.status === 'success' ? result.action : result.error}
