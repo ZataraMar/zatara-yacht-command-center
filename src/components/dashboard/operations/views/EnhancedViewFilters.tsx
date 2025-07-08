@@ -3,10 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { RefreshCw, X, Filter, Calendar, Ship, Users, MapPin } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { RefreshCw, X, Filter, Calendar as CalendarIcon, Ship, Users, MapPin } from 'lucide-react';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface EnhancedViewFiltersProps {
   timeFilter: string;
@@ -29,6 +33,8 @@ interface EnhancedViewFiltersProps {
   setSelectedStatuses?: (statuses: string[]) => void;
   selectedBoats?: string[];
   setSelectedBoats?: (boats: string[]) => void;
+  selectedDate?: Date;
+  setSelectedDate?: (date: Date | undefined) => void;
 }
 
 export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
@@ -51,7 +57,9 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
   selectedStatuses = [],
   setSelectedStatuses,
   selectedBoats = [],
-  setSelectedBoats
+  setSelectedBoats,
+  selectedDate = new Date(),
+  setSelectedDate
 }) => {
   const timeOptions = [
     { label: 'Today', value: '0', icon: Calendar },
@@ -114,6 +122,7 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
     setSelectedSources?.([]);
     setSelectedStatuses?.([]);
     setSelectedBoats?.([]);
+    setSelectedDate?.(new Date());
   };
 
   const hasActiveFilters = 
@@ -123,13 +132,38 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
     dateRange ||
     selectedSources.length > 0 ||
     selectedStatuses.length > 0 ||
-    selectedBoats.length > 0;
+    selectedBoats.length > 0 ||
+    (selectedDate && selectedDate.toDateString() !== new Date().toDateString());
 
   return (
     <Card className="border-2 border-zatara-blue/20">
       <CardHeader className="bg-gradient-to-r from-zatara-blue/5 to-blue-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-[200px] justify-start text-left font-normal",
+                    !selectedDate && "text-muted-foreground"
+                  )}
+                  size="sm"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
             <div className="text-right text-sm">
               <div className="font-semibold text-zatara-navy">{resultCount.toLocaleString()}</div>
               <div className="text-zatara-blue">results found</div>

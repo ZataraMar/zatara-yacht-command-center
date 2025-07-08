@@ -10,7 +10,8 @@ export const useBookingFilters = (
   bookings: any[],
   timeFilter: string,
   boatFilter: string,
-  statusFilter: string
+  statusFilter: string,
+  selectedDate?: Date
 ): BookingFiltersResult => {
   const filteredBookings = React.useMemo(() => {
     if (!bookings) return [];
@@ -19,34 +20,51 @@ export const useBookingFilters = (
 
     let filtered = [...bookings];
 
-    // Apply time filter - more flexible date range with backwards/forwards capability
-    const daysRange = parseInt(timeFilter);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Apply date filter - use selectedDate as base instead of today
+    const baseDate = selectedDate || new Date();
+    baseDate.setHours(0, 0, 0, 0);
     
-    let startDate: Date;
-    let endDate: Date;
-    
-    if (daysRange === 1) {
-      // Today only
-      startDate = new Date(today);
-      endDate = new Date(today);
-      endDate.setDate(today.getDate() + 1);
-    } else {
-      // Range that includes past and future
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - Math.floor(daysRange / 2));
+    // If we have a specific selected date, filter for that date only
+    if (selectedDate) {
+      const targetDate = new Date(selectedDate);
+      targetDate.setHours(0, 0, 0, 0);
+      const nextDay = new Date(targetDate);
+      nextDay.setDate(targetDate.getDate() + 1);
       
-      endDate = new Date(today);
-      endDate.setDate(today.getDate() + Math.ceil(daysRange / 2));
+      filtered = filtered.filter(booking => {
+        if (!booking.start_date) return false;
+        const bookingDate = new Date(booking.start_date);
+        bookingDate.setHours(0, 0, 0, 0);
+        return bookingDate >= targetDate && bookingDate < nextDay;
+      });
+    } else {
+      // Apply time filter - more flexible date range with backwards/forwards capability
+      const daysRange = parseInt(timeFilter);
+      
+      let startDate: Date;
+      let endDate: Date;
+      
+      if (daysRange === 1) {
+        // Today only
+        startDate = new Date(baseDate);
+        endDate = new Date(baseDate);
+        endDate.setDate(baseDate.getDate() + 1);
+      } else {
+        // Range that includes past and future
+        startDate = new Date(baseDate);
+        startDate.setDate(baseDate.getDate() - Math.floor(daysRange / 2));
+        
+        endDate = new Date(baseDate);
+        endDate.setDate(baseDate.getDate() + Math.ceil(daysRange / 2));
+      }
+      
+      filtered = filtered.filter(booking => {
+        if (!booking.start_date) return false;
+        const bookingDate = new Date(booking.start_date);
+        bookingDate.setHours(0, 0, 0, 0);
+        return bookingDate >= startDate && bookingDate <= endDate;
+      });
     }
-    
-    filtered = filtered.filter(booking => {
-      if (!booking.start_date) return false;
-      const bookingDate = new Date(booking.start_date);
-      bookingDate.setHours(0, 0, 0, 0);
-      return bookingDate >= startDate && bookingDate <= endDate;
-    });
 
     console.log('After time filter:', filtered.length);
 
@@ -99,7 +117,7 @@ export const useBookingFilters = (
     console.log('After status filter:', filtered.length);
 
     return filtered;
-  }, [bookings, timeFilter, boatFilter, statusFilter]);
+  }, [bookings, timeFilter, boatFilter, statusFilter, selectedDate]);
 
   const availableViews = [
     { 
