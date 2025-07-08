@@ -221,12 +221,12 @@ export const GoogleReviews: React.FC<GoogleReviewsProps> = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <h4 className="font-medium text-foreground text-sm truncate">{review.author_name}</h4>
+                  <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">{review.relative_time_description}</span>
                 </div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center mb-2">
                   <div className="flex text-yellow-400">
                     {renderStars(review.rating)}
                   </div>
-                  <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">{review.relative_time_description}</span>
                 </div>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   {review.text}
