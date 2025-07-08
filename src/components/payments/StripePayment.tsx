@@ -195,21 +195,16 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
         addDebugLog(`Calling Edge Function...`);
 
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-stripe-checkout`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(requestData),
+        const { data, error } = await supabase.functions.invoke('create-stripe-checkout', {
+          body: requestData,
         });
 
-        addDebugLog(`Edge Function response: ${response.status}`);
+        addDebugLog(`Edge Function response received`);
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          addDebugLog(`Edge Function error: ${errorText}`, 'error');
-          throw new Error(`Failed to create checkout: ${response.status} ${errorText}`);
+        if (error) {
+          addDebugLog(`Edge Function error: ${error.message}`, 'error');
+          throw new Error(`Failed to create checkout: ${error.message}`);
         }
-
-        const data = await response.json();
         addDebugLog(`Checkout session: ${data.session_id}`, 'success');
 
         if (data?.url) {
