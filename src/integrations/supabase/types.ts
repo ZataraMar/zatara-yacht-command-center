@@ -2710,6 +2710,42 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_templates: {
+        Row: {
+          boat_type: string
+          created_at: string | null
+          id: number
+          is_active: boolean | null
+          required_fields: Json | null
+          template_content: string
+          template_name: string
+          updated_at: string | null
+          version_number: number | null
+        }
+        Insert: {
+          boat_type: string
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          required_fields?: Json | null
+          template_content: string
+          template_name: string
+          updated_at?: string | null
+          version_number?: number | null
+        }
+        Update: {
+          boat_type?: string
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          required_fields?: Json | null
+          template_content?: string
+          template_name?: string
+          updated_at?: string | null
+          version_number?: number | null
+        }
+        Relationships: []
+      }
       crew_scheduling: {
         Row: {
           active_status: boolean | null
@@ -3471,6 +3507,50 @@ export type Database = {
           },
         ]
       }
+      customer_signatures: {
+        Row: {
+          contract_id: number
+          id: number
+          ip_address: string | null
+          signature_data: string | null
+          signed_at: string | null
+          signer_email: string | null
+          signer_name: string
+          signer_role: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          contract_id: number
+          id?: number
+          ip_address?: string | null
+          signature_data?: string | null
+          signed_at?: string | null
+          signer_email?: string | null
+          signer_name: string
+          signer_role?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          contract_id?: number
+          id?: number
+          ip_address?: string | null
+          signature_data?: string | null
+          signed_at?: string | null
+          signer_email?: string | null
+          signer_name?: string
+          signer_role?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_signatures_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "digital_contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_users: {
         Row: {
           account_status: string | null
@@ -3860,6 +3940,141 @@ export type Database = {
           validation_type?: string
         }
         Relationships: []
+      }
+      digital_contracts: {
+        Row: {
+          captain_signature_date: string | null
+          captain_signature_name: string | null
+          contract_content: string | null
+          contract_data: Json | null
+          contract_pdf_url: string | null
+          contract_status: string | null
+          contract_type: string | null
+          created_at: string | null
+          expires_at: string | null
+          guest_signature_date: string | null
+          guest_signature_ip: string | null
+          id: number
+          locator: string
+          signature_request_id: string | null
+          template_used: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          captain_signature_date?: string | null
+          captain_signature_name?: string | null
+          contract_content?: string | null
+          contract_data?: Json | null
+          contract_pdf_url?: string | null
+          contract_status?: string | null
+          contract_type?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          guest_signature_date?: string | null
+          guest_signature_ip?: string | null
+          id?: number
+          locator: string
+          signature_request_id?: string | null
+          template_used?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          captain_signature_date?: string | null
+          captain_signature_name?: string | null
+          contract_content?: string | null
+          contract_data?: Json | null
+          contract_pdf_url?: string | null
+          contract_status?: string | null
+          contract_type?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          guest_signature_date?: string | null
+          guest_signature_ip?: string | null
+          id?: number
+          locator?: string
+          signature_request_id?: string | null
+          template_used?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "bookings_management_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_finance"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_operations"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_puravida_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "calendar_availability"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "operations_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "purser_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "skipper_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_template_used_fkey"
+            columns: ["template_used"]
+            isOneToOne: false
+            referencedRelation: "contract_templates"
+            referencedColumns: ["template_name"]
+          },
+        ]
       }
       duplicate_detection: {
         Row: {
@@ -7947,6 +8162,134 @@ export type Database = {
           view_type?: string
         }
         Relationships: []
+      }
+      whatsapp_messages: {
+        Row: {
+          created_at: string | null
+          delivered_at: string | null
+          id: number
+          locator: string | null
+          message_content: string
+          message_status: string | null
+          message_type: string | null
+          read_at: string | null
+          recipient_phone: string
+          response_content: string | null
+          response_received: boolean | null
+          sender_name: string | null
+          sent_at: string | null
+          template_used: string | null
+          updated_at: string | null
+          whatsapp_message_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          delivered_at?: string | null
+          id?: number
+          locator?: string | null
+          message_content: string
+          message_status?: string | null
+          message_type?: string | null
+          read_at?: string | null
+          recipient_phone: string
+          response_content?: string | null
+          response_received?: boolean | null
+          sender_name?: string | null
+          sent_at?: string | null
+          template_used?: string | null
+          updated_at?: string | null
+          whatsapp_message_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          delivered_at?: string | null
+          id?: number
+          locator?: string | null
+          message_content?: string
+          message_status?: string | null
+          message_type?: string | null
+          read_at?: string | null
+          recipient_phone?: string
+          response_content?: string | null
+          response_received?: boolean | null
+          sender_name?: string | null
+          sent_at?: string | null
+          template_used?: string | null
+          updated_at?: string | null
+          whatsapp_message_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "bookings_management_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_finance"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_operations"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_puravida_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "calendar_availability"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "operations_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "purser_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "skipper_dashboard"
+            referencedColumns: ["locator"]
+          },
+        ]
       }
       whatsapp_templates: {
         Row: {

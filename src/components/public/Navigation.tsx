@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Menu, X, ChevronDown } from 'lucide-react';
 import { LanguageToggle } from '@/components/common/LanguageToggle';
+import { ZataraLogo } from '@/components/common/ZataraLogo';
 
 export const Navigation = () => {
   const location = useLocation();
@@ -61,15 +62,8 @@ export const Navigation = () => {
           <div className="flex justify-between items-center py-3">
             {/* Logo Section */}
             <Link to="/" className="flex items-center space-x-3">
-              <img 
-                src="https://eefenqehcesevuudtpti.supabase.co/storage/v1/object/public/brand-assets/Logo/Zatara_Charter_Mallorca_Favicon24.png" 
-                alt="Zatara Logo" 
-                className="h-8 w-8"
-              />
+              <ZataraLogo size="md" variant="image" />
               <div className="flex flex-col">
-                <div className="text-3xl font-bold text-zatara-blue tracking-wide">
-                  Zatara
-                </div>
                 <div className="text-sm text-zatara-blue tracking-wide font-medium whitespace-nowrap">
                   LUXURY YACHT SERVICES
                 </div>
@@ -264,14 +258,7 @@ export const Navigation = () => {
           <div className="flex justify-between items-center py-2">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <img 
-                src="https://eefenqehcesevuudtpti.supabase.co/storage/v1/object/public/brand-assets/Logo/Zatara_Charter_Mallorca_Favicon24.png" 
-                alt="Zatara Logo" 
-                className="h-6 w-6"
-              />
-              <div className="text-xl font-bold text-zatara-blue">
-                Zatara
-              </div>
+              <ZataraLogo size="sm" variant="image" />
             </Link>
 
             {/* Action Buttons */}
