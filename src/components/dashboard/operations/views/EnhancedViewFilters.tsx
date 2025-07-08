@@ -129,14 +129,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
     <Card className="border-2 border-zatara-blue/20">
       <CardHeader className="bg-gradient-to-r from-zatara-blue/5 to-blue-50">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center space-x-3">
-            <div className="p-2 bg-zatara-blue/10 rounded-lg">
-              <Filter className="h-5 w-5 text-zatara-blue" />
-            </div>
-            <div>
-              <span className="text-zatara-navy">Advanced Filters & Controls</span>
-            </div>
-          </CardTitle>
           <div className="flex items-center space-x-3">
             <div className="text-right text-sm">
               <div className="font-semibold text-zatara-navy">{resultCount.toLocaleString()}</div>
