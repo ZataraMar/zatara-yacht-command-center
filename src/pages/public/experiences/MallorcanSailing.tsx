@@ -2,17 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { Navigation } from '@/components/public/Navigation';
 import { Footer } from '@/components/public/Footer';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { SuccessModal } from '@/components/charter/SuccessModal';
 
 const MallorcanSailing = () => {
   const [currentPeople, setCurrentPeople] = useState(2);
   const [hasUpgrade, setHasUpgrade] = useState(false);
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [specialRequests, setSpecialRequests] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  
+  const { toast } = useToast();
 
   const timeSlots = {
-    'morning': { min: 499, label: 'Morning 8:30-12:00' },
-    'afternoon': { min: 699, label: 'Afternoon 1:30-17:00' },
-    'sunset': { min: 599, label: 'Sunset 17:30-21:00' }
+    'morning': { min: 499, label: 'Morning 8:30-12:00', value: '08:30' },
+    'afternoon': { min: 699, label: 'Afternoon 1:30-17:00', value: '13:30' },
+    'sunset': { min: 599, label: 'Sunset 17:30-21:00', value: '17:30' }
   };
 
   // Set minimum date to today
@@ -52,22 +67,81 @@ const MallorcanSailing = () => {
 
   const { total: totalPrice, note: priceNote } = calculatePrice();
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const formData = {
-      date: selectedDate,
-      time: selectedTime,
-      people: currentPeople,
-      upgrade: hasUpgrade,
-      experience: 'mallorcan-sailing'
-    };
+    if (!selectedDate || !selectedTime || !customerName || !customerEmail || !customerPhone) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    // Here we would integrate with Stripe and Supabase
-    console.log('Booking data:', formData);
-    
-    // Simulate booking process
-    alert('Redirecting to secure payment...\n\nIn the real implementation, this would:\n1. Check availability in real-time\n2. Create booking in Supabase\n3. Process payment with Stripe\n4. Send confirmation email\n5. Update Google Calendar');
+    setIsSubmitting(true);
+
+    try {
+      // Create booking data for Supabase
+      const submissionData = {
+        experience_id: 'mallorcan-sailing',
+        booking_reference: `MS-${Date.now()}`, // Mallorcan Sailing prefix
+        booking_date: selectedDate,
+        time_slot: timeSlots[selectedTime as keyof typeof timeSlots].value,
+        time_period: selectedTime,
+        number_of_people: currentPeople,
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+        special_requests: specialRequests || null,
+        price_per_person: 99,
+        total_amount: totalPrice,
+        currency: 'EUR',
+        source: 'mallorcan_landing_page',
+        status: 'inquiry',
+        payment_status: 'pending',
+        premium_catering: hasUpgrade,
+        upgrade_cost: hasUpgrade ? currentPeople * 20 : 0
+      };
+
+      console.log('Submitting booking data:', submissionData);
+
+      const { error } = await supabase
+        .from('landing_page_bookings')
+        .insert([submissionData]);
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      // Reset form and show success
+      setShowSuccessModal(true);
+      setSelectedDate('');
+      setSelectedTime('');
+      setCurrentPeople(2);
+      setHasUpgrade(false);
+      setCustomerName('');
+      setCustomerEmail('');
+      setCustomerPhone('');
+      setSpecialRequests('');
+
+      toast({
+        title: "Booking Request Submitted!",
+        description: "We'll contact you within 24 hours to confirm availability and payment.",
+        variant: "default"
+      });
+
+    } catch (error) {
+      console.error('Booking submission error:', error);
+      toast({
+        title: "Booking Error",
+        description: "There was an error submitting your booking. Please try again or contact us directly.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -119,8 +193,8 @@ const MallorcanSailing = () => {
               <form onSubmit={handleBookingSubmit} className="space-y-6">
                 <div className="grid lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700">Date</label>
-                    <input
+                    <Label className="text-sm font-semibold text-gray-700">Date</Label>
+                    <Input
                       type="date"
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
@@ -130,7 +204,7 @@ const MallorcanSailing = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700">Time</label>
+                    <Label className="text-sm font-semibold text-gray-700">Time</Label>
                     <select
                       value={selectedTime}
                       onChange={(e) => setSelectedTime(e.target.value)}
@@ -144,7 +218,7 @@ const MallorcanSailing = () => {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700">People</label>
+                    <Label className="text-sm font-semibold text-gray-700">People</Label>
                     <div className="flex items-center justify-center gap-3">
                       <Button
                         type="button"
@@ -163,6 +237,55 @@ const MallorcanSailing = () => {
                       </Button>
                     </div>
                   </div>
+                </div>
+
+                {/* Customer Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Your Name</Label>
+                    <Input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="Full name"
+                      required
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Email</Label>
+                    <Input
+                      type="email"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      required
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold text-gray-700">Phone (with country code)</Label>
+                  <Input
+                    type="tel"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    placeholder="+34 123 456 789"
+                    required
+                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold text-gray-700">Special Requests (optional)</Label>
+                  <Textarea
+                    value={specialRequests}
+                    onChange={(e) => setSpecialRequests(e.target.value)}
+                    placeholder="Any special occasions, dietary requirements, or requests..."
+                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
+                    rows={3}
+                  />
                 </div>
 
                 <div className="bg-gray-50 p-5 rounded-xl text-center">
@@ -184,10 +307,19 @@ const MallorcanSailing = () => {
 
                 <Button
                   type="submit"
-                  disabled={!selectedDate || !selectedTime}
+                  disabled={!selectedDate || !selectedTime || !customerName || !customerEmail || !customerPhone || isSubmitting}
                   className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-zatara-blue to-blue-600 hover:from-zatara-blue-dark hover:to-blue-700 text-white disabled:bg-gray-400"
                 >
-                  {totalPrice > 0 ? `Book Now - €${totalPrice}` : 'Select Date & Time'}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Submitting Request...
+                    </>
+                  ) : totalPrice > 0 ? (
+                    `Request Booking - €${totalPrice}`
+                  ) : (
+                    'Fill Details to Continue'
+                  )}
                 </Button>
 
                 <div className="flex justify-around text-sm text-gray-600">
@@ -264,6 +396,11 @@ const MallorcanSailing = () => {
       </section>
 
       <Footer />
+      
+      <SuccessModal 
+        isOpen={showSuccessModal} 
+        onClose={() => setShowSuccessModal(false)} 
+      />
     </div>
   );
 };
