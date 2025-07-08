@@ -48,6 +48,8 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         
         if (!isConfigured) {
           console.warn('Stripe not configured - using simulation mode');
+        } else {
+          console.log('Stripe configured for live payments');
         }
       } catch (error) {
         console.error('Error checking Stripe configuration:', error);
@@ -57,6 +59,41 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
     checkStripeConfig();
   }, []);
+
+  const createStripeCheckout = async (stripePaymentData: StripePaymentData) => {
+    try {
+      // Get Stripe configuration
+      const config = await StripeConfig.getConfig();
+      
+      if (!config.publishableKey) {
+        throw new Error('Stripe publishable key not found');
+      }
+
+      // Create checkout session via Supabase Edge Function
+      const { data: session, error } = await supabase.functions.invoke('create-stripe-checkout', {
+        body: {
+          payment_data: stripePaymentData,
+          success_url: `${window.location.origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: window.location.href,
+          customer_email: stripePaymentData.customerEmail,
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (session?.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = session.url;
+      } else {
+        throw new Error('No checkout URL received from Stripe');
+      }
+    } catch (error) {
+      console.error('Error creating Stripe checkout session:', error);
+      throw error;
+    }
+  };
 
   const handlePayment = async () => {
     setIsProcessing(true);
@@ -142,25 +179,16 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         }
       };
 
-      let paymentSuccessful = false;
-
       if (stripeConfigured) {
-        // TODO: Implement real Stripe checkout here
-        // This would normally redirect to Stripe Checkout or use Stripe Elements
-        console.log('Stripe Payment Data:', stripePaymentData);
-        
-        // For now, simulate processing
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        paymentSuccessful = Math.random() > 0.3; // 70% success rate for testing
+        // Create real Stripe checkout session and redirect
+        await createStripeCheckout(stripePaymentData);
+        // Note: This will redirect the user to Stripe, so execution stops here
       } else {
-        // Simulation mode when Stripe is not configured
+        // Simulation mode fallback
         console.log('Simulation Mode - Stripe Payment Data:', stripePaymentData);
         await new Promise(resolve => setTimeout(resolve, 1500));
-        paymentSuccessful = true; // Always succeed in simulation mode
-      }
-
-      if (paymentSuccessful) {
-        // Update booking status to confirmed
+        
+        // Simulate successful payment
         await supabase
           .from('mallorcan_sailing_bookings')
           .update({
@@ -171,14 +199,12 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           .eq('booking_reference', bookingData.bookingReference);
 
         toast({
-          title: "Payment Successful!",
+          title: "Payment Successful! (Simulation)",
           description: `Your Mallorcan sailing experience is confirmed for ${bookingData.bookingDate}`,
           variant: "default"
         });
 
         onPaymentSuccess();
-      } else {
-        throw new Error('Payment declined');
       }
 
     } catch (error) {
@@ -195,7 +221,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
       toast({
         title: "Payment Failed",
-        description: "There was an error processing your payment. Please try again.",
+        description: error instanceof Error ? error.message : "There was an error processing your payment. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -205,19 +231,6 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Stripe Configuration Status */}
-      {!stripeConfigured && (
-        <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-          <div className="flex items-center gap-2 text-yellow-800">
-            <AlertTriangle className="h-5 w-5" />
-            <span className="font-medium">Demo Mode</span>
-          </div>
-          <p className="text-sm text-yellow-700 mt-1">
-            Stripe is not configured. This is a simulation for testing purposes.
-          </p>
-        </div>
-      )}
-
       {/* Payment Summary */}
       <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
         <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -273,12 +286,12 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           {isProcessing ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Processing Payment...
+              {stripeConfigured ? 'Redirecting to Stripe...' : 'Processing Payment...'}
             </>
           ) : (
             <>
               <CreditCard className="mr-2 h-5 w-5" />
-              {stripeConfigured ? 'Pay' : 'Simulate Payment'} {formatPrice(bookingData.totalAmount)} - Secure Checkout
+              Pay {formatPrice(bookingData.totalAmount)} - Secure Checkout
             </>
           )}
         </Button>
@@ -299,7 +312,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         {stripeConfigured ? (
           <>
             <p>Payments are processed securely through Stripe.</p>
-            <p>You will receive a confirmation email after successful payment.</p>
+            <p>You will be redirected to Stripe's secure checkout page.</p>
           </>
         ) : (
           <>
