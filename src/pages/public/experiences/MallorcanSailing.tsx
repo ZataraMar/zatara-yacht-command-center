@@ -40,15 +40,15 @@ const MallorcanSailing = () => {
   // Google Maps API key
   const GOOGLE_MAPS_API_KEY = 'AIzaSyChMkFLGf2_7hD5sScSpzChajwq1nH1IoU';
 
-  // Palma de Mallorca coordinates and sailing route
-  const mapCenter = { lat: 39.5696, lng: 2.6502 };
-  const pickupLocation = { lat: 39.5696, lng: 2.6502 };
+  // Naviera Balear marina coordinates
+  const mapCenter = { lat: 39.567, lng: 2.633 };
+  const pickupLocation = { lat: 39.567, lng: 2.633 };
   
   const mapMarkers = [
     {
       position: pickupLocation,
-      title: 'Port de Palma - Meeting Point',
-      description: 'Marina area near the Cathedral. Detailed coordinates will be sent after booking.'
+      title: 'Marina Naviera Balear - Meeting Point',
+      description: 'Professional marina in Palma de Mallorca. Detailed meeting instructions will be sent after booking.'
     }
   ];
   
@@ -652,9 +652,9 @@ const MallorcanSailing = () => {
                   <GoogleMap
                     apiKey={GOOGLE_MAPS_API_KEY}
                     center={mapCenter}
-                    zoom={14}
+                    zoom={15}
                     markers={mapMarkers}
-                    className="w-full h-64 rounded-lg border border-border"
+                    className="w-full h-40 rounded-lg border border-border"
                   />
                 </div>
                 <div className="bg-muted rounded-lg p-4">
