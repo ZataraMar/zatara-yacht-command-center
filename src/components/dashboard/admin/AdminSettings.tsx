@@ -8,12 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Settings, Eye, EyeOff, Save, RefreshCw, Shield, Mail, CreditCard, Smartphone, Cog, Building, Globe } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
-
-// Initialize Supabase client
-const supabaseUrl = 'https://eefenqehcesevuudtpti.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlZmVucWVoY2VzZXZ1dWR0cHRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg1NDY4OTQsImV4cCI6MjAzNDEyMjg5NH0.hGB2-8zTKSN3sw6uHYlGLCw_B5-7HJBOemqJ7dOGxW8';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from '@/integrations/supabase/client';
 
 interface SettingItem {
   setting_key: string;
@@ -57,19 +52,32 @@ export const AdminSettings = () => {
 
   const fetchSettings = async () => {
     try {
+      console.log('Fetching settings from Supabase...');
       const { data, error } = await supabase
         .from('admin_settings')
         .select('*')
         .order('category', { ascending: true })
         .order('setting_key', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Settings fetched:', data);
       setSettings(data || []);
+      
+      if (data && data.length > 0) {
+        toast({
+          title: "Settings Loaded",
+          description: `Loaded ${data.length} configuration settings`,
+        });
+      }
     } catch (error) {
       console.error('Error fetching settings:', error);
       toast({
         title: "Error",
-        description: "Failed to load settings",
+        description: "Failed to load settings. Check console for details.",
         variant: "destructive"
       });
     } finally {
@@ -100,7 +108,7 @@ export const AdminSettings = () => {
 
       toast({
         title: "Success",
-        description: `${settingKey} updated successfully`,
+        description: `${settingKey.replace(/_/g, ' ')} updated successfully`,
       });
     } catch (error) {
       console.error('Error updating setting:', error);
@@ -149,25 +157,14 @@ export const AdminSettings = () => {
             </div>
             
             <div className="flex gap-2">
-              {setting.setting_type === 'text' && (
-                <Textarea
-                  id={setting.setting_key}
-                  value={setting.setting_value}
-                  onChange={(e) => updateSetting(setting.setting_key, e.target.value)}
-                  placeholder={setting.description}
-                  className="min-h-[80px]"
-                />
-              )}
-              
-              {setting.setting_type !== 'text' && (
-                <Input
-                  id={setting.setting_key}
-                  type={isPassword && !isVisible ? 'password' : 'text'}
-                  value={setting.setting_value}
-                  onChange={(e) => updateSetting(setting.setting_key, e.target.value)}
-                  placeholder={setting.description}
-                />
-              )}
+              <Input
+                id={setting.setting_key}
+                type={isPassword && !isVisible ? 'password' : 'text'}
+                value={setting.setting_value}
+                onChange={(e) => updateSetting(setting.setting_key, e.target.value)}
+                placeholder={setting.description}
+                className="flex-1"
+              />
             </div>
             
             <p className="text-xs text-gray-500">{setting.description}</p>
@@ -194,20 +191,44 @@ export const AdminSettings = () => {
     );
   }
 
+  if (settings.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <Settings className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">No Settings Found</h3>
+        <p className="text-gray-500 mb-4">Settings database appears to be empty.</p>
+        <Button onClick={fetchSettings} variant="outline">
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Retry Loading
+        </Button>
+      </div>
+    );
+  }
+
+  const availableCategories = Object.keys(settingsByCategory).filter(cat => 
+    settingsByCategory[cat].length > 0 && categoryConfig[cat]
+  );
+
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Settings</h1>
         <p className="text-gray-600">Manage API keys, integrations, and system configuration</p>
+        <div className="mt-2">
+          <Badge variant="outline">
+            {settings.length} settings loaded across {availableCategories.length} categories
+          </Badge>
+        </div>
       </div>
 
-      <Tabs defaultValue={Object.keys(settingsByCategory)[0]} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-1">
-          {Object.entries(categoryConfig).map(([category, config]) => {
+      <Tabs defaultValue={availableCategories[0]} className="w-full">
+        <TabsList className="grid w-full gap-1 mb-6" style={{
+          gridTemplateColumns: `repeat(${Math.min(availableCategories.length, 4)}, 1fr)`
+        }}>
+          {availableCategories.map((category) => {
+            const config = categoryConfig[category];
             const Icon = config.icon;
             const count = settingsByCategory[category]?.length || 0;
-            
-            if (count === 0) return null;
             
             return (
               <TabsTrigger 
@@ -223,10 +244,9 @@ export const AdminSettings = () => {
           })}
         </TabsList>
 
-        {Object.entries(settingsByCategory).map(([category, categorySettings]) => {
+        {availableCategories.map((category) => {
+          const categorySettings = settingsByCategory[category];
           const config = categoryConfig[category];
-          if (!config || categorySettings.length === 0) return null;
-          
           const Icon = config.icon;
           
           return (
@@ -260,6 +280,15 @@ export const AdminSettings = () => {
           All password fields are automatically masked for security.
         </p>
       </div>
+
+      {saving && (
+        <div className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <RefreshCw className="w-4 h-4 animate-spin" />
+            Saving...
+          </div>
+        </div>
+      )}
     </div>
   );
 };
