@@ -16,39 +16,39 @@ export const DashboardMetrics: React.FC<DashboardMetricsProps> = ({ data }) => {
   const avgCharterValue = totalRevenue / totalCharters;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <Card>
-        <CardContent className="p-6">
+    <div className="grid grid-cols-3 gap-2 mb-4">
+      <Card className="min-h-0">
+        <CardContent className="p-2">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Charters</p>
-              <p className="text-2xl font-bold text-zatara-navy">{totalCharters}</p>
+            <div className="flex-1">
+              <p className="text-xs font-medium text-gray-600">Charters</p>
+              <p className="text-lg font-bold text-zatara-navy">{totalCharters}</p>
             </div>
-            <BarChart3 className="h-8 w-8 text-blue-600" />
+            <BarChart3 className="h-5 w-5 text-blue-600 flex-shrink-0" />
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="p-6">
+      <Card className="min-h-0">
+        <CardContent className="p-2">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-bold text-zatara-navy">€{totalRevenue.toLocaleString()}</p>
+            <div className="flex-1">
+              <p className="text-xs font-medium text-gray-600">Revenue</p>
+              <p className="text-lg font-bold text-zatara-navy">€{Math.ceil(totalRevenue).toLocaleString()}</p>
             </div>
-            <DollarSign className="h-8 w-8 text-green-600" />
+            <DollarSign className="h-5 w-5 text-green-600 flex-shrink-0" />
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="p-6">
+      <Card className="min-h-0">
+        <CardContent className="p-2">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Avg Charter Value</p>
-              <p className="text-2xl font-bold text-zatara-navy">€{avgCharterValue.toFixed(0)}</p>
+            <div className="flex-1">
+              <p className="text-xs font-medium text-gray-600">Avg Value</p>
+              <p className="text-lg font-bold text-zatara-navy">€{Math.ceil(avgCharterValue).toLocaleString()}</p>
             </div>
-            <Users className="h-8 w-8 text-purple-600" />
+            <Users className="h-5 w-5 text-purple-600 flex-shrink-0" />
           </div>
         </CardContent>
       </Card>
