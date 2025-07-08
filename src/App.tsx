@@ -17,6 +17,7 @@ import Sales from "./pages/public/Sales";
 import Management from "./pages/public/Management";
 import Guides from "./pages/public/Guides";
 import TestBookingIframe from "./pages/public/TestBookingIframe";
+import MallorcanSailing from "./pages/public/experiences/MallorcanSailing";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +41,7 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/" element={<Homepage />} />
             <Route path="/charter" element={<Charter />} />
+            <Route path="/charter/experiences/mallorcan-sailing" element={<MallorcanSailing />} />
             <Route path="/boat-club" element={<BoatClub />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/management" element={<Management />} />
