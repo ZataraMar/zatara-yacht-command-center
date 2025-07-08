@@ -116,7 +116,22 @@ export const FieldAnalysisDashboard = () => {
 
       if (error) throw error;
 
-      setBookingData(bookings || []);
+      // Transform booking data to match BookingData interface
+      const transformedBookings = (bookings || []).map(booking => ({
+        booking_locator: booking.locator,
+        boat_names: booking.boat,
+        client_first_name: booking.guest_first_name,
+        client_second_name: booking.guest_surname,
+        guest_email: booking.guest_email || '',
+        guest_phone: booking.guest_phone || '',
+        booking_start_date: booking.start_date,
+        total_charter_amount: booking.charter_total || 0,
+        outstanding_amount: booking.outstanding_amount || 0,
+        booking_status: booking.booking_status,
+        booking_source: booking.booking_source || ''
+      }));
+      
+      setBookingData(transformedBookings);
       
       toast({
         title: "Data Loaded",

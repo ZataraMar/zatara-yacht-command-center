@@ -2815,6 +2815,55 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_booking_access: {
+        Row: {
+          access_level: string | null
+          booking_id: number | null
+          customer_id: number | null
+          granted_at: string | null
+          granted_by: number | null
+          id: number
+        }
+        Insert: {
+          access_level?: string | null
+          booking_id?: number | null
+          customer_id?: number | null
+          granted_at?: string | null
+          granted_by?: number | null
+          id?: number
+        }
+        Update: {
+          access_level?: string | null
+          booking_id?: number | null
+          customer_id?: number | null
+          granted_at?: string | null
+          granted_by?: number | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_booking_access_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_booking_access_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_dashboard_view"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "customer_booking_access_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_communications: {
         Row: {
           attachments: string | null
@@ -3159,6 +3208,60 @@ export type Database = {
           },
         ]
       }
+      customer_interactions: {
+        Row: {
+          booking_reference: string | null
+          created_at: string | null
+          customer_id: number | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          id: number
+          interaction_source: string | null
+          interaction_summary: string | null
+          interaction_type: string
+          staff_member: string | null
+        }
+        Insert: {
+          booking_reference?: string | null
+          created_at?: string | null
+          customer_id?: number | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: number
+          interaction_source?: string | null
+          interaction_summary?: string | null
+          interaction_type: string
+          staff_member?: string | null
+        }
+        Update: {
+          booking_reference?: string | null
+          created_at?: string | null
+          customer_id?: number | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: number
+          interaction_source?: string | null
+          interaction_summary?: string | null
+          interaction_type?: string
+          staff_member?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_interactions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_dashboard_view"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "customer_interactions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_preferences: {
         Row: {
           active: boolean | null
@@ -3322,6 +3425,99 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      customer_sessions: {
+        Row: {
+          created_at: string | null
+          customer_id: number | null
+          expires_at: string
+          id: number
+          ip_address: unknown | null
+          session_token: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: number | null
+          expires_at: string
+          id?: number
+          ip_address?: unknown | null
+          session_token: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: number | null
+          expires_at?: string
+          id?: number
+          ip_address?: unknown | null
+          session_token?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_dashboard_view"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "customer_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_users: {
+        Row: {
+          account_status: string | null
+          created_at: string | null
+          email: string
+          email_verified: boolean | null
+          first_name: string | null
+          id: number
+          last_login: string | null
+          last_name: string | null
+          login_attempts: number | null
+          nationality: string | null
+          password_hash: string | null
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_status?: string | null
+          created_at?: string | null
+          email: string
+          email_verified?: boolean | null
+          first_name?: string | null
+          id?: number
+          last_login?: string | null
+          last_name?: string | null
+          login_attempts?: number | null
+          nationality?: string | null
+          password_hash?: string | null
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_status?: string | null
+          created_at?: string | null
+          email?: string
+          email_verified?: boolean | null
+          first_name?: string | null
+          id?: number
+          last_login?: string | null
+          last_name?: string | null
+          login_attempts?: number | null
+          nationality?: string | null
+          password_hash?: string | null
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       customers: {
         Row: {
@@ -3876,6 +4072,95 @@ export type Database = {
           weather_policy?: string | null
         }
         Relationships: []
+      }
+      google_calendar_config: {
+        Row: {
+          access_token: string | null
+          boat_name: string
+          calendar_id: string
+          calendar_name: string | null
+          created_at: string | null
+          id: number
+          last_sync: string | null
+          refresh_token: string | null
+          sync_enabled: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          boat_name: string
+          calendar_id: string
+          calendar_name?: string | null
+          created_at?: string | null
+          id?: number
+          last_sync?: string | null
+          refresh_token?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          boat_name?: string
+          calendar_id?: string
+          calendar_name?: string | null
+          created_at?: string | null
+          id?: number
+          last_sync?: string | null
+          refresh_token?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      google_calendar_sync: {
+        Row: {
+          booking_id: number | null
+          calendar_id: string
+          created_at: string | null
+          event_title: string | null
+          google_event_id: string | null
+          id: number
+          last_synced: string | null
+          sync_direction: string | null
+          sync_error: string | null
+          sync_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          booking_id?: number | null
+          calendar_id: string
+          created_at?: string | null
+          event_title?: string | null
+          google_event_id?: string | null
+          id?: number
+          last_synced?: string | null
+          sync_direction?: string | null
+          sync_error?: string | null
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          booking_id?: number | null
+          calendar_id?: string
+          created_at?: string | null
+          event_title?: string | null
+          google_event_id?: string | null
+          id?: number
+          last_synced?: string | null
+          sync_direction?: string | null
+          sync_error?: string | null
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_calendar_sync_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       guardiennage_schedules: {
         Row: {
@@ -8472,6 +8757,24 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_dashboard_view: {
+        Row: {
+          completed_bookings: number | null
+          customer_id: number | null
+          email: string | null
+          first_name: string | null
+          last_interaction: string | null
+          last_name: string | null
+          member_since: string | null
+          phone: string | null
+          saved_preferences: number | null
+          total_bookings: number | null
+          total_outstanding: number | null
+          total_spent: number | null
+          upcoming_bookings: number | null
+        }
+        Relationships: []
+      }
       customer_service_usage: {
         Row: {
           active_contracts: number | null
@@ -8810,11 +9113,37 @@ export type Database = {
         }
         Returns: Json
       }
+      check_real_time_availability: {
+        Args: {
+          p_boat_name: string
+          p_date: string
+          p_start_time?: string
+          p_end_time?: string
+        }
+        Returns: {
+          is_available: boolean
+          blocking_reason: string
+          conflicting_bookings: number
+          google_conflicts: number
+        }[]
+      }
       cleanup_old_data: {
         Args: { days_to_keep?: number }
         Returns: {
           table_cleaned: string
           records_removed: number
+        }[]
+      }
+      create_customer_from_booking: {
+        Args: {
+          p_email: string
+          p_password_hash: string
+          p_booking_locator: string
+        }
+        Returns: {
+          customer_id: number
+          success: boolean
+          message: string
         }[]
       }
       create_guardiennage_contract: {
@@ -8945,6 +9274,19 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_customer_portal_data: {
+        Args: { p_customer_id: number }
+        Returns: {
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          total_bookings: number
+          upcoming_bookings: number
+          completed_bookings: number
+          total_spent: number
+          recent_bookings: Json
+        }[]
       }
       get_filter_options: {
         Args: Record<PropertyKey, never>

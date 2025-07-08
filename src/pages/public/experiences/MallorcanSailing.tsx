@@ -14,6 +14,7 @@ import { TimeSlotSelector } from '@/components/calendar/TimeSlotSelector';
 import StripePayment from '@/components/payments/StripePayment';
 import { useTranslation } from '@/contexts/TranslationContext';
 import GoogleMap from '@/components/maps/GoogleMap';
+import { GoogleReviews } from '@/components/reviews/GoogleReviews';
 
 const MallorcanSailing = () => {
   const [currentPeople, setCurrentPeople] = useState(2);
@@ -732,43 +733,12 @@ const MallorcanSailing = () => {
               </div>
             </div>
 
-            {/* Reviews */}
-            <div>
-              <div className="flex items-center gap-4 mb-6">
-                <h2 className="text-2xl font-semibold text-foreground">Reviews</h2>
-                <div className="flex items-center gap-2">
-                  <div className="flex text-yellow-400">
-                    {'★'.repeat(5)}
-                  </div>
-                  <span className="text-sm text-muted-foreground">5.0 · 127 reviews</span>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  { stars: 5, text: t('reviews.sarah'), author: 'Sarah K.', location: 'United Kingdom' },
-                  { stars: 5, text: t('reviews.marcus'), author: 'Marcus L.', location: 'Germany' },
-                  { stars: 5, text: t('reviews.emma'), author: 'Emma & Tom', location: 'Netherlands' },
-                  { stars: 5, text: "Incredible day on the water! Captain was so knowledgeable about the area.", author: 'James M.', location: 'Australia' }
-                ].map((review, index) => (
-                  <div key={index} className="border border-border rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium">
-                        {review.author.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="font-medium text-foreground">{review.author}</div>
-                        <div className="text-xs text-muted-foreground">{review.location}</div>
-                      </div>
-                    </div>
-                    <div className="flex text-yellow-400 text-sm mb-2">
-                      {'★'.repeat(review.stars)}
-                    </div>
-                    <p className="text-muted-foreground text-sm">{review.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Google Reviews */}
+            <GoogleReviews 
+              placeId="ChIJXyHUWcrRQg0Ra6w1FOPMZf0" // Palma de Mallorca - replace with your actual place ID
+              maxReviews={6}
+              className="mb-8"
+            />
           </>
         )}
       </div>

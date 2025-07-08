@@ -354,9 +354,7 @@ export const CustomerPortal = () => {
                         <Calendar className="w-4 h-4 text-gray-400" />
                         <div>
                           <p className="font-medium">{formatDate(booking.start_date)}</p>
-                          {booking.start_time && (
-                            <p className="text-sm text-gray-600">{booking.start_time} - {booking.end_time}</p>
-                          )}
+                          <p className="text-sm text-gray-600">Full day charter</p>
                         </div>
                       </div>
 
