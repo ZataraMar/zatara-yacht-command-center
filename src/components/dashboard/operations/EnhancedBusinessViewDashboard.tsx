@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { EnhancedViewFilters } from './views/EnhancedViewFilters';
-import { WhatsAppGenerator } from '../communications/WhatsAppGenerator';
 import { EnhancedOperationsInput } from './views/EnhancedOperationsInput';
 import { useRealTimeBookings } from '@/hooks/useRealTimeBookings';
 import { DashboardMetrics } from './components/DashboardMetrics';
@@ -124,7 +123,6 @@ export const EnhancedBusinessViewDashboard = () => {
 
           {selectedCharter && (
             <div className="space-y-4">
-              <WhatsAppGenerator charter={selectedCharter} />
               <EnhancedOperationsInput 
                 charter={selectedCharter}
                 onSave={() => refetch()}
