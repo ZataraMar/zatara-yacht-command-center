@@ -220,10 +220,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status-filter" className="text-sm font-semibold text-zatara-navy flex items-center">
-              <Users className="h-4 w-4 mr-2" />
-              Status Filter
-            </Label>
             <select
               id="status-filter"
               value={statusFilter}
