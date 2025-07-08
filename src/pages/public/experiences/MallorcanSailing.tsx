@@ -347,53 +347,8 @@ const MallorcanSailing = () => {
               )}
 
               {/* Step 3: Guest Information */}
-              {selectedTime && (
-                <div className="border border-border rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                      3
-                    </div>
-                    <h3 className="text-xl font-semibold">Guest information</h3>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <Input
-                      type="text"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="Full name *"
-                      required
-                      className="w-full"
-                    />
-                    <Input
-                      type="email"
-                      value={customerEmail}
-                      onChange={(e) => setCustomerEmail(e.target.value)}
-                      placeholder="Email address *"
-                      required
-                      className="w-full"
-                    />
-                    <Input
-                      type="tel"
-                      value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
-                      placeholder="Phone number *"
-                      required
-                      className="w-full"
-                    />
-                    <Textarea
-                      value={specialRequests}
-                      onChange={(e) => setSpecialRequests(e.target.value)}
-                      placeholder="Special requests (optional)"
-                      className="w-full"
-                      rows={3}
-                    />
-                  </div>
-                </div>
-              )}
-
               {/* Continue Button */}
-              {selectedTime && customerName && customerEmail && customerPhone && (
+              {selectedTime && (
                 <Button
                   onClick={() => {
                     const reference = `MS-${Date.now()}`;
@@ -482,6 +437,50 @@ const MallorcanSailing = () => {
               <p className="text-muted-foreground text-sm">Complete your booking with secure payment</p>
             </div>
 
+            {/* Guest Information Form */}
+            <div className="border border-border rounded-xl p-6 mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                  1
+                </div>
+                <h3 className="text-xl font-semibold">Guest information</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <Input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder="Full name *"
+                  required
+                  className="w-full"
+                />
+                <Input
+                  type="email"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  placeholder="Email address *"
+                  required
+                  className="w-full"
+                />
+                <Input
+                  type="tel"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  placeholder="Phone number *"
+                  required
+                  className="w-full"
+                />
+                <Textarea
+                  value={specialRequests}
+                  onChange={(e) => setSpecialRequests(e.target.value)}
+                  placeholder="Special requests (optional)"
+                  className="w-full"
+                  rows={3}
+                />
+              </div>
+            </div>
+
             {/* Booking Summary for Payment */}
             <div className="bg-muted p-4 rounded-lg mb-6 space-y-2 text-sm">
               <div className="flex justify-between">
@@ -494,7 +493,7 @@ const MallorcanSailing = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Customer:</span>
-                <span className="font-medium">{customerName}</span>
+                <span className="font-medium">{customerName || 'Please enter your name above'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Booking Ref:</span>
