@@ -237,48 +237,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
 
 
         {/* Active Filters Display */}
-        {hasActiveFilters && (
-          <div className="border-t pt-4 bg-gray-50 -mx-6 px-6 py-4 rounded-b-lg">
-            <Label className="text-sm font-semibold text-zatara-navy mb-3 block">Active Filters:</Label>
-            <div className="flex flex-wrap gap-2">
-              {timeFilter !== '14' && (
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
-                  Time: {timeOptions.find(o => o.value === timeFilter)?.label}
-                </Badge>
-              )}
-              {boatFilter !== 'all' && (
-                <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
-                  Fleet: {boatOptions.find(o => o.value === boatFilter)?.label}
-                </Badge>
-              )}
-              {statusFilter !== 'active' && (
-                <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
-                  Status: {statusOptions.find(o => o.value === statusFilter)?.label}
-                </Badge>
-              )}
-              {dateRange && (
-                <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
-                  Custom Date Range
-                </Badge>
-              )}
-              {selectedSources.map(source => (
-                <Badge key={source} variant="secondary" className="bg-cyan-100 text-cyan-800 border-cyan-200">
-                  Source: {source}
-                </Badge>
-              ))}
-              {selectedStatuses.map(status => (
-                <Badge key={status} variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-200">
-                  Status: {status}
-                </Badge>
-              ))}
-              {selectedBoats.map(boat => (
-                <Badge key={boat} variant="secondary" className="bg-teal-100 text-teal-800 border-teal-200">
-                  Boat: {boat}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
