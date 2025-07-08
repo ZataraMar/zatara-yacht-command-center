@@ -2,11 +2,12 @@
 // This handles payment processing for experience bookings
 
 export const STRIPE_CONFIG = {
-  // Use test keys for development - replace with live keys for production
-  publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_test_key_here',
-  // Server-side secret key should be in environment variables
+  // Get keys from environment variables (set in .env.local)
+  publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_test_key_here',
+  secretKey: import.meta.env.VITE_STRIPE_SECRET_KEY || 'sk_test_your_secret_key_here',
   currency: 'EUR',
   country: 'ES', // Spain for Mallorca operations
+  mode: import.meta.env.VITE_NODE_ENV === 'production' ? 'live' : 'test',
 };
 
 // Stripe payment session data structure
@@ -70,5 +71,23 @@ export const formatPrice = (amount: number, currency: string = 'EUR'): string =>
     currency: currency,
   }).format(amount);
 };
+
+// Check if Stripe is properly configured
+export const isStripeConfigured = (): boolean => {
+  const hasPublishableKey = STRIPE_CONFIG.publishableKey && 
+    !STRIPE_CONFIG.publishableKey.includes('your_test_key_here');
+  const hasSecretKey = STRIPE_CONFIG.secretKey && 
+    !STRIPE_CONFIG.secretKey.includes('your_secret_key_here');
+  
+  return hasPublishableKey && hasSecretKey;
+};
+
+// Get current environment info
+export const getStripeEnvironment = () => ({
+  mode: STRIPE_CONFIG.mode,
+  isConfigured: isStripeConfigured(),
+  publishableKeyExists: !!STRIPE_CONFIG.publishableKey,
+  environment: import.meta.env.VITE_NODE_ENV || 'development'
+});
 
 export default STRIPE_CONFIG;
