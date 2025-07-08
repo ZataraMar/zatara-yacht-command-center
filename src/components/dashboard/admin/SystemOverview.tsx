@@ -31,7 +31,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface SystemMetrics {
   totalBookings: number;
+  totalRevenue: number;
+  confirmedBookings: number;
   upcomingBookings: number;
+  totalCustomers: number;
   upcomingRevenue: number;
   outstandingPayments: number;
   activeAiAgents: number;
@@ -59,20 +62,70 @@ const SystemOverview: React.FC = () => {
     try {
       setRefreshing(true);
       
-      // Fetch business metrics
-      const { data: businessMetrics, error: businessError } = await supabase.rpc('get_business_metrics');
-      if (businessError) throw businessError;
+      // Fetch business metrics from available tables
+      const { data: bookings, error: bookingsError } = await supabase
+        .from('bookings')
+        .select('charter_total, paid_amount, outstanding_amount, booking_status, start_date, boat')
+        .gte('start_date', new Date(new Date().getFullYear(), 0, 1).toISOString());
+      
+      if (bookingsError) throw bookingsError;
 
-      // Fetch system status
-      const { data: systemStatus, error: systemError } = await supabase.rpc('get_system_status');
-      if (systemError) throw systemError;
+      // Calculate business metrics
+      const totalBookings = bookings?.length || 0;
+      const totalRevenue = bookings?.reduce((sum, b) => sum + (b.charter_total || 0), 0) || 0;
+      const paidAmount = bookings?.reduce((sum, b) => sum + (b.paid_amount || 0), 0) || 0;
+      const outstandingAmount = bookings?.reduce((sum, b) => sum + (b.outstanding_amount || 0), 0) || 0;
+      const upcomingBookings = bookings?.filter(b => new Date(b.start_date) > new Date()).length || 0;
+      const confirmedBookings = bookings?.filter(b => b.booking_status?.toLowerCase().includes('confirmed')).length || 0;
 
-      // Fetch fleet performance
-      const { data: fleetPerformance, error: fleetError } = await supabase.rpc('get_fleet_performance_2025');
-      if (fleetError) throw fleetError;
+      // Fetch AI agents count
+      const { count: aiAgentsCount } = await supabase
+        .from('ai_agents')
+        .select('*', { count: 'exact' })
+        .eq('is_active', true);
 
-      setMetrics(businessMetrics[0] || {});
-      setFleetData(fleetPerformance || []);
+      // Fetch chat sessions count
+      const { count: chatSessionsCount } = await supabase
+        .from('ai_chat_sessions')
+        .select('*', { count: 'exact' })
+        .eq('is_active', true);
+
+      // Calculate fleet performance
+      const fleetPerformanceMap = new Map<string, { bookingCount: number; totalRevenue: number }>();
+      bookings?.forEach(booking => {
+        if (booking.boat) {
+          const existing = fleetPerformanceMap.get(booking.boat) || { bookingCount: 0, totalRevenue: 0 };
+          fleetPerformanceMap.set(booking.boat, {
+            bookingCount: existing.bookingCount + 1,
+            totalRevenue: existing.totalRevenue + (booking.charter_total || 0)
+          });
+        }
+      });
+
+      const fleetPerformance: FleetPerformance[] = Array.from(fleetPerformanceMap.entries()).map(([boat, data]) => ({
+        boat,
+        bookingCount: data.bookingCount,
+        totalRevenue: data.totalRevenue,
+        avgBookingValue: data.bookingCount > 0 ? data.totalRevenue / data.bookingCount : 0
+      }));
+
+      // Set the calculated metrics
+      setMetrics({
+        totalBookings,
+        totalRevenue,
+        confirmedBookings,
+        upcomingBookings,
+        totalCustomers: 0, // Could be calculated from customers table if needed
+        upcomingRevenue: bookings?.filter(b => new Date(b.start_date) > new Date()).reduce((sum, b) => sum + (b.charter_total || 0), 0) || 0,
+        outstandingPayments: outstandingAmount,
+        activeAiAgents: aiAgentsCount || 0,
+        activeChatSessions: chatSessionsCount || 0,
+        activeWorkflows: 0, // Could be calculated from automated_triggers if needed
+        whatsappMessagesSent: 0, // Could be calculated from message logs if available
+        signedContracts: bookings?.filter(b => b.booking_status?.toLowerCase().includes('confirmed')).length || 0
+      });
+      
+      setFleetData(fleetPerformance);
       
     } catch (err: any) {
       console.error('Error fetching system metrics:', err);
