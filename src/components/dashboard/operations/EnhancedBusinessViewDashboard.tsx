@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -112,7 +111,7 @@ export const EnhancedBusinessViewDashboard = () => {
       <DashboardMetrics data={transformedData} />
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        <div className="xl:col-span-3">
+        <div className="xl:col-span-3 space-y-6">
           <ViewRenderer
             viewMode={viewMode}
             transformedData={transformedData}
@@ -122,47 +121,45 @@ export const EnhancedBusinessViewDashboard = () => {
             error={error}
             onCharterSelect={setSelectedCharter}
           />
-        </div>
-        
-        <div className="space-y-4">
+
           {selectedCharter && (
-            <>
+            <div className="space-y-4">
               <WhatsAppGenerator charter={selectedCharter} />
               <EnhancedOperationsInput 
                 charter={selectedCharter}
                 onSave={() => refetch()}
               />
-            </>
+            </div>
           )}
+        </div>
+        
+        <div className="space-y-4">
+          <BookingStats 
+            data={transformedData} 
+            timeFilter={timeFilter}
+            onDrillDown={handleDataDrillDown}
+          />
+          
+          <FilterPresets 
+            onApplyPreset={handleApplyPreset}
+            currentFilters={{ timeFilter, boatFilter, statusFilter, viewMode }}
+            bookingData={transformedData}
+          />
+          
+          <QuickActions 
+            {...handleQuickActions} 
+            bookingData={transformedData}
+          />
           
           {!selectedCharter && (
-            <>
-              <BookingStats 
-                data={transformedData} 
-                timeFilter={timeFilter}
-                onDrillDown={handleDataDrillDown}
-              />
-              
-              <FilterPresets 
-                onApplyPreset={handleApplyPreset}
-                currentFilters={{ timeFilter, boatFilter, statusFilter, viewMode }}
-                bookingData={transformedData}
-              />
-              
-              <QuickActions 
-                {...handleQuickActions} 
-                bookingData={transformedData}
-              />
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm">Charter Tools</CardTitle>
-                  <CardDescription className="text-xs">
-                    Select a charter to access management tools
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Charter Tools</CardTitle>
+                <CardDescription className="text-xs">
+                  Select a charter to access management tools
+                </CardDescription>
+              </CardHeader>
+            </Card>
           )}
         </div>
       </div>
