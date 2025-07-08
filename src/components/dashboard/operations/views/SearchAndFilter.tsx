@@ -116,32 +116,6 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
         </div>
       </div>
 
-      {/* Active Filters Display */}
-      {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t">
-          <span className="text-sm font-medium text-gray-600">Active filters:</span>
-          {searchTerm && (
-            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-              Search: {searchTerm}
-            </Badge>
-          )}
-          {statusFilter && statusFilter !== 'all' && (
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              Status: {statusOptions.find(o => o.value === statusFilter)?.label}
-            </Badge>
-          )}
-          {boatFilter && boatFilter !== 'all' && (
-            <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-              Boat: {boatOptions.find(o => o.value === boatFilter)?.label}
-            </Badge>
-          )}
-          {sourceFilter && sourceFilter !== 'all' && (
-            <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-              Source: {sourceOptions.find(o => o.value === sourceFilter)?.label}
-            </Badge>
-          )}
-        </div>
-      )}
     </div>
   );
 };
