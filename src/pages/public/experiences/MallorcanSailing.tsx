@@ -198,7 +198,7 @@ const MallorcanSailing = () => {
               {'★'.repeat(5)}
             </div>
             <a 
-              href="https://g.page/r/YOUR_GOOGLE_BUSINESS_URL/review" 
+              href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition-colors underline"
@@ -414,7 +414,7 @@ const MallorcanSailing = () => {
                       {'★'.repeat(5)}
                     </div>
                     <a 
-                      href="https://g.page/r/YOUR_GOOGLE_BUSINESS_URL/review" 
+                      href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-sm text-muted-foreground hover:text-primary transition-colors underline"
