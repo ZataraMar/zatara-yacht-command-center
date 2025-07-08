@@ -223,7 +223,7 @@ export const AdminSettings = () => {
       
       toast({
         title: "Field Mapping Complete",
-        description: `Processed ${data.processed} bookings, ${data.errors} errors`,
+        description: `Processed ${data.processed} bookings using ${data.mappings_used} field mappings`,
         variant: data.errors > 0 ? "destructive" : "default"
       });
 
@@ -621,7 +621,10 @@ export const AdminSettings = () => {
                 </Button>
                 <Button 
                   variant="outline" 
-                  onClick={loadAndronauticData}
+                  onClick={() => {
+                    loadAndronauticData();
+                    loadFieldMappings();
+                  }}
                   disabled={isProcessing || isAnalyzing}
                   size="sm"
                 >
@@ -652,6 +655,15 @@ export const AdminSettings = () => {
                   <div className="text-2xl font-bold text-purple-600">{fieldMappings.length}</div>
                   <div className="text-sm text-purple-600">Field Mappings</div>
                 </div>
+              </div>
+
+              {/* Sample Raw Data Toggle */}
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={showRawData}
+                  onCheckedChange={setShowRawData}
+                />
+                <Label>Show Sample Raw Data</Label>
               </div>
             </CardContent>
           </Card>
@@ -795,13 +807,6 @@ export const AdminSettings = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Sample Raw Data</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={showRawData}
-                    onCheckedChange={setShowRawData}
-                  />
-                  <Label>Show Sample Raw Data</Label>
-                </div>
               </CardHeader>
               <CardContent>
                 <pre className="text-xs bg-gray-50 p-3 rounded border overflow-x-auto max-h-60">
