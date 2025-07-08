@@ -26,8 +26,11 @@ serve(async (req) => {
 
     // Initialize Stripe
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    console.log("[STRIPE-CHECKOUT] Stripe key check:", stripeKey ? 'Found' : 'Missing');
+    
     if (!stripeKey) {
-      throw new Error("Stripe secret key not configured");
+      console.error("[STRIPE-CHECKOUT] STRIPE_SECRET_KEY environment variable not found");
+      throw new Error("Stripe secret key not configured. Please set STRIPE_SECRET_KEY in edge function secrets.");
     }
 
     const stripe = new Stripe(stripeKey, {
