@@ -17,6 +17,7 @@ import Sales from "./pages/public/Sales";
 import Management from "./pages/public/Management";
 import Guides from "./pages/public/Guides";
 import TestBookingIframe from "./pages/public/TestBookingIframe";
+import MallorcanExperience from "./pages/public/MallorcanExperience";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +48,9 @@ const App = () => (
             
             {/* Hidden test page - obscure URL */}
             <Route path="/test-booking-iframe-zatara-75212" element={<TestBookingIframe />} />
+            
+            {/* Landing page template */}
+            <Route path="/charter/experiences/Mallorcan-experience" element={<MallorcanExperience />} />
             
             {/* Authentication Route */}
             <Route path="/auth" element={<Auth />} />
