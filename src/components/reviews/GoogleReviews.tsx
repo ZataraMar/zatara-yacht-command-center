@@ -203,37 +203,35 @@ export const GoogleReviews: React.FC<GoogleReviewsProps> = ({
       </div>
 
       {/* Reviews Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {reviews.map((review, index) => (
           <Card key={index} className="p-4">
-            <div className="flex items-start gap-3 mb-3">
+            <div className="flex items-start gap-3">
               {review.profile_photo_url ? (
                 <img 
                   src={review.profile_photo_url} 
                   alt={review.author_name}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                 />
               ) : (
-                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium text-sm flex-shrink-0">
                   {review.author_name.charAt(0)}
                 </div>
               )}
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-medium text-foreground">{review.author_name}</h4>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <h4 className="font-medium text-foreground text-sm truncate">{review.author_name}</h4>
+                  <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">{review.relative_time_description}</span>
+                </div>
+                <div className="flex items-center gap-2 mb-2">
                   <div className="flex text-yellow-400">
                     {renderStars(review.rating)}
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground">{review.relative_time_description}</div>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {review.text}
+                </p>
               </div>
-            </div>
-            
-            <div className="relative">
-              <Quote className="absolute top-0 left-0 w-4 h-4 text-muted-foreground/50" />
-              <p className="text-muted-foreground text-sm pl-6 leading-relaxed">
-                {review.text}
-              </p>
             </div>
           </Card>
         ))}
