@@ -39,20 +39,94 @@ export const GoogleReviews: React.FC<GoogleReviewsProps> = ({
     try {
       setLoading(true);
       
-      // Call the Supabase edge function for Google Places API
-      const response = await fetch(`https://eefenqehcesevuudtpti.supabase.co/functions/v1/google-reviews?placeId=${placeId}`);
+      // Temporarily show mock data to test the UI
+      const mockData = {
+        result: {
+          rating: 4.8,
+          user_ratings_total: 127,
+          reviews: [
+            {
+              author_name: "Maria Rodriguez",
+              author_url: "https://www.google.com/maps/contrib/118234567890123456789",
+              language: "en",
+              profile_photo_url: "https://lh3.googleusercontent.com/a-/ALV-UjX1234567890",
+              rating: 5,
+              relative_time_description: "2 weeks ago",
+              text: "Absolutely incredible sailing experience! Captain was knowledgeable and the traditional Llaut boat was perfect for exploring the coastline. The tapas were delicious and authentic.",
+              time: 1734567890
+            },
+            {
+              author_name: "James Thompson",
+              author_url: "https://www.google.com/maps/contrib/987654321098765432",
+              language: "en", 
+              profile_photo_url: "https://lh3.googleusercontent.com/a-/ALV-UjY9876543210",
+              rating: 5,
+              relative_time_description: "1 month ago",
+              text: "Perfect day out on the water! Swimming in crystal clear coves and learning about Mallorcan maritime traditions. Highly recommend for anyone visiting Palma.",
+              time: 1731889290
+            },
+            {
+              author_name: "Sophie Dubois",
+              author_url: "https://www.google.com/maps/contrib/456789012345678901",
+              language: "en",
+              profile_photo_url: "https://lh3.googleusercontent.com/a-/ALV-UjZ4567890123",
+              rating: 5,
+              relative_time_description: "3 weeks ago", 
+              text: "Une expérience magnifique! The crew was professional and the boat beautiful. We saw dolphins and enjoyed the best paella at sea!",
+              time: 1733864690
+            },
+            {
+              author_name: "Michael Chen",
+              author_url: "https://www.google.com/maps/contrib/234567890123456789",
+              language: "en",
+              profile_photo_url: null,
+              rating: 4,
+              relative_time_description: "1 week ago",
+              text: "Great authentic sailing experience. The traditional fishing boat and local knowledge made this special. Weather was perfect and crew very friendly.",
+              time: 1734912690
+            },
+            {
+              author_name: "Emma Williams",
+              author_url: "https://www.google.com/maps/contrib/345678901234567890", 
+              language: "en",
+              profile_photo_url: "https://lh3.googleusercontent.com/a-/ALV-UjW3456789012",
+              rating: 5,
+              relative_time_description: "2 months ago",
+              text: "Unforgettable experience! The captain shared amazing stories about Mallorca's history. Swimming stops were in the most beautiful hidden coves.",
+              time: 1729210890
+            },
+            {
+              author_name: "Roberto Silva",
+              author_url: "https://www.google.com/maps/contrib/567890123456789012",
+              language: "en",
+              profile_photo_url: "https://lh3.googleusercontent.com/a-/ALV-UjV5678901234", 
+              rating: 5,
+              relative_time_description: "5 days ago",
+              text: "Spectacular day! Traditional Llaut boat, excellent tapas, and the most professional crew. This is how you experience authentic Mallorca.",
+              time: 1735344690
+            }
+          ]
+        }
+      };
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch reviews');
-      }
+      setReviews(mockData.result.reviews?.slice(0, maxReviews) || []);
+      setAverageRating(mockData.result.rating || 0);
+      setTotalReviews(mockData.result.user_ratings_total || 0);
       
-      const data = await response.json();
-      
-      if (data.result) {
-        setReviews(data.result.reviews?.slice(0, maxReviews) || []);
-        setAverageRating(data.result.rating || 0);
-        setTotalReviews(data.result.user_ratings_total || 0);
-      }
+      // Call the Supabase edge function for Google Places API (currently disabled for testing)
+      // const response = await fetch(`https://eefenqehcesevuudtpti.supabase.co/functions/v1/google-reviews?placeId=${placeId}`);
+      // 
+      // if (!response.ok) {
+      //   throw new Error('Failed to fetch reviews');
+      // }
+      // 
+      // const data = await response.json();
+      // 
+      // if (data.result) {
+      //   setReviews(data.result.reviews?.slice(0, maxReviews) || []);
+      //   setAverageRating(data.result.rating || 0);
+      //   setTotalReviews(data.result.user_ratings_total || 0);
+      // }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error fetching Google reviews:', err);
