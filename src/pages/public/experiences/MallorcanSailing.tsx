@@ -164,6 +164,41 @@ const MallorcanSailing = () => {
       
       {/* Main Content Area - Airbnb Style Layout */}
       <div className="max-w-7xl mx-auto px-6 py-8">
+        
+        {/* Header Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
+            {t('hero.title')}
+          </h1>
+          <p className="text-lg text-muted-foreground mb-6">
+            {t('hero.subtitle')}
+          </p>
+          
+          <div className="flex flex-wrap gap-4 text-sm mb-6">
+            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+              <span>Traditional Llaut Boat</span>
+            </div>
+            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+              <span>Authentic Tapas</span>
+            </div>
+            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+              <span>Swimming & Snorkeling</span>
+            </div>
+            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+              <span>Local Skipper</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex text-yellow-400">
+              {'★'.repeat(5)}
+            </div>
+            <span className="text-muted-foreground">5.0 (127 reviews)</span>
+            <span className="text-muted-foreground">•</span>
+            <span className="text-muted-foreground">Palma, Mallorca</span>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Left Side - Images and Content */}
@@ -216,34 +251,43 @@ const MallorcanSailing = () => {
                 Show all photos
               </Button>
             </div>
-            
-            {/* Content Sections */}
-            
-            {/* Header */}
-            <div className="border-b border-border pb-6">
-              <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
-                {t('hero.title')}
-              </h1>
-              <p className="text-lg text-muted-foreground mb-6">
-                {t('hero.subtitle')}
-              </p>
-              
-              <div className="flex flex-wrap gap-4 text-sm">
-                <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
-                  <span>Traditional Llaut Boat</span>
-                </div>
-                <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
-                  <span>Authentic Tapas</span>
-                </div>
-                <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
-                  <span>Swimming & Snorkeling</span>
-                </div>
-                <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
-                  <span>Local Skipper</span>
-                </div>
-              </div>
-            </div>
 
+            {/* Quick Info Icons - Airbnb Style */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all">
+                <svg className="w-6 h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm font-medium">3.5 hours</span>
+                <span className="text-xs text-muted-foreground">Duration</span>
+              </button>
+              
+              <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all">
+                <svg className="w-6 h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="text-sm font-medium">Port Palma</span>
+                <span className="text-xs text-muted-foreground">Meeting point</span>
+              </button>
+              
+              <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all">
+                <svg className="w-6 h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
+                </svg>
+                <span className="text-sm font-medium">12 max</span>
+                <span className="text-xs text-muted-foreground">Group size</span>
+              </button>
+              
+              <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all">
+                <svg className="w-6 h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm font-medium">Free cancel</span>
+                <span className="text-xs text-muted-foreground">24h notice</span>
+              </button>
+            </div>
+            
             {/* What You'll Do */}
             <div className="border-b border-border pb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-4">What you'll do</h2>
@@ -425,28 +469,54 @@ const MallorcanSailing = () => {
 
                     <div className="space-y-6">
                       
-                      {/* Date & Time Selection - Compact */}
+                      {/* Date & Time Selection - Streamlined */}
                       <div className="border border-border rounded-xl p-4">
-                        <Label className="text-base font-medium text-foreground mb-3 block">Date & time</Label>
+                        <Label className="text-base font-medium text-foreground mb-3 block">Check availability</Label>
                         
-                        {/* Compact Calendar */}
-                        <div className="mb-4">
-                          <AirbnbStyleCalendar
-                            selectedDate={selectedDate}
-                            onDateSelect={handleDateSelect}
-                            className="border-0 shadow-none w-full scale-90"
-                          />
+                        {/* Simple Date Input */}
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div>
+                            <label className="text-xs text-muted-foreground mb-1 block">Date</label>
+                            <Input
+                              type="date"
+                              min={today}
+                              value={selectedDateString}
+                              onChange={(e) => {
+                                setSelectedDateString(e.target.value);
+                                setSelectedDate(new Date(e.target.value));
+                              }}
+                              className="w-full"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs text-muted-foreground mb-1 block">Time</label>
+                            <select
+                              value={selectedTime}
+                              onChange={(e) => {
+                                setSelectedTime(e.target.value);
+                                handlePriceUpdate(timeSlots[e.target.value as keyof typeof timeSlots]?.min || 0);
+                              }}
+                              className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            >
+                              <option value="">Select time</option>
+                              <option value="morning">Morning (8:30-12:00) - €499</option>
+                              <option value="afternoon">Afternoon (1:30-17:00) - €699</option>
+                              <option value="sunset">Sunset (17:30-21:00) - €599</option>
+                            </select>
+                          </div>
                         </div>
 
-                        {/* Time Selection */}
-                        <TimeSlotSelector
-                          selectedDate={selectedDate}
-                          selectedTime={selectedTime}
-                          onTimeSelect={handleTimeSelect}
-                          onPriceUpdate={handlePriceUpdate}
-                          currentPeople={currentPeople}
-                          className="border-0 shadow-none"
-                        />
+                        {/* Quick availability check */}
+                        {selectedDate && selectedTime && (
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <div className="flex items-center gap-2 text-green-700">
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                              <span className="text-sm font-medium">Available!</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Guests Selection - Enhanced */}
