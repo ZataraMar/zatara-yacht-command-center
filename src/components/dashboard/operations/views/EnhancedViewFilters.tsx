@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { RefreshCw, X, Filter, Calendar as CalendarIcon, Ship, Users, MapPin } from 'lucide-react';
+import { RefreshCw, X, Filter, Calendar as CalendarIcon, Ship, Users, MapPin, Plus, Minus } from 'lucide-react';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
@@ -35,6 +35,10 @@ interface EnhancedViewFiltersProps {
   setSelectedBoats?: (boats: string[]) => void;
   selectedDate?: Date;
   setSelectedDate?: (date: Date | undefined) => void;
+  daysForward?: number;
+  setDaysForward?: (days: number) => void;
+  daysBackward?: number;
+  setDaysBackward?: (days: number) => void;
 }
 
 export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
@@ -59,7 +63,11 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
   selectedBoats = [],
   setSelectedBoats,
   selectedDate = new Date(),
-  setSelectedDate
+  setSelectedDate,
+  daysForward = 0,
+  setDaysForward,
+  daysBackward = 0,
+  setDaysBackward
 }) => {
   const timeOptions = [
     { label: 'Today', value: '0', icon: Calendar },
@@ -123,6 +131,8 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
     setSelectedStatuses?.([]);
     setSelectedBoats?.([]);
     setSelectedDate?.(new Date());
+    setDaysForward?.(0);
+    setDaysBackward?.(0);
   };
 
   const hasActiveFilters = 
@@ -133,6 +143,8 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
     selectedSources.length > 0 ||
     selectedStatuses.length > 0 ||
     selectedBoats.length > 0 ||
+    daysForward > 0 ||
+    daysBackward > 0 ||
     (selectedDate && selectedDate.toDateString() !== new Date().toDateString());
 
   return (
@@ -204,19 +216,47 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
             </select>
           </div>
 
-          <div>
-            <select
-              id="time-filter"
-              value={timeFilter}
-              onChange={(e) => setTimeFilter(e.target.value)}
-              className="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
+          <div className="flex items-center space-x-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDaysBackward?.(Math.max(0, daysBackward - 1))}
+              className="p-1 h-8 w-8"
+              title="Decrease days backward"
             >
-              {timeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <Minus className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDaysBackward?.(daysBackward + 1)}
+              className="p-1 h-8 w-8"
+              title="Increase days backward"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+            <div className="text-center min-w-[60px] text-sm">
+              <div className="text-xs text-gray-500">-{daysBackward} | +{daysForward}</div>
+              <div className="text-xs text-gray-400">days</div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDaysForward?.(Math.max(0, daysForward - 1))}
+              className="p-1 h-8 w-8"
+              title="Decrease days forward"
+            >
+              <Minus className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDaysForward?.(daysForward + 1)}
+              className="p-1 h-8 w-8"
+              title="Increase days forward"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
           </div>
 
           <div>

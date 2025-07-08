@@ -25,6 +25,8 @@ export const EnhancedBusinessViewDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState('operations');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [daysForward, setDaysForward] = useState<number>(0);
+  const [daysBackward, setDaysBackward] = useState<number>(0);
   const [selectedCharter, setSelectedCharter] = useState<any>(null);
   const [drillDownData, setDrillDownData] = useState<{
     dataSource: string;
@@ -39,7 +41,9 @@ export const EnhancedBusinessViewDashboard = () => {
     timeFilter, 
     boatFilter, 
     statusFilter,
-    selectedDate
+    selectedDate,
+    daysForward,
+    daysBackward
   );
 
   // Transform bookings to different view formats
@@ -99,6 +103,10 @@ export const EnhancedBusinessViewDashboard = () => {
         resultCount={transformedData.length}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        daysForward={daysForward}
+        setDaysForward={setDaysForward}
+        daysBackward={daysBackward}
+        setDaysBackward={setDaysBackward}
       />
 
       <DashboardMetrics data={transformedData} />
