@@ -161,11 +161,6 @@ export const EnhancedBusinessViewDashboard = () => {
                     Select a charter to access management tools
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-xs text-gray-500 text-center py-4">
-                    Click on any charter to get started with WhatsApp generator and operations input
-                  </p>
-                </CardContent>
               </Card>
             </>
           )}
