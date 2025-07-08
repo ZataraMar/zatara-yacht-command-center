@@ -167,33 +167,33 @@ const MallorcanSailing = () => {
       <Navigation />
       
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         
         {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-semibold text-foreground mb-3">
             {t('hero.title')}
           </h1>
-          <p className="text-lg text-muted-foreground mb-6">
+          <p className="text-base text-muted-foreground mb-4">
             {t('hero.subtitle')}
           </p>
           
-          <div className="flex flex-wrap gap-4 text-sm mb-6">
-            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+          <div className="flex flex-wrap gap-2 text-xs mb-4">
+            <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-full">
               <span>Traditional Llaut Boat</span>
             </div>
-            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+            <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-full">
               <span>Authentic Tapas</span>
             </div>
-            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+            <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-full">
               <span>Swimming & Snorkeling</span>
             </div>
-            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
+            <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-full">
               <span>Local Skipper</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-3 mb-4">
             <div className="flex text-yellow-400">
               {'★'.repeat(5)}
             </div>
@@ -213,11 +213,11 @@ const MallorcanSailing = () => {
 
         {/* Date Selection Section - Top Priority */}
         {!selectedDate && !showPayment && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-semibold text-foreground mb-6">Choose your date</h2>
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-foreground mb-4">Choose your date</h2>
             
             {/* Next 4 Available Dates */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
               {getNext4Days().map((dateInfo, index) => (
                 <button
                   key={index}
@@ -225,9 +225,9 @@ const MallorcanSailing = () => {
                     setSelectedDate(dateInfo.date);
                     setSelectedDateString(dateInfo.date.toISOString().split('T')[0]);
                   }}
-                  className="p-4 border border-border rounded-xl hover:border-primary hover:bg-primary/5 transition-all text-left"
+                  className="p-3 border border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-left"
                 >
-                  <div className="text-sm text-muted-foreground">{dateInfo.dayName}</div>
+                  <div className="text-xs text-muted-foreground">{dateInfo.dayName}</div>
                   <div className="font-medium text-foreground">{dateInfo.dayMonth}</div>
                   <div className="text-xs text-muted-foreground mt-1">From €499</div>
                 </button>
@@ -237,6 +237,7 @@ const MallorcanSailing = () => {
             {/* Show All Dates Button */}
             <Button 
               variant="outline" 
+              size="sm"
               onClick={() => setShowCalendarModal(true)}
               className="w-full md:w-auto"
             >
@@ -247,10 +248,10 @@ const MallorcanSailing = () => {
 
         {/* Booking Confirmation Layout - After Date Selected */}
         {selectedDate && !showPayment && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Left Side - Booking Steps */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4">
               
               {/* Back to Dates */}
               <Button
@@ -268,13 +269,13 @@ const MallorcanSailing = () => {
               </Button>
 
               {/* Step 1: Choose Time */}
-              <div className="border border-border rounded-xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+              <div className="border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
                     1
                   </div>
-                  <h3 className="text-xl font-semibold">Choose your time</h3>
-                  <div className="text-sm text-muted-foreground">
+                  <h3 className="text-lg font-semibold">Choose your time</h3>
+                  <div className="text-xs text-muted-foreground">
                     {selectedDate?.toLocaleDateString('en-US', { 
                       weekday: 'long', 
                       day: 'numeric', 
@@ -283,7 +284,7 @@ const MallorcanSailing = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                   {Object.entries(timeSlots).map(([key, slot]) => (
                     <button
                       key={key}
@@ -291,14 +292,14 @@ const MallorcanSailing = () => {
                         setSelectedTime(key);
                         handlePriceUpdate(slot.min);
                       }}
-                      className={`p-4 border rounded-lg text-left transition-all ${
+                      className={`p-3 border rounded-lg text-left transition-all ${
                         selectedTime === key 
                           ? 'border-primary bg-primary/5' 
                           : 'border-border hover:border-primary'
                       }`}
                     >
-                      <div className="font-medium">{slot.label}</div>
-                      <div className="text-sm text-muted-foreground">€{slot.min}</div>
+                      <div className="font-medium text-sm">{slot.label}</div>
+                      <div className="text-xs text-muted-foreground">€{slot.min}</div>
                     </button>
                   ))}
                 </div>
@@ -306,37 +307,37 @@ const MallorcanSailing = () => {
 
               {/* Step 2: Choose Guests */}
               {selectedTime && (
-                <div className="border border-border rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                <div className="border border-border rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
                       2
                     </div>
-                    <h3 className="text-xl font-semibold">Number of guests</h3>
+                    <h3 className="text-lg font-semibold">Number of guests</h3>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-medium">Guests</div>
-                      <div className="text-sm text-muted-foreground">Ages 2 and up, max 12 guests</div>
+                      <div className="font-medium text-sm">Guests</div>
+                      <div className="text-xs text-muted-foreground">Ages 2 and up, max 12 guests</div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => changePeople(-1)}
-                        className="w-10 h-10 rounded-full p-0 border-2"
+                        className="w-8 h-8 rounded-full p-0"
                         disabled={currentPeople <= 1}
                       >
                         -
                       </Button>
-                      <span className="font-semibold text-lg min-w-8 text-center">{currentPeople}</span>
+                      <span className="font-semibold text-base min-w-6 text-center">{currentPeople}</span>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => changePeople(1)}
-                        className="w-10 h-10 rounded-full p-0 border-2"
+                        className="w-8 h-8 rounded-full p-0"
                         disabled={currentPeople >= 12}
                       >
                         +
@@ -346,7 +347,6 @@ const MallorcanSailing = () => {
                 </div>
               )}
 
-              {/* Step 3: Guest Information */}
               {/* Continue Button */}
               {selectedTime && (
                 <Button
@@ -355,7 +355,7 @@ const MallorcanSailing = () => {
                     setBookingReference(reference);
                     setShowPayment(true);
                   }}
-                  className="w-full h-12 text-base font-medium"
+                  className="w-full h-10 text-sm font-medium"
                 >
                   Continue to payment
                 </Button>
@@ -364,31 +364,31 @@ const MallorcanSailing = () => {
 
             {/* Right Side - Booking Summary */}
             <div className="lg:col-span-1">
-              <div className="sticky top-6 border border-border rounded-xl p-6 bg-card">
-                <div className="flex gap-4 mb-6">
+              <div className="sticky top-6 border border-border rounded-lg p-4 bg-card">
+                <div className="flex gap-3 mb-4">
                   <img 
                     src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=100&h=80&fit=crop" 
                     alt="Mallorcan sailing" 
-                    className="w-20 h-16 object-cover rounded-lg"
+                    className="w-16 h-12 object-cover rounded-lg"
                   />
                   <div>
-                    <h4 className="font-medium text-foreground">Mallorcan Sailing Experience</h4>
-                    <div className="flex text-yellow-400 text-sm">
+                    <h4 className="font-medium text-foreground text-sm">Mallorcan Sailing Experience</h4>
+                    <div className="flex text-yellow-400 text-xs">
                       {'★'.repeat(5)}
                     </div>
                     <a 
                       href="https://maps.app.goo.gl/GLPe8ViYEppZbe299" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors underline"
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors underline"
                     >
-                      View Google reviews
+                      View reviews
                     </a>
                   </div>
                 </div>
 
-                <div className="border-b border-border pb-4 mb-4">
-                  <div className="text-sm font-medium text-foreground mb-2">Free cancellation</div>
+                <div className="border-b border-border pb-3 mb-3">
+                  <div className="text-xs font-medium text-foreground mb-1">Free cancellation</div>
                   <div className="text-xs text-muted-foreground">
                     Cancel before 24 hours for a full refund
                   </div>
@@ -396,8 +396,8 @@ const MallorcanSailing = () => {
 
 
                 {totalPrice > 0 && (
-                  <div className="border-t border-border pt-4 mt-4">
-                    <div className="space-y-2 text-sm">
+                  <div className="border-t border-border pt-3 mt-3">
+                    <div className="space-y-1 text-xs">
                       <div className="flex justify-between">
                         <span>€{currentPrice} x {currentPeople} guests</span>
                         <span>€{currentPrice * currentPeople}</span>
@@ -408,7 +408,7 @@ const MallorcanSailing = () => {
                           <span>€{currentPeople * 20}</span>
                         </div>
                       )}
-                      <div className="border-t border-border pt-2 flex justify-between font-medium">
+                      <div className="border-t border-border pt-1 flex justify-between font-medium text-sm">
                         <span>Total</span>
                         <span>€{totalPrice}</span>
                       </div>
