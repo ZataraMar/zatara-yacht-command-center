@@ -82,37 +82,67 @@ const MallorcanSailing = () => {
     setIsSubmitting(true);
 
     try {
-      // Create booking data for Supabase
+      // Create booking data for SEPARATE Mallorcan Sailing table
+      // NOTE: This is separate from Andronautic - manual sync required until 2-way integration
       const submissionData = {
-        experience_id: 'mallorcan-sailing',
         booking_reference: `MS-${Date.now()}`, // Mallorcan Sailing prefix
+        experience_name: 'Authentic Mallorcan Sailing Experience',
         booking_date: selectedDate,
         time_slot: timeSlots[selectedTime as keyof typeof timeSlots].value,
-        time_period: selectedTime,
+        time_period_label: timeSlots[selectedTime as keyof typeof timeSlots].label,
         number_of_people: currentPeople,
         customer_name: customerName,
         customer_email: customerEmail,
         customer_phone: customerPhone,
         special_requests: specialRequests || null,
-        price_per_person: 99,
+        base_price_per_person: 99,
+        total_base_amount: Math.max(currentPeople * 99, timeSlots[selectedTime as keyof typeof timeSlots].min),
+        premium_catering_upgrade: hasUpgrade,
+        upgrade_cost: hasUpgrade ? currentPeople * 20 : 0,
         total_amount: totalPrice,
         currency: 'EUR',
-        source: 'mallorcan_landing_page',
-        status: 'inquiry',
+        booking_source: 'mallorcan_sailing_landing_page',
+        status: 'pending_payment',
         payment_status: 'pending',
-        premium_catering: hasUpgrade,
-        upgrade_cost: hasUpgrade ? currentPeople * 20 : 0
+        created_at: new Date().toISOString(),
+        // PRIORITY: Add to Andronautic manually until 2-way sync implemented
+        andronautic_sync_status: 'manual_required'
       };
 
-      console.log('Submitting booking data:', submissionData);
+      console.log('Submitting Mallorcan Sailing booking:', submissionData);
 
+      // Save to separate table - will fail gracefully if table doesn't exist yet
       const { error } = await supabase
-        .from('landing_page_bookings')
+        .from('mallorcan_sailing_bookings')
         .insert([submissionData]);
 
       if (error) {
-        console.error('Supabase error:', error);
-        throw error;
+        console.error('Database error:', error);
+        // Fallback to generic bookings table if mallorcan table doesn't exist
+        const fallbackData = {
+          experience_id: 'mallorcan-sailing',
+          booking_reference: submissionData.booking_reference,
+          booking_date: selectedDate,
+          time_slot: submissionData.time_slot,
+          time_period: selectedTime,
+          number_of_people: currentPeople,
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone,
+          special_requests: specialRequests || null,
+          price_per_person: 99,
+          total_amount: totalPrice,
+          currency: 'EUR',
+          source: 'mallorcan_sailing_page',
+          status: 'inquiry',
+          payment_status: 'pending'
+        };
+
+        const { error: fallbackError } = await supabase
+          .from('landing_page_bookings')
+          .insert([fallbackData]);
+
+        if (fallbackError) throw fallbackError;
       }
 
       // Reset form and show success
@@ -128,7 +158,7 @@ const MallorcanSailing = () => {
 
       toast({
         title: "Booking Request Submitted!",
-        description: "We'll contact you within 24 hours to confirm availability and payment.",
+        description: "We'll contact you within 24 hours to confirm availability and payment details.",
         variant: "default"
       });
 
