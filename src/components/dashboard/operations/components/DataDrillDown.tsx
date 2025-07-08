@@ -51,44 +51,47 @@ export const DataDrillDown: React.FC<DataDrillDownProps> = ({
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-lg">Data Source: {dataSource}</CardTitle>
-            <p className="text-sm text-gray-600 mt-1">
-              {getDataSourceDescription(dataSource)}
-            </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline">{data.length} records</Badge>
-            <Button onClick={handleExportFiltered} size="sm" variant="outline">
-              <Download className="h-4 w-4 mr-1" />
-              Export
-            </Button>
-            {onClose && (
-              <Button onClick={onClose} size="sm" variant="ghost">
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-3 border-b">
+        <div>
+          <h3 className="text-lg font-semibold text-zatara-navy">{dataSource.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h3>
+          <p className="text-sm text-gray-600">{getDataSourceDescription(dataSource)}</p>
         </div>
-      </CardHeader>
-      
-      <CardContent>
-        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-          <div className="text-sm font-medium mb-2">Applied Filters:</div>
+        <div className="flex items-center space-x-2">
+          <Badge variant="outline" className="bg-zatara-blue/10 text-zatara-navy">
+            {data.length} records
+          </Badge>
+          <Button onClick={handleExportFiltered} size="sm" variant="outline">
+            <Download className="h-4 w-4 mr-1" />
+            Export
+          </Button>
+          {onClose && (
+            <Button onClick={onClose} size="sm" variant="ghost">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Filters */}
+      {Object.keys(filters).length > 0 && (
+        <div className="bg-blue-50 p-3 rounded-lg border border-zatara-blue/20">
+          <div className="text-sm font-medium text-zatara-navy mb-2">Active Filters:</div>
           <div className="flex flex-wrap gap-2">
             {Object.entries(filters).map(([key, value]) => (
-              <Badge key={key} variant="secondary" className="text-xs">
-                {key}: {String(value)}
+              <Badge key={key} variant="secondary" className="text-xs bg-white">
+                {key.replace(/_/g, ' ')}: {String(value)}
               </Badge>
             ))}
           </div>
         </div>
+      )}
 
-        <div className="overflow-x-auto">
-          <Table>
+      {/* Data Table */}
+      <Card className="border-zatara-blue/20">
+        <CardContent className="p-0">
+          <Table className="border-separate border-spacing-0">
             <TableHeader>
               <TableRow>
                 <TableHead>Locator</TableHead>
@@ -154,15 +157,15 @@ export const DataDrillDown: React.FC<DataDrillDownProps> = ({
               ))}
             </TableBody>
           </Table>
-        </div>
-        
-        {data.length > 10 && (
-          <div className="mt-4 text-center text-sm text-gray-600">
-            Showing first 10 of {data.length} records. Export to see all data.
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          
+          {data.length > 10 && (
+            <div className="p-4 text-center text-sm text-gray-600">
+              Showing first 10 of {data.length} records. Export to see all data.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
