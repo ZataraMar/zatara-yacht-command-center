@@ -223,26 +223,17 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         }
 
       } else {
-        // Simulation mode
-        addDebugLog('SIMULATION MODE - No real payment', 'info');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        await supabase
-          .from('landing_page_bookings')
-          .update({
-            status: 'confirmed',
-            payment_status: 'paid',
-          })
-          .eq('booking_reference', bookingData.bookingReference);
-
-        addDebugLog('Simulation completed', 'success');
+        // Simulation mode - this should NOT call onPaymentSuccess
+        addDebugLog('SIMULATION MODE - No real payment configured', 'info');
         
         toast({
-          title: "Payment Successful (Simulation)",
-          description: `Your booking is confirmed for ${bookingData.bookingDate}`,
+          title: "Stripe Not Configured",
+          description: "Please configure Stripe in Admin Settings to enable real payments.",
+          variant: "destructive"
         });
-
-        onPaymentSuccess();
+        
+        // Do NOT call onPaymentSuccess in simulation mode
+        // The user should be redirected to Stripe, not see the success modal
       }
 
     } catch (error) {

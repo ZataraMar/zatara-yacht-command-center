@@ -88,6 +88,7 @@ const MallorcanSailing = () => {
   };
 
   const handlePaymentSuccess = () => {
+    console.log("handlePaymentSuccess called - this should only happen after successful Stripe payment");
     // Reset form
     setSelectedDate('');
     setSelectedTime('');
