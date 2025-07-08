@@ -269,12 +269,12 @@ const MallorcanSailing = () => {
               </Button>
 
               {/* Step 1: Choose Time */}
-              <div className="border border-border rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+              <div className="border border-border rounded-lg p-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
                     1
                   </div>
-                  <h3 className="text-lg font-semibold">Choose your time</h3>
+                  <h3 className="text-base font-semibold">Choose your time</h3>
                   <div className="text-xs text-muted-foreground">
                     {selectedDate?.toLocaleDateString('en-US', { 
                       weekday: 'long', 
@@ -292,7 +292,7 @@ const MallorcanSailing = () => {
                         setSelectedTime(key);
                         handlePriceUpdate(slot.min);
                       }}
-                      className={`p-3 border rounded-lg text-left transition-all ${
+                      className={`p-2 border rounded text-left transition-all ${
                         selectedTime === key 
                           ? 'border-primary bg-primary/5' 
                           : 'border-border hover:border-primary'
@@ -307,37 +307,35 @@ const MallorcanSailing = () => {
 
               {/* Step 2: Choose Guests */}
               {selectedTime && (
-                <div className="border border-border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
-                      2
-                    </div>
-                    <h3 className="text-lg font-semibold">Number of guests</h3>
-                  </div>
-                  
+                <div className="border border-border rounded-lg p-3">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-sm">Guests</div>
-                      <div className="text-xs text-muted-foreground">Ages 2 and up, max 12 guests</div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                        2
+                      </div>
+                      <div>
+                        <h3 className="text-base font-semibold">Guests</h3>
+                        <div className="text-xs text-muted-foreground">Ages 2+, max 12</div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => changePeople(-1)}
-                        className="w-8 h-8 rounded-full p-0"
+                        className="w-6 h-6 rounded-full p-0"
                         disabled={currentPeople <= 1}
                       >
                         -
                       </Button>
-                      <span className="font-semibold text-base min-w-6 text-center">{currentPeople}</span>
+                      <span className="font-semibold text-sm min-w-4 text-center">{currentPeople}</span>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => changePeople(1)}
-                        className="w-8 h-8 rounded-full p-0"
+                        className="w-6 h-6 rounded-full p-0"
                         disabled={currentPeople >= 12}
                       >
                         +
