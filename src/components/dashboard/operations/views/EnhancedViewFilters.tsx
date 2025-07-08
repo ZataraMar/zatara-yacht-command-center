@@ -135,9 +135,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
             </div>
             <div>
               <span className="text-zatara-navy">Advanced Filters & Controls</span>
-              <p className="text-sm text-zatara-blue font-normal mt-1">
-                Comprehensive filtering for precise data analysis
-              </p>
             </div>
           </CardTitle>
           <div className="flex items-center space-x-3">
