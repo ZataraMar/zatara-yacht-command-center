@@ -12,6 +12,7 @@ import { AirbnbStyleCalendar } from '@/components/calendar/AirbnbStyleCalendar';
 import { TimeSlotSelector } from '@/components/calendar/TimeSlotSelector';
 import StripePayment from '@/components/payments/StripePayment';
 import { useTranslation } from '@/contexts/TranslationContext';
+import GoogleMap from '@/components/maps/GoogleMap';
 
 const MallorcanSailing = () => {
   const [currentPeople, setCurrentPeople] = useState(2);
@@ -31,6 +32,28 @@ const MallorcanSailing = () => {
   
   const { toast } = useToast();
   const { t } = useTranslation();
+
+  // Replace with your Google Maps API key
+  const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY';
+
+  // Palma de Mallorca coordinates and sailing route
+  const mapCenter = { lat: 39.5696, lng: 2.6502 };
+  const pickupLocation = { lat: 39.5696, lng: 2.6502 };
+  
+  const mapMarkers = [
+    {
+      position: pickupLocation,
+      title: 'Port de Palma - Meeting Point',
+      description: 'Marina area near the Cathedral. Detailed coordinates will be sent after booking.'
+    }
+  ];
+  
+  const sailingRoute = [
+    { lat: 39.5696, lng: 2.6502 }, // Port de Palma
+    { lat: 39.5650, lng: 2.6300 }, // Cala Major
+    { lat: 39.5580, lng: 2.6100 }, // Swimming cove
+    { lat: 39.5696, lng: 2.6502 }  // Return to port
+  ];
 
   const timeSlots = {
     'morning': { min: 499, label: 'Morning 8:30-12:00', value: '08:30' },
@@ -219,6 +242,15 @@ const MallorcanSailing = () => {
               {/* Pickup Location */}
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-foreground mb-3">Pickup Location</h3>
+                <div className="mb-4">
+                  <GoogleMap
+                    apiKey={GOOGLE_MAPS_API_KEY}
+                    center={mapCenter}
+                    zoom={14}
+                    markers={mapMarkers}
+                    className="w-full h-64 rounded-lg border border-border"
+                  />
+                </div>
                 <div className="bg-muted rounded-lg p-4">
                   <p className="text-sm text-muted-foreground mb-2">
                     <strong>Port de Palma</strong> - Marina area near the Cathedral
@@ -226,15 +258,27 @@ const MallorcanSailing = () => {
                   <p className="text-xs text-muted-foreground">
                     Easy access by car, taxi, or public transport. Detailed meeting point coordinates will be sent after booking.
                   </p>
-                  <p className="text-xs text-primary mt-2">
-                    Add your Mapbox token in the Supabase Edge Functions Secrets to display the interactive map
-                  </p>
                 </div>
               </div>
 
               {/* Sailing Route */}
               <div>
-                <h3 className="text-lg font-medium text-foreground mb-3">Sailing Route & Itinerary</h3>
+                <h3 className="text-lg font-medium text-foreground mb-3">Sailing Route</h3>
+                <div className="mb-4">
+                  <GoogleMap
+                    apiKey={GOOGLE_MAPS_API_KEY}
+                    center={mapCenter}
+                    zoom={12}
+                    polyline={sailingRoute}
+                    markers={[
+                      { position: sailingRoute[0], title: 'Start: Port de Palma' },
+                      { position: sailingRoute[1], title: 'Cala Major' },
+                      { position: sailingRoute[2], title: 'Swimming Cove' }
+                    ]}
+                    className="w-full h-64 rounded-lg border border-border"
+                  />
+                </div>
+                <h4 className="font-medium text-foreground mb-3">Itinerary</h4>
                 <div className="space-y-4">
                   <div className="flex gap-4">
                     <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">1</div>
