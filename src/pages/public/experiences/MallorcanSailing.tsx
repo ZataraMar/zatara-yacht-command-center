@@ -162,77 +162,62 @@ const MallorcanSailing = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Image Gallery Header - Airbnb Style */}
-      <section className="relative">
-        <div className="relative h-[60vh] max-h-[600px] min-h-[400px] p-6">
-          <div className="grid grid-cols-4 gap-2 h-full max-w-7xl mx-auto">
-            {/* Main large image */}
-            <div className="col-span-2 row-span-2">
-              <img 
-                src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=800&fit=crop" 
-                alt="Traditional Llaut sailing boat" 
-                className="w-full h-full object-cover rounded-l-xl"
-              />
-            </div>
-            
-            {/* Top right image */}
-            <div className="col-span-1">
-              <img 
-                src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&h=400&fit=crop" 
-                alt="Mallorcan coastline" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {/* Top far right image */}
-            <div className="col-span-1">
-              <img 
-                src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop" 
-                alt="Swimming in crystal waters" 
-                className="w-full h-full object-cover rounded-tr-xl"
-              />
-            </div>
-            
-            {/* Bottom right image */}
-            <div className="col-span-1">
-              <img 
-                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" 
-                alt="Traditional tapas on boat" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {/* Bottom far right image */}
-            <div className="col-span-1 relative">
-              <img 
-                src="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop" 
-                alt="Sunset sailing in Mallorca" 
-                className="w-full h-full object-cover rounded-br-xl"
-              />
-              <div className="absolute inset-0 bg-black/20 rounded-br-xl flex items-center justify-center">
-                <span className="text-white font-medium text-sm">+5 photos</span>
-              </div>
-            </div>
-          </div>
-          
-          <Button 
-            variant="outline" 
-            className="absolute bottom-8 right-8 bg-white/95 backdrop-blur-sm hover:bg-white border border-gray-300"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-            Show all photos
-          </Button>
-        </div>
-      </section>
-
-      {/* Main Content Area */}
+      {/* Main Content Area - Airbnb Style Layout */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
-          {/* Left Content */}
-          <div className="lg:col-span-2 space-y-8">
+          {/* Left Side - Images and Content */}
+          <div className="space-y-8">
+            
+            {/* Image Gallery - Compact */}
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-2 h-[400px]">
+                {/* Left images stack */}
+                <div className="space-y-2">
+                  <img 
+                    src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&h=400&fit=crop" 
+                    alt="Mallorcan coastline" 
+                    className="w-full h-[195px] object-cover rounded-l-xl"
+                  />
+                  <img 
+                    src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop" 
+                    alt="Swimming in crystal waters" 
+                    className="w-full h-[195px] object-cover rounded-bl-xl"
+                  />
+                </div>
+                
+                {/* Right images stack */}
+                <div className="space-y-2">
+                  <img 
+                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" 
+                    alt="Traditional tapas on boat" 
+                    className="w-full h-[195px] object-cover rounded-tr-xl"
+                  />
+                  <div className="relative">
+                    <img 
+                      src="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop" 
+                      alt="Sunset sailing in Mallorca" 
+                      className="w-full h-[195px] object-cover rounded-br-xl"
+                    />
+                    <div className="absolute inset-0 bg-black/20 rounded-br-xl flex items-center justify-center">
+                      <span className="text-white font-medium text-sm">+5 photos</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm hover:bg-white border border-gray-300"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                Show all photos
+              </Button>
+            </div>
+            
+            {/* Content Sections */}
             
             {/* Header */}
             <div className="border-b border-border pb-6">
