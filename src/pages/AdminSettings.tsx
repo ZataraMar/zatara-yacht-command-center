@@ -6,12 +6,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, RefreshCw, Eye, EyeOff, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Loader2, Save, RefreshCw, Eye, EyeOff, AlertTriangle, CheckCircle, Play, Database, MapPin } from 'lucide-react';
 import SettingsService, { SETTING_KEYS } from '@/services/SettingsService';
 import { StripeConfig, getStripeEnvironment } from '@/utils/stripe';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SettingGroup {
   [key: string]: string;
+}
+
+interface AndronauticData {
+  id: number;
+  andronautic_data: any;
+  imported_at: string;
+  processed_at?: string;
+}
+
+interface ProcessingResult {
+  locator: string;
+  status: 'success' | 'error';
+  action?: 'created' | 'updated';
+  error?: string;
 }
 
 export const AdminSettings = () => {
@@ -24,10 +39,17 @@ export const AdminSettings = () => {
   const [businessSettings, setBusinessSettings] = useState<SettingGroup>({});
   const [communicationSettings, setCommunicationSettings] = useState<SettingGroup>({});
   
+  // Andronautic Integration State
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [rawData, setRawData] = useState<AndronauticData[]>([]);
+  const [processingResults, setProcessingResults] = useState<ProcessingResult[]>([]);
+  const [showRawData, setShowRawData] = useState(false);
+  
   const { toast } = useToast();
 
   useEffect(() => {
     loadSettings();
+    loadAndronauticData();
   }, []);
 
   const loadSettings = async () => {
@@ -61,6 +83,90 @@ export const AdminSettings = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadAndronauticData = async () => {
+    try {
+      // Get raw bookings data
+      const { data: rawBookings, error } = await supabase
+        .from('raw_bookings')
+        .select('*')
+        .order('imported_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      setRawData(rawBookings || []);
+    } catch (error) {
+      console.error('Failed to load Andronautic data:', error);
+    }
+  };
+
+  const runFieldMapping = async () => {
+    setIsProcessing(true);
+    setProcessingResults([]);
+    
+    try {
+      console.log('🔄 Starting field mapping process...');
+      
+      const { data, error } = await supabase.functions.invoke('process-andronautic-data');
+      
+      if (error) throw error;
+
+      console.log('✅ Field mapping completed:', data);
+      setProcessingResults(data.results || []);
+      
+      toast({
+        title: "Field Mapping Complete",
+        description: `Processed ${data.processed} bookings, ${data.errors} errors`,
+        variant: data.errors > 0 ? "destructive" : "default"
+      });
+
+      // Reload data to see updates
+      await loadAndronauticData();
+
+    } catch (error) {
+      console.error('❌ Field mapping failed:', error);
+      toast({
+        title: "Field Mapping Failed",
+        description: error.message || 'Unknown error occurred',
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const runAndronauticImport = async () => {
+    setIsProcessing(true);
+    
+    try {
+      console.log('📥 Starting Andronautic import...');
+      
+      const { data, error } = await supabase.functions.invoke('andronautic-import');
+      
+      if (error) throw error;
+
+      console.log('✅ Import completed:', data);
+      
+      toast({
+        title: "Import Complete",
+        description: `Imported ${data.bookings_imported} bookings, ${data.invoices_imported} invoices`,
+        variant: "default"
+      });
+
+      // Reload data to see new imports
+      await loadAndronauticData();
+
+    } catch (error) {
+      console.error('❌ Import failed:', error);
+      toast({
+        title: "Import Failed",
+        description: error.message || 'Unknown error occurred',
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -227,6 +333,7 @@ export const AdminSettings = () => {
           <TabsTrigger value="payments">Payment Settings</TabsTrigger>
           <TabsTrigger value="business">Business Settings</TabsTrigger>
           <TabsTrigger value="communications">Communications</TabsTrigger>
+          <TabsTrigger value="andronautic">Andronautic Integration</TabsTrigger>
         </TabsList>
 
         {/* Payment Settings */}
@@ -347,6 +454,123 @@ export const AdminSettings = () => {
                     onChange={(e) => updateSetting('communications', SETTING_KEYS.BOOKING_CONFIRMATION_TEMPLATE, e.target.value)}
                     placeholder="bookings@zatara.es"
                   />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Andronautic Integration */}
+        <TabsContent value="andronautic" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="h-5 w-5" />
+                Andronautic Data Integration
+              </CardTitle>
+              <CardDescription>
+                Import and process booking data from Andronautic API into your Supabase database
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Control Panel */}
+              <div className="flex gap-4">
+                <Button 
+                  onClick={runAndronauticImport} 
+                  disabled={isProcessing}
+                  variant="outline"
+                >
+                  {isProcessing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                  Import Raw Data
+                </Button>
+                <Button 
+                  onClick={runFieldMapping} 
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <MapPin className="h-4 w-4 mr-2" />}
+                  Process Field Mapping
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={loadAndronauticData}
+                  disabled={isProcessing}
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh Data
+                </Button>
+              </div>
+
+              {/* Data Status */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">{rawData.length}</div>
+                  <div className="text-sm text-blue-600">Raw Records</div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">
+                    {rawData.filter(r => r.processed_at).length}
+                  </div>
+                  <div className="text-sm text-green-600">Processed</div>
+                </div>
+                <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                  <div className="text-2xl font-bold text-yellow-600">
+                    {rawData.filter(r => !r.processed_at).length}
+                  </div>
+                  <div className="text-sm text-yellow-600">Pending</div>
+                </div>
+              </div>
+
+              {/* Processing Results */}
+              {processingResults.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-medium">Latest Processing Results</h4>
+                  <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
+                    {processingResults.map((result, index) => (
+                      <div key={index} className="flex justify-between items-center py-1">
+                        <span className="font-mono text-sm">{result.locator}</span>
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          result.status === 'success' 
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-red-100 text-red-700'
+                        }`}>
+                          {result.status === 'success' ? result.action : result.error}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Sample Raw Data */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={showRawData}
+                    onCheckedChange={setShowRawData}
+                  />
+                  <Label>Show Sample Raw Data</Label>
+                </div>
+                
+                {showRawData && rawData.length > 0 && (
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-medium mb-2">Sample Andronautic Data Structure</h4>
+                    <pre className="text-xs bg-white p-3 rounded border overflow-x-auto">
+                      {JSON.stringify(rawData[0].andronautic_data, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </div>
+
+              {/* Field Mapping Information */}
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h4 className="font-medium text-blue-800 mb-2">Field Mapping</h4>
+                <div className="text-sm text-blue-700 space-y-1">
+                  <div><code>locator</code> → <code>bookings.locator</code></div>
+                  <div><code>start/end</code> → <code>bookings.start_date/end_date</code></div>
+                  <div><code>guest_name</code> → <code>bookings.guest_first_name + guest_surname</code></div>
+                  <div><code>phone</code> → <code>bookings.guest_phone</code></div>
+                  <div><code>total_amount</code> → <code>bookings.charter_total</code></div>
+                  <div className="text-blue-600 text-xs mt-2">And many more automatic field mappings...</div>
                 </div>
               </div>
             </CardContent>
