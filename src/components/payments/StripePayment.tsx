@@ -193,14 +193,24 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           customer_email: stripePaymentData.customerEmail,
         };
 
-        addDebugLog(`Calling Edge Function...`);
+        addDebugLog(`Calling Edge Function with data: ${JSON.stringify(requestData)}`);
+
+        // Add timeout to detect hanging
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Edge Function call timed out after 30 seconds')), 30000);
+        });
 
         try {
-          const { data, error } = await supabase.functions.invoke('create-stripe-checkout', {
+          const invokePromise = supabase.functions.invoke('create-stripe-checkout', {
             body: requestData,
           });
 
-          addDebugLog(`Edge Function response received`);
+          addDebugLog(`Waiting for Edge Function response...`);
+          
+          const result = await Promise.race([invokePromise, timeoutPromise]);
+          const { data, error } = result as any;
+
+          addDebugLog(`Edge Function response received: ${JSON.stringify({ data, error })}`);
 
           if (error) {
             addDebugLog(`Edge Function error: ${JSON.stringify(error)}`, 'error');
