@@ -53,6 +53,43 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
     }
   };
 
+  // Robust redirect function for long Stripe URLs
+  const redirectToStripe = (url: string) => {
+    addDebugLog(`Attempting redirect to: ${url.substring(0, 100)}... (${url.length} chars)`);
+    
+    try {
+      // Method 1: Try window.location.href
+      window.location.href = url;
+      addDebugLog('Redirect method: window.location.href', 'success');
+    } catch (error) {
+      addDebugLog('window.location.href failed, trying window.open', 'error');
+      
+      try {
+        // Method 2: Try window.open as fallback
+        const popup = window.open(url, '_self');
+        if (popup) {
+          addDebugLog('Redirect method: window.open success', 'success');
+        } else {
+          addDebugLog('window.open failed, trying form submission', 'error');
+          
+          // Method 3: Form submission as last resort
+          const form = document.createElement('form');
+          form.method = 'GET';
+          form.action = url;
+          form.target = '_self';
+          form.style.display = 'none';
+          document.body.appendChild(form);
+          form.submit();
+          document.body.removeChild(form);
+          addDebugLog('Redirect method: form submission', 'success');
+        }
+      } catch (openError) {
+        addDebugLog(`All redirect methods failed: ${openError}`, 'error');
+        throw new Error('Could not redirect to Stripe checkout. Please try again or contact support.');
+      }
+    }
+  };
+
   useEffect(() => {
     const checkStripe = async () => {
       try {
@@ -176,9 +213,16 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         addDebugLog(`Checkout session: ${data.session_id}`, 'success');
 
         if (data?.url) {
-          addDebugLog(`Redirecting to Stripe: ${data.url}`, 'success');
-          // Open Stripe checkout in current tab
-          window.location.href = data.url;
+          addDebugLog(`Received Stripe URL (${data.url.length} chars)`, 'success');
+          
+          // Use robust redirect function instead of simple window.location.href
+          redirectToStripe(data.url);
+          
+          // Set timeout to detect if redirect failed
+          setTimeout(() => {
+            addDebugLog('Redirect may have failed - still on page after 3 seconds', 'error');
+          }, 3000);
+          
         } else {
           throw new Error('No checkout URL received');
         }
