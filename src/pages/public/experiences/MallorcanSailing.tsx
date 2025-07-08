@@ -138,38 +138,32 @@ const MallorcanSailing = () => {
       
       {/* Image Gallery Header */}
       <section className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 h-[400px] md:h-[480px] p-6">
-          <div className="md:col-span-2">
+        <div className="relative h-[400px] md:h-[480px] p-6">
+          <div className="grid grid-cols-2 gap-2 h-full max-w-5xl mx-auto">
             <img 
-              src="/api/placeholder/800/600" 
-              alt="Mallorcan sailing experience" 
+              src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop" 
+              alt="Traditional Llaut sailing boat" 
               className="w-full h-full object-cover rounded-l-xl"
             />
+            <div className="grid grid-rows-2 gap-2">
+              <img 
+                src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=400&h=300&fit=crop" 
+                alt="Mallorcan coastline" 
+                className="w-full h-full object-cover rounded-tr-xl"
+              />
+              <img 
+                src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop" 
+                alt="Swimming in crystal waters" 
+                className="w-full h-full object-cover rounded-br-xl"
+              />
+            </div>
           </div>
-          <div className="grid grid-rows-2 gap-2">
-            <img 
-              src="/api/placeholder/400/300" 
-              alt="Traditional Llaut boat" 
-              className="w-full h-full object-cover"
-            />
-            <img 
-              src="/api/placeholder/400/300" 
-              alt="Sailing in Mallorca" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="grid grid-rows-2 gap-2">
-            <img 
-              src="/api/placeholder/400/300" 
-              alt="Local tapas on board" 
-              className="w-full h-full object-cover rounded-tr-xl"
-            />
-            <img 
-              src="/api/placeholder/400/300" 
-              alt="Swimming stop" 
-              className="w-full h-full object-cover rounded-br-xl"
-            />
-          </div>
+          <Button 
+            variant="outline" 
+            className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-sm hover:bg-white"
+          >
+            Show all photos
+          </Button>
         </div>
       </section>
 
@@ -191,20 +185,16 @@ const MallorcanSailing = () => {
               
               <div className="flex flex-wrap gap-4 text-sm">
                 <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
-                  <span className="text-lg">⛵</span>
-                  <span>{t('hero.classic_llaut')}</span>
+                  <span>Traditional Llaut Boat</span>
                 </div>
                 <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
-                  <span className="text-lg">🥘</span>
-                  <span>{t('hero.local_tapas')}</span>
+                  <span>Authentic Tapas</span>
                 </div>
                 <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
-                  <span className="text-lg">🏊</span>
-                  <span>{t('hero.swimming_stop')}</span>
+                  <span>Swimming & Snorkeling</span>
                 </div>
                 <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-full">
-                  <span className="text-lg">👨‍✈️</span>
-                  <span>{t('hero.local_skipper')}</span>
+                  <span>Local Skipper</span>
                 </div>
               </div>
             </div>
@@ -222,20 +212,82 @@ const MallorcanSailing = () => {
               </div>
             </div>
 
+            {/* Where you'll be */}
+            <div className="border-b border-border pb-8">
+              <h2 className="text-2xl font-semibold text-foreground mb-6">Where you'll be</h2>
+              
+              {/* Pickup Location */}
+              <div className="mb-6">
+                <h3 className="text-lg font-medium text-foreground mb-3">Pickup Location</h3>
+                <div className="bg-muted rounded-lg p-4">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Port de Palma</strong> - Marina area near the Cathedral
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Easy access by car, taxi, or public transport. Detailed meeting point coordinates will be sent after booking.
+                  </p>
+                  <p className="text-xs text-primary mt-2">
+                    Add your Mapbox token in the Supabase Edge Functions Secrets to display the interactive map
+                  </p>
+                </div>
+              </div>
+
+              {/* Sailing Route */}
+              <div>
+                <h3 className="text-lg font-medium text-foreground mb-3">Sailing Route & Itinerary</h3>
+                <div className="space-y-4">
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">1</div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Departure from Port de Palma</h4>
+                      <p className="text-sm text-muted-foreground">Meet your skipper and receive safety briefing</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">2</div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Sail to Cala Major</h4>
+                      <p className="text-sm text-muted-foreground">Traditional sailing techniques demonstration</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">3</div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Swimming & Snorkeling Stop</h4>
+                      <p className="text-sm text-muted-foreground">Crystal-clear waters of a secluded cove</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">4</div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Tapas & Wine Tasting</h4>
+                      <p className="text-sm text-muted-foreground">Authentic Mallorcan appetizers and local wines</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">5</div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Return to Port</h4>
+                      <p className="text-sm text-muted-foreground">Relaxing sail back with sunset views (evening trips)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* What's Included */}
             <div className="border-b border-border pb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-6">{t('included.title')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { icon: '👨‍✈️', title: t('included.professional_skipper'), desc: t('included.professional_skipper_desc') },
-                  { icon: '🥘', title: t('included.authentic_tapas'), desc: t('included.authentic_tapas_desc') },
-                  { icon: '🍹', title: t('included.drinks_fruit'), desc: t('included.drinks_fruit_desc') },
-                  { icon: '🏊', title: t('included.swimming'), desc: t('included.swimming_desc') },
-                  { icon: '⛵', title: t('included.sailing_instruction'), desc: t('included.sailing_instruction_desc') },
-                  { icon: '📷', title: t('included.memories'), desc: t('included.memories_desc') }
+                  { title: 'Professional Skipper', desc: 'Experienced local captain with intimate knowledge of Mallorca\'s coastline' },
+                  { title: 'Authentic Tapas', desc: 'Selection of traditional Mallorcan appetizers and local specialties' },
+                  { title: 'Drinks & Fresh Fruit', desc: 'Local wines, soft drinks, water, and seasonal Mediterranean fruit' },
+                  { title: 'Swimming & Snorkeling', desc: 'Equipment provided for exploring secluded coves and crystal-clear waters' },
+                  { title: 'Sailing Instruction', desc: 'Learn traditional sailing techniques on an authentic Llaut boat' },
+                  { title: 'Unforgettable Memories', desc: 'Photo opportunities and stories of maritime heritage' }
                 ].map((item, index) => (
                   <div key={index} className="flex gap-3 p-4 rounded-lg border border-border">
-                    <div className="text-2xl flex-shrink-0">{item.icon}</div>
                     <div>
                       <h4 className="font-medium text-foreground mb-1">{item.title}</h4>
                       <p className="text-sm text-muted-foreground">{item.desc}</p>
@@ -305,7 +357,7 @@ const MallorcanSailing = () => {
                       </div>
                     </div>
 
-                    <form onSubmit={handleBookingSubmit} className="space-y-4">
+                    <div className="space-y-4">
                       
                       {/* Date Selection */}
                       <div className="border border-border rounded-lg p-4">
@@ -331,8 +383,8 @@ const MallorcanSailing = () => {
                       <div className="border border-border rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <Label className="text-sm font-medium text-foreground">{t('booking.guests')}</Label>
-                            <div className="text-xs text-muted-foreground">{t('booking.add_children')}</div>
+                            <Label className="text-sm font-medium text-foreground">Guests</Label>
+                            <div className="text-xs text-muted-foreground">Ages 2 and up</div>
                           </div>
                           <div className="flex items-center gap-3">
                             <Button
@@ -360,77 +412,31 @@ const MallorcanSailing = () => {
                         </div>
                       </div>
 
-                      {/* Contact Information */}
-                      <div className="space-y-3">
-                        <div>
-                          <Input
-                            type="text"
-                            value={customerName}
-                            onChange={(e) => setCustomerName(e.target.value)}
-                            placeholder={t('common.name_placeholder')}
-                            required
-                            className="w-full"
-                          />
-                        </div>
-                        <div>
-                          <Input
-                            type="email"
-                            value={customerEmail}
-                            onChange={(e) => setCustomerEmail(e.target.value)}
-                            placeholder={t('common.email_placeholder')}
-                            required
-                            className="w-full"
-                          />
-                        </div>
-                        <div>
-                          <Input
-                            type="tel"
-                            value={customerPhone}
-                            onChange={(e) => setCustomerPhone(e.target.value)}
-                            placeholder={t('common.phone_placeholder')}
-                            required
-                            className="w-full"
-                          />
-                        </div>
-                        <div>
-                          <Textarea
-                            value={specialRequests}
-                            onChange={(e) => setSpecialRequests(e.target.value)}
-                            placeholder={t('booking.special_requests_placeholder')}
-                            className="w-full"
-                            rows={3}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Premium Upgrade */}
-                      <div
-                        onClick={toggleUpgrade}
-                        className={`border-2 p-4 rounded-lg cursor-pointer transition-all ${
-                          hasUpgrade ? 'border-primary bg-primary/5' : 'border-border hover:border-primary'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium text-foreground mb-1">{t('booking.premium_upgrade')}</h4>
-                            <p className="text-xs text-muted-foreground">{t('booking.premium_upgrade_desc')}</p>
-                          </div>
-                          <div className="text-sm font-medium text-foreground">+€{currentPeople * 20}</div>
-                        </div>
-                      </div>
-
                       <Button
-                        type="submit"
-                        disabled={!selectedDate || !selectedTime || !customerName || !customerEmail || !customerPhone || isSubmitting}
+                        onClick={() => {
+                          if (!selectedDate || !selectedTime) {
+                            toast({
+                              title: "Please select date and time",
+                              description: "Choose your preferred date and time slot to continue.",
+                              variant: "destructive"
+                            });
+                            return;
+                          }
+                          // Generate booking reference and proceed to payment
+                          const reference = `MS-${Date.now()}`;
+                          setBookingReference(reference);
+                          setShowPayment(true);
+                        }}
+                        disabled={!selectedDate || !selectedTime}
                         className="w-full h-12 text-base font-medium"
                       >
-                        {totalPrice > 0 ? `${t('booking.continue_payment')} - €${totalPrice}` : t('booking.fill_details')}
+                        {totalPrice > 0 ? `Continue - €${totalPrice}` : 'Select date and time'}
                       </Button>
 
                       <div className="text-center text-xs text-muted-foreground">
-                        {t('booking.secure_payment')} • {t('booking.free_cancellation')}
+                        You won't be charged yet
                       </div>
-                    </form>
+                    </div>
                   </>
                 ) : (
                   <>
@@ -450,6 +456,65 @@ const MallorcanSailing = () => {
                     </div>
 
                     {/* Booking Summary */}
+                    {/* Contact Information */}
+                    <div className="space-y-3 mb-6">
+                      <div>
+                        <Input
+                          type="text"
+                          value={customerName}
+                          onChange={(e) => setCustomerName(e.target.value)}
+                          placeholder="Full name"
+                          required
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          type="email"
+                          value={customerEmail}
+                          onChange={(e) => setCustomerEmail(e.target.value)}
+                          placeholder="Email address"
+                          required
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          type="tel"
+                          value={customerPhone}
+                          onChange={(e) => setCustomerPhone(e.target.value)}
+                          placeholder="Phone number"
+                          required
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <Textarea
+                          value={specialRequests}
+                          onChange={(e) => setSpecialRequests(e.target.value)}
+                          placeholder="Special requests (optional)"
+                          className="w-full"
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Premium Upgrade */}
+                    <div
+                      onClick={toggleUpgrade}
+                      className={`border-2 p-4 rounded-lg cursor-pointer transition-all mb-6 ${
+                        hasUpgrade ? 'border-primary bg-primary/5' : 'border-border hover:border-primary'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium text-foreground mb-1">Premium Catering Upgrade</h4>
+                          <p className="text-xs text-muted-foreground">Enhanced tapas selection with premium wines and desserts</p>
+                        </div>
+                        <div className="text-sm font-medium text-foreground">+€{currentPeople * 20}</div>
+                      </div>
+                    </div>
+
                     <div className="bg-muted p-4 rounded-lg mb-6 space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Date & Time:</span>

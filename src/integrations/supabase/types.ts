@@ -354,6 +354,48 @@ export type Database = {
         }
         Relationships: []
       }
+      andronautic_field_mappings: {
+        Row: {
+          andronautic_field: string
+          created_at: string | null
+          default_value: string | null
+          field_type: string | null
+          id: number
+          is_mapped: boolean | null
+          is_required: boolean | null
+          notes: string | null
+          supabase_field: string | null
+          transformation_rule: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          andronautic_field: string
+          created_at?: string | null
+          default_value?: string | null
+          field_type?: string | null
+          id?: number
+          is_mapped?: boolean | null
+          is_required?: boolean | null
+          notes?: string | null
+          supabase_field?: string | null
+          transformation_rule?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          andronautic_field?: string
+          created_at?: string | null
+          default_value?: string | null
+          field_type?: string | null
+          id?: number
+          is_mapped?: boolean | null
+          is_required?: boolean | null
+          notes?: string | null
+          supabase_field?: string | null
+          transformation_rule?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       api_sync_status: {
         Row: {
           api_credentials_valid: boolean | null
