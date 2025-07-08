@@ -5,10 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Loader2, Save, RefreshCw, Eye, EyeOff, AlertTriangle, CheckCircle, 
-  Play, Database, MapPin, Search, FileText, Settings, Users
+  Play, Database, MapPin, Search, FileText, Settings, Users, Calendar,
+  BarChart3, TrendingUp, Clock, Anchor, ChefHat, UserCheck, AlertCircle
 } from 'lucide-react';
 import SettingsService, { SETTING_KEYS } from '@/services/SettingsService';
 import { StripeConfig, getStripeEnvironment } from '@/utils/stripe';
@@ -52,6 +54,52 @@ interface FieldAnalysis {
   suggested_mapping: string | null;
 }
 
+interface FieldPreview {
+  andronautic_field: string;
+  supabase_field: string;
+  field_type: string;
+  raw_value: any;
+  transformed_value: any;
+  status: 'mapped' | 'manual' | 'default' | 'unmapped';
+  is_mapped: boolean;
+}
+
+interface CalendarData {
+  start_date: string;
+  end_date: string;
+  boat: string;
+  guest_name: string;
+  total_guests: number;
+  booking_status: string;
+  locator: string;
+  duration_days: number;
+}
+
+interface ValidationResults {
+  is_valid: boolean;
+  issues: string[];
+  warnings: string[];
+  score: number;
+}
+
+interface MappingPreview {
+  locator: string;
+  raw_data: any;
+  mapped_data: any;
+  field_previews: FieldPreview[];
+  calendar_data: CalendarData;
+  validation_results: ValidationResults;
+}
+
+interface DashboardCard {
+  id: string;
+  title: string;
+  type: 'metric' | 'chart' | 'list' | 'calendar' | 'status';
+  query: string;
+  config: any;
+  position: { x: number; y: number; w: number; h: number };
+}
+
 export const AdminSettings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -73,6 +121,15 @@ export const AdminSettings = () => {
   const [fieldAnalysis, setFieldAnalysis] = useState<FieldAnalysis[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [mappingFilter, setMappingFilter] = useState<'all' | 'mapped' | 'unmapped' | 'manual'>('all');
+  
+  // Preview State
+  const [mappingPreviews, setMappingPreviews] = useState<MappingPreview[]>([]);
+  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
+  const [selectedPreview, setSelectedPreview] = useState<number>(0);
+  
+  // Dashboard State
+  const [dashboardCards, setDashboardCards] = useState<DashboardCard[]>([]);
+  const [showDashboardBuilder, setShowDashboardBuilder] = useState(false);
   
   const { toast } = useToast();
 
@@ -147,6 +204,36 @@ export const AdminSettings = () => {
     }
   };
 
+  const generateMappingPreview = async () => {
+    setIsGeneratingPreview(true);
+    try {
+      console.log('🔍 Generating field mapping preview...');
+      
+      const { data, error } = await supabase.functions.invoke('preview-field-mappings');
+      
+      if (error) throw error;
+
+      console.log('✅ Preview generated:', data);
+      setMappingPreviews(data.previews || []);
+      
+      toast({
+        title: "Preview Generated",
+        description: `Created preview for ${data.previews?.length || 0} sample bookings`,
+        variant: "default"
+      });
+
+    } catch (error) {
+      console.error('❌ Preview generation failed:', error);
+      toast({
+        title: "Preview Failed",
+        description: error.message || 'Unknown error occurred',
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeneratingPreview(false);
+    }
+  };
+
   const analyzeFields = async () => {
     setIsAnalyzing(true);
     try {
@@ -196,6 +283,11 @@ export const AdminSettings = () => {
       setFieldMappings(prev => prev.map(mapping => 
         mapping.id === id ? { ...mapping, ...updates } : mapping
       ));
+
+      // Regenerate preview if available
+      if (mappingPreviews.length > 0) {
+        await generateMappingPreview();
+      }
 
     } catch (error) {
       console.error('Failed to update field mapping:', error);
@@ -362,11 +454,6 @@ export const AdminSettings = () => {
     }
   };
 
-  const maskSecret = (value: string) => {
-    if (!value || value.length < 8) return value;
-    return value.substring(0, 8) + '•'.repeat(Math.max(0, value.length - 8));
-  };
-
   const getFilteredMappings = () => {
     switch (mappingFilter) {
       case 'mapped':
@@ -378,6 +465,21 @@ export const AdminSettings = () => {
       default:
         return fieldMappings;
     }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'mapped': return 'bg-green-100 text-green-700';
+      case 'manual': return 'bg-blue-100 text-blue-700';
+      case 'default': return 'bg-yellow-100 text-yellow-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const getValidationColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   if (isLoading) {
@@ -452,6 +554,7 @@ export const AdminSettings = () => {
           <TabsTrigger value="business">Business Settings</TabsTrigger>
           <TabsTrigger value="communications">Communications</TabsTrigger>
           <TabsTrigger value="andronautic">Andronautic Integration</TabsTrigger>
+          <TabsTrigger value="dashboard">Dashboard Builder</TabsTrigger>
         </TabsList>
 
         {/* Payment Settings */}
@@ -595,7 +698,7 @@ export const AdminSettings = () => {
               <div className="flex gap-2 flex-wrap">
                 <Button 
                   onClick={runAndronauticImport} 
-                  disabled={isProcessing || isAnalyzing}
+                  disabled={isProcessing || isAnalyzing || isGeneratingPreview}
                   variant="outline"
                   size="sm"
                 >
@@ -604,7 +707,7 @@ export const AdminSettings = () => {
                 </Button>
                 <Button 
                   onClick={analyzeFields} 
-                  disabled={isProcessing || isAnalyzing}
+                  disabled={isProcessing || isAnalyzing || isGeneratingPreview}
                   variant="outline"
                   size="sm"
                 >
@@ -612,8 +715,17 @@ export const AdminSettings = () => {
                   Analyze Fields
                 </Button>
                 <Button 
+                  onClick={generateMappingPreview} 
+                  disabled={isProcessing || isAnalyzing || isGeneratingPreview}
+                  variant="outline"
+                  size="sm"
+                >
+                  {isGeneratingPreview ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Eye className="h-4 w-4 mr-2" />}
+                  Preview Mappings
+                </Button>
+                <Button 
                   onClick={runFieldMapping} 
-                  disabled={isProcessing || isAnalyzing}
+                  disabled={isProcessing || isAnalyzing || isGeneratingPreview}
                   size="sm"
                 >
                   {isProcessing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <MapPin className="h-4 w-4 mr-2" />}
@@ -625,7 +737,7 @@ export const AdminSettings = () => {
                     loadAndronauticData();
                     loadFieldMappings();
                   }}
-                  disabled={isProcessing || isAnalyzing}
+                  disabled={isProcessing || isAnalyzing || isGeneratingPreview}
                   size="sm"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
@@ -667,6 +779,143 @@ export const AdminSettings = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Mapping Preview Cards */}
+          {mappingPreviews.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Preview Selection */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Eye className="h-5 w-5" />
+                    Live Mapping Preview
+                  </CardTitle>
+                  <CardDescription>
+                    See how your field mappings transform real Andronautic data
+                  </CardDescription>
+                  <div className="flex gap-2">
+                    {mappingPreviews.map((_, index) => (
+                      <Button
+                        key={index}
+                        variant={selectedPreview === index ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setSelectedPreview(index)}
+                      >
+                        Sample {index + 1}
+                      </Button>
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {mappingPreviews[selectedPreview] && (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium">{mappingPreviews[selectedPreview].locator}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge 
+                              className={getValidationColor(mappingPreviews[selectedPreview].validation_results.score)}
+                            >
+                              {mappingPreviews[selectedPreview].validation_results.score}% Valid
+                            </Badge>
+                            {mappingPreviews[selectedPreview].validation_results.issues.length > 0 && (
+                              <Badge variant="destructive">
+                                <AlertCircle className="h-3 w-3 mr-1" />
+                                {mappingPreviews[selectedPreview].validation_results.issues.length} Issues
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        {mappingPreviews[selectedPreview].field_previews
+                          .filter(fp => fp.is_mapped)
+                          .slice(0, 8)
+                          .map((fieldPreview, idx) => (
+                          <div key={idx} className="border rounded p-2">
+                            <div className="font-medium text-xs text-gray-600">
+                              {fieldPreview.supabase_field}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge size="sm" className={getStatusColor(fieldPreview.status)}>
+                                {fieldPreview.status}
+                              </Badge>
+                              <span className="text-sm">
+                                {fieldPreview.transformed_value || '(empty)'}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {mappingPreviews[selectedPreview].validation_results.issues.length > 0 && (
+                        <div className="bg-red-50 p-3 rounded">
+                          <h5 className="font-medium text-red-800 mb-1">Issues Found:</h5>
+                          <ul className="text-sm text-red-700 space-y-1">
+                            {mappingPreviews[selectedPreview].validation_results.issues.map((issue, idx) => (
+                              <li key={idx}>• {issue}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Calendar Preview */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Calendar Integration Preview
+                  </CardTitle>
+                  <CardDescription>
+                    How this booking would appear in your calendar system
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {mappingPreviews[selectedPreview]?.calendar_data && (
+                    <div className="space-y-4">
+                      <div className="border rounded-lg p-4 bg-blue-50">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Anchor className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium">{mappingPreviews[selectedPreview].calendar_data.boat}</span>
+                          </div>
+                          <Badge>{mappingPreviews[selectedPreview].calendar_data.booking_status}</Badge>
+                        </div>
+                        
+                        <div className="text-sm space-y-1">
+                          <div><strong>Guest:</strong> {mappingPreviews[selectedPreview].calendar_data.guest_name}</div>
+                          <div><strong>Dates:</strong> {new Date(mappingPreviews[selectedPreview].calendar_data.start_date).toLocaleDateString()} - {new Date(mappingPreviews[selectedPreview].calendar_data.end_date).toLocaleDateString()}</div>
+                          <div><strong>Duration:</strong> {mappingPreviews[selectedPreview].calendar_data.duration_days} days</div>
+                          <div><strong>Guests:</strong> {mappingPreviews[selectedPreview].calendar_data.total_guests}</div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-7 gap-1 text-xs text-center">
+                        {/* Mini calendar visualization */}
+                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
+                          <div key={day} className="font-medium p-1">{day}</div>
+                        ))}
+                        {Array.from({length: 21}, (_, i) => (
+                          <div key={i} className={`p-1 border rounded ${
+                            i >= 10 && i < 10 + mappingPreviews[selectedPreview].calendar_data.duration_days 
+                              ? 'bg-blue-200 border-blue-400' 
+                              : 'bg-gray-50'
+                          }`}>
+                            {i + 1}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           {/* Field Mapping Configuration */}
           <Card>
@@ -728,12 +977,12 @@ export const AdminSettings = () => {
                             : mapping.andronautic_field
                           }
                         </code>
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                        <Badge size="sm" variant="outline">
                           {mapping.field_type}
-                        </span>
+                        </Badge>
                       </div>
                       {mapping.is_required && (
-                        <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Required</span>
+                        <Badge size="sm" variant="destructive">Required</Badge>
                       )}
                     </div>
                     
@@ -788,13 +1037,12 @@ export const AdminSettings = () => {
                   {processingResults.map((result, index) => (
                     <div key={index} className="flex justify-between items-center py-1">
                       <span className="font-mono text-sm">{result.locator}</span>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        result.status === 'success' 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-red-100 text-red-700'
-                      }`}>
+                      <Badge 
+                        size="sm"
+                        variant={result.status === 'success' ? 'default' : 'destructive'}
+                      >
                         {result.status === 'success' ? result.action : result.error}
-                      </span>
+                      </Badge>
                     </div>
                   ))}
                 </div>
@@ -815,6 +1063,46 @@ export const AdminSettings = () => {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        {/* Dashboard Builder */}
+        <TabsContent value="dashboard" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Operational Dashboard Builder
+              </CardTitle>
+              <CardDescription>
+                Create custom cards and widgets for charter operations management
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-gray-500">
+                <BarChart3 className="h-16 w-16 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">Dashboard Builder Coming Soon</h3>
+                <p className="mb-4">Build custom operational dashboards with cards for:</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Upcoming Charters
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="h-4 w-4" />
+                    Staff Scheduling
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ChefHat className="h-4 w-4" />
+                    Supply Orders
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Revenue Analytics
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 
