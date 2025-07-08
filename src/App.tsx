@@ -19,6 +19,8 @@ import Management from "./pages/public/Management";
 import Guides from "./pages/public/Guides";
 import TestBookingIframe from "./pages/public/TestBookingIframe";
 import MallorcanSailing from "./pages/public/experiences/MallorcanSailing";
+import { ClientAuth } from "./components/client/ClientAuth";
+import { CustomerPortal } from "./components/client/CustomerPortal";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +60,10 @@ const App = () => (
             {/* Authentication Route */}
             <Route path="/auth" element={<Auth />} />
             
+            {/* Client Authentication & Portal Routes */}
+            <Route path="/client-login" element={<ClientAuth />} />
+            <Route path="/customer-portal" element={<CustomerPortal />} />
+            
             {/* Protected Dashboard Routes */}
             <Route path="/dashboard/*" element={
               <SecureProtectedRoute>
@@ -77,3 +83,4 @@ const App = () => (
 );
 
 export default App;
+
