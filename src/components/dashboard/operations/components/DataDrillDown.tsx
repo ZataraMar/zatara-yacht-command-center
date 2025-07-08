@@ -130,74 +130,71 @@ export const DataDrillDown: React.FC<DataDrillDownProps> = ({
                           View
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
+                      <DialogContent className="max-w-md">
                         <DialogHeader>
-                          <DialogTitle>Record Details: {record.locator}</DialogTitle>
+                          <DialogTitle className="text-center text-lg font-bold text-zatara-navy">
+                            🫡 {record.boat?.toUpperCase() || 'BOAT'} CHARTER
+                          </DialogTitle>
                         </DialogHeader>
-                        <div className="space-y-4 max-h-96 overflow-y-auto">
+                        <div className="space-y-3 text-sm">
                           {selectedRecord && (
-                            <Table>
-                              <TableBody>
-                                {Object.entries(selectedRecord).map(([key, value]) => {
-                                  const getFieldIcon = (fieldName: string) => {
-                                    const field = fieldName.toLowerCase();
-                                    if (field.includes('guest') || field.includes('name')) return '👤';
-                                    if (field.includes('boat')) return '⛵';
-                                    if (field.includes('date')) return '📅';
-                                    if (field.includes('time')) return '⏰';
-                                    if (field.includes('total') || field.includes('amount') || field.includes('price')) return '💰';
-                                    if (field.includes('phone')) return '📞';
-                                    if (field.includes('email')) return '✉️';
-                                    if (field.includes('status')) return '📊';
-                                    if (field.includes('source')) return '🌐';
-                                    if (field.includes('locator')) return '🎫';
-                                    if (field.includes('crew')) return '👥';
-                                    if (field.includes('equipment')) return '🏄';
-                                    if (field.includes('notes')) return '📝';
-                                    if (field.includes('check')) return '✅';
-                                    if (field.includes('gps') || field.includes('coordinates')) return '📍';
-                                    return '📋';
-                                  };
+                            <div className="space-y-2">
+                              {/* Guest Info */}
+                              <div className="border-b pb-2">
+                                <div>🎫 Locator: <strong>{selectedRecord.locator || '?'}</strong></div>
+                                <div>👤 Guest: <strong>{selectedRecord.guest_name || selectedRecord.guest_full_name || '?'}</strong></div>
+                                <div>📅 Date: <strong>{selectedRecord.charter_date ? new Date(selectedRecord.charter_date).toLocaleDateString('en-GB') : '?'}</strong></div>
+                                <div>⏰ Time: <strong>{selectedRecord.start_time || '?'} - {selectedRecord.end_time || '?'}</strong></div>
+                                <div>👥 Guests: <strong>{selectedRecord.total_guests || '?'}</strong></div>
+                              </div>
 
-                                  const formatValue = (val: any, fieldName: string) => {
-                                    if (val === null || val === undefined) return 'N/A';
-                                    if (typeof val === 'boolean') return val ? '✅ Yes' : '❌ No';
-                                    if (fieldName.toLowerCase().includes('date') && val) {
-                                      return new Date(val).toLocaleDateString('en-GB');
-                                    }
-                                    if (fieldName.toLowerCase().includes('total') || fieldName.toLowerCase().includes('amount')) {
-                                      const num = parseFloat(val);
-                                      return !isNaN(num) ? `€${num.toLocaleString()}` : val;
-                                    }
-                                    return String(val);
-                                  };
+                              {/* Financial Status */}
+                              <div className="border-b pb-2">
+                                <div className="font-semibold text-zatara-navy mb-1">💰 FINANCIAL STATUS</div>
+                                <div>💰 Total: <strong>€{selectedRecord.charter_total?.toLocaleString() || '0'}</strong></div>
+                                <div className={selectedRecord.paid_amount > 0 ? 'text-green-600' : ''}>
+                                  💳 Paid: <strong>€{selectedRecord.paid_amount?.toLocaleString() || '0'}</strong>
+                                </div>
+                                <div className={selectedRecord.outstanding_amount > 0 ? 'text-red-600' : ''}>
+                                  ⚠️ Outstanding: <strong>€{selectedRecord.outstanding_amount?.toLocaleString() || '0'}</strong>
+                                </div>
+                                <div>📜 Contract Signed?: <strong>{selectedRecord.contract_signed ? '✅ YES' : '❌ NO'}</strong></div>
+                              </div>
 
-                                  return (
-                                    <TableRow key={key} className="hover:bg-blue-50/50">
-                                      <TableCell className="font-medium text-zatara-navy w-1/3">
-                                        <div className="flex items-center space-x-2">
-                                          <span className="text-sm">{getFieldIcon(key)}</span>
-                                          <span className="capitalize text-sm">
-                                            {key.replace(/_/g, ' ')}
-                                          </span>
-                                        </div>
-                                      </TableCell>
-                                       <TableCell className="text-sm">
-                                         <span className={`${
-                                           key.toLowerCase().includes('outstanding') && typeof value === 'string' && parseFloat(value) > 0 
-                                             ? 'text-red-600 font-medium' 
-                                             : key.toLowerCase().includes('paid') && typeof value === 'string' && parseFloat(value) > 0
-                                             ? 'text-green-600 font-medium'
-                                             : ''
-                                         }`}>
-                                           {formatValue(value, key)}
-                                         </span>
-                                       </TableCell>
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                            </Table>
+                              {/* Operations */}
+                              <div className="border-b pb-2">
+                                <div className="font-semibold text-zatara-navy mb-1">🫡 OPERATIONS</div>
+                                <div>✅ Pre-checks?: <strong>{selectedRecord.pre_departure_checks ? '✅ DONE' : '⏳ PENDING'}</strong></div>
+                                <div>🚦 Cleared?: <strong>{selectedRecord.cleared_for_departure ? '✅ YES' : '❌ NO'}</strong></div>
+                                {selectedRecord.crew_required && <div>👥 Crew: <strong>{selectedRecord.crew_required}</strong></div>}
+                                {selectedRecord.equipment_required && <div>🏄 Equipment: <strong>{selectedRecord.equipment_required}</strong></div>}
+                                {selectedRecord.gps_coordinates && <div>📍 GPS: <strong>{selectedRecord.gps_coordinates}</strong></div>}
+                              </div>
+
+                              {/* Notes & Details */}
+                              {(selectedRecord.charter_notes || selectedRecord.fnb_details) && (
+                                <div className="border-b pb-2">
+                                  <div className="font-semibold text-zatara-navy mb-1">📝 NOTES</div>
+                                  {selectedRecord.charter_notes && (
+                                    <div className="bg-yellow-50 p-2 rounded text-xs border-l-2 border-yellow-400">
+                                      📝 Charter Notes: {selectedRecord.charter_notes}
+                                    </div>
+                                  )}
+                                  {selectedRecord.fnb_details && (
+                                    <div className="bg-blue-50 p-2 rounded text-xs border-l-2 border-blue-400 mt-2">
+                                      🍽️ F&B Details: {selectedRecord.fnb_details}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Status */}
+                              <div className="text-center">
+                                <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-zatara-blue/10 text-zatara-navy">
+                                  📊 Status: <strong className="ml-1">{selectedRecord.status || selectedRecord.booking_status || 'Unknown'}</strong>
+                                </div>
+                              </div>
+                            </div>
                           )}
                         </div>
                       </DialogContent>
