@@ -149,21 +149,18 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
 
   return (
     <Card className="border-2 border-zatara-blue/20">
-      <CardHeader className="bg-gradient-to-r from-zatara-blue/5 to-blue-50">
+      <CardHeader className="bg-gradient-to-r from-zatara-blue/5 to-blue-50 p-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn(
-                    "w-[200px] justify-start text-left font-normal",
-                    !selectedDate && "text-muted-foreground"
-                  )}
+                  className="w-[180px] justify-start text-left font-normal h-9"
                   size="sm"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                  {selectedDate ? format(selectedDate, "MMM dd") : <span>Pick date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -176,23 +173,27 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
                 />
               </PopoverContent>
             </Popover>
-            <div className="text-right text-sm">
-              <div className="font-semibold text-zatara-navy">{resultCount.toLocaleString()}</div>
-              <div className="text-zatara-blue">results found</div>
+            
+            <div className="text-center">
+              <div className="font-semibold text-zatara-navy text-lg">{resultCount.toLocaleString()}</div>
+              <div className="text-zatara-blue text-xs">results</div>
             </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
             {hasActiveFilters && (
-              <Button variant="outline" size="sm" onClick={clearAllFilters} className="border-red-200 text-red-600 hover:bg-red-50">
-                <X className="h-4 w-4 mr-2" />
-                Clear All
+              <Button variant="outline" size="sm" onClick={clearAllFilters} className="border-red-200 text-red-600 hover:bg-red-50 h-9">
+                <X className="h-4 w-4 mr-1" />
+                Clear
               </Button>
             )}
             <Button 
               onClick={onRefresh} 
               disabled={loading}
               size="sm"
-              className="bg-zatara-blue hover:bg-zatara-navy"
+              className="bg-zatara-blue hover:bg-zatara-navy h-9"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
           </div>
