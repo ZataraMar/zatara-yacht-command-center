@@ -62,7 +62,7 @@ export const Navigation = () => {
           <div className="flex justify-between items-center py-3">
             {/* Logo Section */}
             <Link to="/" className="flex items-center space-x-3">
-              <ZataraLogo size="md" variant="image" />
+              <ZataraLogo size="sm" variant="image" className="!h-12" />
               <div className="flex flex-col">
                 <div className="text-sm text-zatara-blue tracking-wide font-medium whitespace-nowrap">
                   LUXURY YACHT SERVICES
@@ -258,7 +258,7 @@ export const Navigation = () => {
           <div className="flex justify-between items-center py-2">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <ZataraLogo size="sm" variant="image" />
+              <ZataraLogo size="sm" variant="image" className="!h-8" />
             </Link>
 
             {/* Action Buttons */}
