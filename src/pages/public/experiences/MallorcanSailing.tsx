@@ -525,7 +525,7 @@ const MallorcanSailing = () => {
           <>
             {/* Image Gallery - Compact */}
             <div className="relative mb-8">
-              <div className="grid grid-cols-2 gap-2 h-[400px]">
+              <div className="grid grid-cols-2 gap-2 h-[400px] w-1/2">
                 {/* Left images stack */}
                 <div className="space-y-2">
                   <img 
