@@ -167,10 +167,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
         {/* Primary Controls Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="view-select" className="text-sm font-semibold text-zatara-navy flex items-center">
-              <MapPin className="h-4 w-4 mr-2" />
-              View Mode
-            </Label>
             <select
               id="view-select"
               value={viewMode}
