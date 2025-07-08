@@ -11,6 +11,7 @@ import { SuccessModal } from '@/components/charter/SuccessModal';
 import { AirbnbStyleCalendar } from '@/components/calendar/AirbnbStyleCalendar';
 import { TimeSlotSelector } from '@/components/calendar/TimeSlotSelector';
 import StripePayment from '@/components/payments/StripePayment';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const MallorcanSailing = () => {
   const [currentPeople, setCurrentPeople] = useState(2);
@@ -29,6 +30,7 @@ const MallorcanSailing = () => {
   const [currentPrice, setCurrentPrice] = useState(0);
   
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const timeSlots = {
     'morning': { min: 499, label: 'Morning 8:30-12:00', value: '08:30' },
@@ -143,28 +145,28 @@ const MallorcanSailing = () => {
             {/* Hero Text */}
             <div className="text-white">
               <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                Authentic Mallorcan Sailing Experience
+                {t('hero.title')}
               </h1>
               <p className="text-xl lg:text-2xl mb-8 opacity-95">
-                Sail on a traditional llaut with local tapas & wine in turquoise waters
+                {t('hero.subtitle')}
               </p>
               
               <div className="flex flex-wrap gap-6 mb-8">
                 <div className="flex items-center gap-2 text-lg">
                   <span className="text-2xl">⛵</span>
-                  <span>Classic Llaut</span>
+                  <span>{t('hero.classic_llaut')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-lg">
                   <span className="text-2xl">🥘</span>
-                  <span>Local Tapas</span>
+                  <span>{t('hero.local_tapas')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-lg">
                   <span className="text-2xl">🏊</span>
-                  <span>Swimming Stop</span>
+                  <span>{t('hero.swimming_stop')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-lg">
                   <span className="text-2xl">👨‍✈️</span>
-                  <span>Local Skipper</span>
+                  <span>{t('hero.local_skipper')}</span>
                 </div>
               </div>
             </div>
@@ -174,8 +176,8 @@ const MallorcanSailing = () => {
               {!showPayment ? (
                 <>
                   <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold text-zatara-blue mb-2">Book Your Experience</h3>
-                    <p className="text-gray-600">From €99 per person</p>
+                    <h3 className="text-2xl font-bold text-zatara-blue mb-2">{t('booking.title')}</h3>
+                    <p className="text-gray-600">{t('booking.from_price')}</p>
                   </div>
 
                   <form onSubmit={handleBookingSubmit} className="space-y-6">
@@ -185,8 +187,8 @@ const MallorcanSailing = () => {
                       <div className="border rounded-xl p-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-sm">Guests</div>
-                            <div className="text-xs text-muted-foreground">Add children</div>
+                            <div className="font-medium text-sm">{t('booking.guests')}</div>
+                            <div className="text-xs text-muted-foreground">{t('booking.add_children')}</div>
                           </div>
                           <div className="flex items-center gap-3">
                             <Button
@@ -233,23 +235,23 @@ const MallorcanSailing = () => {
                     {/* Customer Information */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">Your Name</Label>
+                        <Label className="text-sm font-semibold text-gray-700">{t('booking.your_name')}</Label>
                         <Input
                           type="text"
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
-                          placeholder="Full name"
+                          placeholder={t('common.name_placeholder')}
                           required
                           className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">Email</Label>
+                        <Label className="text-sm font-semibold text-gray-700">{t('booking.email')}</Label>
                         <Input
                           type="email"
                           value={customerEmail}
                           onChange={(e) => setCustomerEmail(e.target.value)}
-                          placeholder="your@email.com"
+                          placeholder={t('common.email_placeholder')}
                           required
                           className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
                         />
@@ -257,23 +259,23 @@ const MallorcanSailing = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">Phone (with country code)</Label>
+                      <Label className="text-sm font-semibold text-gray-700">{t('booking.phone')}</Label>
                       <Input
                         type="tel"
                         value={customerPhone}
                         onChange={(e) => setCustomerPhone(e.target.value)}
-                        placeholder="+34 123 456 789"
+                        placeholder={t('common.phone_placeholder')}
                         required
                         className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">Special Requests (optional)</Label>
+                      <Label className="text-sm font-semibold text-gray-700">{t('booking.special_requests')}</Label>
                       <Textarea
                         value={specialRequests}
                         onChange={(e) => setSpecialRequests(e.target.value)}
-                        placeholder="Any special occasions, dietary requirements, or requests..."
+                        placeholder={t('booking.special_requests_placeholder')}
                         className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue outline-none"
                         rows={3}
                       />
@@ -292,8 +294,8 @@ const MallorcanSailing = () => {
                         hasUpgrade ? 'border-zatara-blue bg-blue-50' : 'border-gray-200 hover:border-zatara-blue'
                       }`}
                     >
-                      <h4 className="font-semibold text-zatara-blue mb-2">Premium Catering Upgrade</h4>
-                      <p className="text-sm text-gray-600">Enhanced tapas selection with premium local specialties (+€20 per person)</p>
+                      <h4 className="font-semibold text-zatara-blue mb-2">{t('booking.premium_upgrade')}</h4>
+                      <p className="text-sm text-gray-600">{t('booking.premium_upgrade_desc')}</p>
                     </div>
 
                     <Button
@@ -301,21 +303,21 @@ const MallorcanSailing = () => {
                       disabled={!selectedDate || !selectedTime || !customerName || !customerEmail || !customerPhone || isSubmitting}
                       className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-zatara-blue to-blue-600 hover:from-zatara-blue-dark hover:to-blue-700 text-white disabled:bg-gray-400"
                     >
-                      {totalPrice > 0 ? `Continue to Payment - €${totalPrice}` : 'Fill Details to Continue'}
+                      {totalPrice > 0 ? `${t('booking.continue_payment')} - €${totalPrice}` : t('booking.fill_details')}
                     </Button>
 
                     <div className="flex justify-around text-sm text-gray-600">
                       <div className="flex items-center gap-1">
                         <span>🛡️</span>
-                        <span>Fully Insured</span>
+                        <span>{t('booking.fully_insured')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <span>↩️</span>
-                        <span>Free Cancellation</span>
+                        <span>{t('booking.free_cancellation')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <span>💳</span>
-                        <span>Secure Payment</span>
+                        <span>{t('booking.secure_payment')}</span>
                       </div>
                     </div>
                   </form>
@@ -386,18 +388,18 @@ const MallorcanSailing = () => {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">What's Included in Your Experience</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Everything you need for an authentic Mallorcan sailing adventure</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('included.title')}</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t('included.subtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { icon: '👨‍✈️', title: 'Professional Local Skipper', desc: 'Experienced captain who knows the best spots and can teach you sailing basics' },
-              { icon: '🥘', title: 'Authentic Local Tapas', desc: 'Traditional Mallorcan tapas prepared with local ingredients and regional wine' },
-              { icon: '🍹', title: 'Drinks & Fresh Fruit', desc: 'Selection of beverages, local wine, and seasonal fresh fruit from Mallorca' },
-              { icon: '🏊', title: 'Swimming in Turquoise Waters', desc: 'Stop at a beautiful secluded cala with crystal clear Mediterranean waters' },
-              { icon: '⛵', title: 'Sailing Instruction', desc: 'Learn to sail a traditional llaut or simply relax while we handle everything' },
-              { icon: '📷', title: 'Unforgettable Memories', desc: 'Create lasting memories sailing across the beautiful Bay of Palma' }
+              { icon: '👨‍✈️', title: t('included.professional_skipper'), desc: t('included.professional_skipper_desc') },
+              { icon: '🥘', title: t('included.authentic_tapas'), desc: t('included.authentic_tapas_desc') },
+              { icon: '🍹', title: t('included.drinks_fruit'), desc: t('included.drinks_fruit_desc') },
+              { icon: '🏊', title: t('included.swimming'), desc: t('included.swimming_desc') },
+              { icon: '⛵', title: t('included.sailing_instruction'), desc: t('included.sailing_instruction_desc') },
+              { icon: '📷', title: t('included.memories'), desc: t('included.memories_desc') }
             ].map((item, index) => (
               <div key={index} className="flex gap-4 p-6 bg-gray-50 rounded-xl">
                 <div className="text-4xl">{item.icon}</div>
@@ -415,15 +417,15 @@ const MallorcanSailing = () => {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">What Our Guests Say</h2>
-            <p className="text-xl text-gray-600">Join hundreds of happy guests who've experienced authentic Mallorca</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('reviews.title')}</h2>
+            <p className="text-xl text-gray-600">{t('reviews.subtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { stars: '★★★★★', text: 'Amazing experience! The traditional boat, local food, and swimming spot were perfect. Our skipper was fantastic and taught us so much about Mallorca.', author: '- Sarah K., UK' },
-              { stars: '★★★★★', text: 'Exactly what we wanted - authentic, relaxed, and beautiful. The tapas were incredible and the cala was like paradise. Highly recommend!', author: '- Marcus L., Germany' },
-              { stars: '★★★★★', text: 'Best way to see Mallorca from the water. The sunset trip was magical and our kids loved learning to sail the traditional boat.', author: '- Emma & Tom, Netherlands' }
+              { stars: '★★★★★', text: t('reviews.sarah'), author: '- Sarah K., UK' },
+              { stars: '★★★★★', text: t('reviews.marcus'), author: '- Marcus L., Germany' },
+              { stars: '★★★★★', text: t('reviews.emma'), author: '- Emma & Tom, Netherlands' }
             ].map((review, index) => (
               <div key={index} className="bg-white p-6 rounded-xl shadow-md">
                 <div className="text-yellow-400 text-xl mb-4">{review.stars}</div>

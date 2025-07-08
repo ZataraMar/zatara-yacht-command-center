@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { Clock, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface TimeSlot {
   id: string;
@@ -33,33 +34,34 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
 }) => {
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const timeSlots: TimeSlot[] = [
     {
       id: 'morning',
-      label: 'Morning Sailing',
+      label: t('timeslot.morning'),
       value: '08:30',
       minPrice: 499,
       duration: '3.5 hours',
-      description: 'Perfect for early birds • Calm waters • Light breakfast',
+      description: t('timeslot.morning_desc'),
       available: true
     },
     {
       id: 'afternoon',
-      label: 'Afternoon Adventure',
+      label: t('timeslot.afternoon'),
       value: '13:30',
       duration: '3.5 hours',
       minPrice: 699,
-      description: 'Peak experience • Full lunch • Swimming time',
+      description: t('timeslot.afternoon_desc'),
       available: true
     },
     {
       id: 'sunset',
-      label: 'Sunset Romance',
+      label: t('timeslot.sunset'),
       value: '17:30',
       duration: '3.5 hours',
       minPrice: 599,
-      description: 'Magic hour • Tapas & wine • Unforgettable views',
+      description: t('timeslot.sunset_desc'),
       available: true
     }
   ];
@@ -119,8 +121,8 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
     return (
       <div className={cn("bg-muted/30 rounded-xl p-8 text-center", className)}>
         <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-        <p className="text-muted-foreground font-medium">Select a date to see available times</p>
-        <p className="text-sm text-muted-foreground/70 mt-1">Choose your preferred sailing date first</p>
+        <p className="text-muted-foreground font-medium">{t('timeslot.select_date_first')}</p>
+        <p className="text-sm text-muted-foreground/70 mt-1">{t('timeslot.choose_date_first')}</p>
       </div>
     );
   }
@@ -131,7 +133,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
         <h3 className="text-lg font-semibold mb-1">
           {format(selectedDate, 'EEEE, MMMM d')}
         </h3>
-        <p className="text-sm text-muted-foreground">Select a time</p>
+        <p className="text-sm text-muted-foreground">{t('booking.select_time')}</p>
       </div>
 
       <div className="space-y-3">
@@ -172,14 +174,14 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
                     "text-xs text-muted-foreground",
                     isBooked && "text-muted-foreground/60"
                   )}>
-                    {slot.description} • Up to 12 guests
+                    {slot.description} • {t('timeslot.up_to_guests')}
                   </p>
                 </div>
 
                 <div className="text-right ml-4">
                   {isBooked ? (
                     <div className="text-muted-foreground text-sm">
-                      Unavailable
+                      {t('timeslot.unavailable')}
                     </div>
                   ) : (
                     <div className="font-semibold">
@@ -188,7 +190,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
                   )}
                   {!isBooked && (
                     <div className="text-xs text-muted-foreground">
-                      per group
+                      {t('timeslot.per_group')}
                     </div>
                   )}
                 </div>
@@ -201,7 +203,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
       {loading && (
         <div className="flex items-center justify-center py-4">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-foreground/20"></div>
-          <span className="ml-2 text-sm text-muted-foreground">Checking availability...</span>
+          <span className="ml-2 text-sm text-muted-foreground">{t('timeslot.checking_availability')}</span>
         </div>
       )}
     </div>

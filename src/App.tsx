@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SecureAuthProvider } from "@/contexts/SecureAuthContext";
+import { TranslationProvider } from "@/contexts/TranslationContext";
 import { SecureProtectedRoute } from "@/components/auth/SecureProtectedRoute";
 import { OfflineIndicator } from "@/components/common/OfflineIndicator";
 import Auth from "./pages/Auth";
@@ -32,10 +33,11 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <SecureAuthProvider>
+    <TranslationProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <SecureAuthProvider>
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
@@ -70,6 +72,7 @@ const App = () => (
         </BrowserRouter>
       </SecureAuthProvider>
     </TooltipProvider>
+    </TranslationProvider>
   </QueryClientProvider>
 );
 
