@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -70,11 +71,11 @@ export const BookingStats: React.FC<BookingStatsProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="flex gap-2 w-full">
       {stats.map((stat, index) => (
         <Card 
           key={index} 
-          className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-zatara-blue/30"
+          className="flex-1 cursor-pointer hover:shadow-md transition-shadow border-l-4 border-zatara-blue/30"
           onClick={() => onDrillDown('bookings', data, { stat: stat.title })}
         >
           <CardHeader className="p-2">
