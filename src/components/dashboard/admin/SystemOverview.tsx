@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { HealthCheck } from '@/components/admin/HealthCheck';
 
 interface SystemMetrics {
   totalBookings: number;
@@ -577,6 +578,19 @@ const SystemOverview: React.FC = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* System Health Check */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5" />
+                System Health Check
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <HealthCheck />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
