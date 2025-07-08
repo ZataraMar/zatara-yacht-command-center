@@ -6,7 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, RefreshCw, Eye, EyeOff, AlertTriangle, CheckCircle, Play, Database, MapPin } from 'lucide-react';
+import { 
+  Loader2, Save, RefreshCw, Eye, EyeOff, AlertTriangle, CheckCircle, 
+  Play, Database, MapPin, Search, FileText, Settings, Users
+} from 'lucide-react';
 import SettingsService, { SETTING_KEYS } from '@/services/SettingsService';
 import { StripeConfig, getStripeEnvironment } from '@/utils/stripe';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,6 +32,26 @@ interface ProcessingResult {
   error?: string;
 }
 
+interface FieldMapping {
+  id: number;
+  andronautic_field: string;
+  supabase_field: string | null;
+  field_type: string;
+  is_mapped: boolean;
+  is_required: boolean;
+  default_value: string | null;
+  transformation_rule: string | null;
+  notes: string | null;
+}
+
+interface FieldAnalysis {
+  andronautic_field: string;
+  sample_values: string[];
+  data_type: string;
+  frequency: number;
+  suggested_mapping: string | null;
+}
+
 export const AdminSettings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -45,11 +68,18 @@ export const AdminSettings = () => {
   const [processingResults, setProcessingResults] = useState<ProcessingResult[]>([]);
   const [showRawData, setShowRawData] = useState(false);
   
+  // Field Mapping State
+  const [fieldMappings, setFieldMappings] = useState<FieldMapping[]>([]);
+  const [fieldAnalysis, setFieldAnalysis] = useState<FieldAnalysis[]>([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [mappingFilter, setMappingFilter] = useState<'all' | 'mapped' | 'unmapped' | 'manual'>('all');
+  
   const { toast } = useToast();
 
   useEffect(() => {
     loadSettings();
     loadAndronauticData();
+    loadFieldMappings();
   }, []);
 
   const loadSettings = async () => {
@@ -99,6 +129,81 @@ export const AdminSettings = () => {
       setRawData(rawBookings || []);
     } catch (error) {
       console.error('Failed to load Andronautic data:', error);
+    }
+  };
+
+  const loadFieldMappings = async () => {
+    try {
+      const { data: mappings, error } = await supabase
+        .from('andronautic_field_mappings')
+        .select('*')
+        .order('is_mapped', { ascending: false })
+        .order('andronautic_field');
+
+      if (error) throw error;
+      setFieldMappings(mappings || []);
+    } catch (error) {
+      console.error('Failed to load field mappings:', error);
+    }
+  };
+
+  const analyzeFields = async () => {
+    setIsAnalyzing(true);
+    try {
+      console.log('🔍 Analyzing Andronautic field structure...');
+      
+      const { data, error } = await supabase.functions.invoke('analyze-andronautic-fields');
+      
+      if (error) throw error;
+
+      console.log('✅ Field analysis completed:', data);
+      setFieldAnalysis(data.field_analysis || []);
+      
+      toast({
+        title: "Field Analysis Complete",
+        description: `Discovered ${data.fields_discovered} unique fields`,
+        variant: "default"
+      });
+
+      // Reload mappings to see updates
+      await loadFieldMappings();
+
+    } catch (error) {
+      console.error('❌ Field analysis failed:', error);
+      toast({
+        title: "Field Analysis Failed",
+        description: error.message || 'Unknown error occurred',
+        variant: "destructive"
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const updateFieldMapping = async (id: number, updates: Partial<FieldMapping>) => {
+    try {
+      const { error } = await supabase
+        .from('andronautic_field_mappings')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Update local state
+      setFieldMappings(prev => prev.map(mapping => 
+        mapping.id === id ? { ...mapping, ...updates } : mapping
+      ));
+
+    } catch (error) {
+      console.error('Failed to update field mapping:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to save field mapping",
+        variant: "destructive"
+      });
     }
   };
 
@@ -260,6 +365,19 @@ export const AdminSettings = () => {
   const maskSecret = (value: string) => {
     if (!value || value.length < 8) return value;
     return value.substring(0, 8) + '•'.repeat(Math.max(0, value.length - 8));
+  };
+
+  const getFilteredMappings = () => {
+    switch (mappingFilter) {
+      case 'mapped':
+        return fieldMappings.filter(m => m.is_mapped && m.supabase_field);
+      case 'unmapped':
+        return fieldMappings.filter(m => !m.is_mapped || !m.supabase_field);
+      case 'manual':
+        return fieldMappings.filter(m => m.andronautic_field.startsWith('_MANUAL_'));
+      default:
+        return fieldMappings;
+    }
   };
 
   if (isLoading) {
@@ -474,34 +592,46 @@ export const AdminSettings = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Control Panel */}
-              <div className="flex gap-4">
+              <div className="flex gap-2 flex-wrap">
                 <Button 
                   onClick={runAndronauticImport} 
-                  disabled={isProcessing}
+                  disabled={isProcessing || isAnalyzing}
                   variant="outline"
+                  size="sm"
                 >
                   {isProcessing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
                   Import Raw Data
                 </Button>
                 <Button 
+                  onClick={analyzeFields} 
+                  disabled={isProcessing || isAnalyzing}
+                  variant="outline"
+                  size="sm"
+                >
+                  {isAnalyzing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Search className="h-4 w-4 mr-2" />}
+                  Analyze Fields
+                </Button>
+                <Button 
                   onClick={runFieldMapping} 
-                  disabled={isProcessing}
+                  disabled={isProcessing || isAnalyzing}
+                  size="sm"
                 >
                   {isProcessing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <MapPin className="h-4 w-4 mr-2" />}
-                  Process Field Mapping
+                  Process Data
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={loadAndronauticData}
-                  disabled={isProcessing}
+                  disabled={isProcessing || isAnalyzing}
+                  size="sm"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  Refresh Data
+                  Refresh
                 </Button>
               </div>
 
               {/* Data Status */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
                   <div className="text-2xl font-bold text-blue-600">{rawData.length}</div>
                   <div className="text-sm text-blue-600">Raw Records</div>
@@ -518,31 +648,153 @@ export const AdminSettings = () => {
                   </div>
                   <div className="text-sm text-yellow-600">Pending</div>
                 </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600">{fieldMappings.length}</div>
+                  <div className="text-sm text-purple-600">Field Mappings</div>
+                </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Processing Results */}
-              {processingResults.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="font-medium">Latest Processing Results</h4>
-                  <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
-                    {processingResults.map((result, index) => (
-                      <div key={index} className="flex justify-between items-center py-1">
-                        <span className="font-mono text-sm">{result.locator}</span>
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          result.status === 'success' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                        }`}>
-                          {result.status === 'success' ? result.action : result.error}
+          {/* Field Mapping Configuration */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Field Mapping Configuration
+              </CardTitle>
+              <CardDescription>
+                Configure how Andronautic fields map to your Supabase database columns
+              </CardDescription>
+              <div className="flex gap-2">
+                <Button 
+                  variant={mappingFilter === 'all' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setMappingFilter('all')}
+                >
+                  All ({fieldMappings.length})
+                </Button>
+                <Button 
+                  variant={mappingFilter === 'mapped' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setMappingFilter('mapped')}
+                >
+                  <CheckCircle className="h-4 w-4 mr-1" />
+                  Mapped ({fieldMappings.filter(m => m.is_mapped && m.supabase_field).length})
+                </Button>
+                <Button 
+                  variant={mappingFilter === 'unmapped' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setMappingFilter('unmapped')}
+                >
+                  <AlertTriangle className="h-4 w-4 mr-1" />
+                  Unmapped ({fieldMappings.filter(m => !m.is_mapped || !m.supabase_field).length})
+                </Button>
+                <Button 
+                  variant={mappingFilter === 'manual' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setMappingFilter('manual')}
+                >
+                  <Users className="h-4 w-4 mr-1" />
+                  Manual ({fieldMappings.filter(m => m.andronautic_field.startsWith('_MANUAL_')).length})
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {getFilteredMappings().map((mapping) => (
+                  <div key={mapping.id} className="border rounded-lg p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={mapping.is_mapped}
+                          onCheckedChange={(checked) => updateFieldMapping(mapping.id, { is_mapped: checked })}
+                        />
+                        <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                          {mapping.andronautic_field.startsWith('_MANUAL_') 
+                            ? mapping.andronautic_field.replace('_MANUAL_', '🔧 ')
+                            : mapping.andronautic_field
+                          }
+                        </code>
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                          {mapping.field_type}
                         </span>
                       </div>
-                    ))}
+                      {mapping.is_required && (
+                        <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Required</span>
+                      )}
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs">Supabase Field</Label>
+                        <Input
+                          value={mapping.supabase_field || ''}
+                          onChange={(e) => updateFieldMapping(mapping.id, { supabase_field: e.target.value })}
+                          placeholder="Select target field..."
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Default Value</Label>
+                        <Input
+                          value={mapping.default_value || ''}
+                          onChange={(e) => updateFieldMapping(mapping.id, { default_value: e.target.value })}
+                          placeholder="Default value..."
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                    
+                    {mapping.notes && (
+                      <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                        {mapping.notes}
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                ))}
+                
+                {getFilteredMappings().length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <FileText className="h-12 w-12 mx-auto mb-4" />
+                    <p>No field mappings found for this filter.</p>
+                    <p className="text-sm">Try running "Analyze Fields" to discover Andronautic data structure.</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Sample Raw Data */}
-              <div className="space-y-2">
+          {/* Processing Results */}
+          {processingResults.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Latest Processing Results</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
+                  {processingResults.map((result, index) => (
+                    <div key={index} className="flex justify-between items-center py-1">
+                      <span className="font-mono text-sm">{result.locator}</span>
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        result.status === 'success' 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {result.status === 'success' ? result.action : result.error}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Sample Raw Data */}
+          {showRawData && rawData.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Sample Raw Data</CardTitle>
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={showRawData}
@@ -550,31 +802,14 @@ export const AdminSettings = () => {
                   />
                   <Label>Show Sample Raw Data</Label>
                 </div>
-                
-                {showRawData && rawData.length > 0 && (
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="font-medium mb-2">Sample Andronautic Data Structure</h4>
-                    <pre className="text-xs bg-white p-3 rounded border overflow-x-auto">
-                      {JSON.stringify(rawData[0].andronautic_data, null, 2)}
-                    </pre>
-                  </div>
-                )}
-              </div>
-
-              {/* Field Mapping Information */}
-              <div className="bg-blue-50 rounded-lg p-4">
-                <h4 className="font-medium text-blue-800 mb-2">Field Mapping</h4>
-                <div className="text-sm text-blue-700 space-y-1">
-                  <div><code>locator</code> → <code>bookings.locator</code></div>
-                  <div><code>start/end</code> → <code>bookings.start_date/end_date</code></div>
-                  <div><code>guest_name</code> → <code>bookings.guest_first_name + guest_surname</code></div>
-                  <div><code>phone</code> → <code>bookings.guest_phone</code></div>
-                  <div><code>total_amount</code> → <code>bookings.charter_total</code></div>
-                  <div className="text-blue-600 text-xs mt-2">And many more automatic field mappings...</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent>
+                <pre className="text-xs bg-gray-50 p-3 rounded border overflow-x-auto max-h-60">
+                  {JSON.stringify(rawData[0].andronautic_data, null, 2)}
+                </pre>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
 
