@@ -117,24 +117,24 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
 
   if (!selectedDate) {
     return (
-      <div className={cn("bg-gray-50 rounded-lg p-6 text-center", className)}>
-        <Clock className="h-8 w-8 text-gray-400 mx-auto mb-3" />
-        <p className="text-gray-500 font-medium">Select a date to see available times</p>
-        <p className="text-sm text-gray-400 mt-1">Choose your preferred sailing date first</p>
+      <div className={cn("bg-muted/30 rounded-xl p-8 text-center", className)}>
+        <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+        <p className="text-muted-foreground font-medium">Select a date to see available times</p>
+        <p className="text-sm text-muted-foreground/70 mt-1">Choose your preferred sailing date first</p>
       </div>
     );
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
-      <div className="flex items-center gap-2 mb-4">
-        <Clock className="h-5 w-5 text-gray-600" />
-        <h3 className="text-lg font-semibold text-gray-900">
-          Available times for {format(selectedDate, 'EEEE, MMMM d')}
+    <div className={cn("space-y-3", className)}>
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-1">
+          {format(selectedDate, 'EEEE, d')} de {format(selectedDate, 'MMMM')}
         </h3>
+        <p className="text-sm text-muted-foreground">Selecciona la hora</p>
       </div>
 
-      <div className="grid gap-3">
+      <div className="space-y-3">
         {timeSlots.map(slot => {
           const isBooked = isSlotBooked(slot.value);
           const isSelected = selectedTime === slot.id;
@@ -146,95 +146,62 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
               onClick={() => handleSlotSelect(slot)}
               disabled={isBooked || loading}
               className={cn(
-                "w-full p-4 rounded-xl border-2 text-left transition-all duration-200 group",
+                "w-full p-4 rounded-xl border text-left transition-all duration-200",
                 // Default state
-                "border-gray-200 hover:border-blue-300 hover:shadow-md",
+                "border-border hover:border-foreground/20 hover:bg-muted/30",
                 // Selected state
-                isSelected && "border-blue-500 bg-blue-50 shadow-md",
+                isSelected && "border-foreground bg-foreground/5",
                 // Booked state
-                isBooked && "border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed",
+                isBooked && "border-muted bg-muted/50 opacity-60 cursor-not-allowed",
                 // Loading state
                 loading && "opacity-50 cursor-wait"
               )}
             >
-              <div className="flex items-start justify-between">
+              <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-1">
                     <h4 className={cn(
-                      "font-semibold text-base",
-                      isSelected ? "text-blue-700" : "text-gray-900",
-                      isBooked && "text-gray-500"
+                      "font-medium text-sm",
+                      isBooked && "text-muted-foreground"
                     )}>
-                      {slot.label}
+                      {slot.value} - {slot.label}
                     </h4>
-                    <span className={cn(
-                      "text-sm px-2 py-1 rounded-full",
-                      isSelected ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
-                    )}>
-                      {slot.duration}
-                    </span>
                   </div>
                   
                   <p className={cn(
-                    "text-sm mb-3",
-                    isSelected ? "text-blue-600" : "text-gray-600",
-                    isBooked && "text-gray-400"
+                    "text-xs text-muted-foreground",
+                    isBooked && "text-muted-foreground/60"
                   )}>
-                    {slot.description}
+                    {slot.description} • Hasta {currentPeople === 1 ? '12 huéspedes' : '12 huéspedes'}
                   </p>
-
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      <span>Starts {slot.value}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      <span>Up to 12 guests</span>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="text-right ml-4">
                   {isBooked ? (
-                    <div className="text-gray-500 font-medium">
-                      Unavailable
+                    <div className="text-muted-foreground text-sm">
+                      No disponible
                     </div>
                   ) : (
-                    <div className={cn(
-                      "font-bold text-lg",
-                      isSelected ? "text-blue-700" : "text-gray-900"
-                    )}>
-                      €{price}
+                    <div className="font-semibold">
+                      €{price} MXN
                     </div>
                   )}
                   {!isBooked && (
-                    <div className="text-xs text-gray-500 mt-1">
-                      {currentPeople} {currentPeople === 1 ? 'person' : 'people'}
+                    <div className="text-xs text-muted-foreground">
+                      por grupo
                     </div>
                   )}
                 </div>
               </div>
-
-              {isSelected && (
-                <div className="mt-3 pt-3 border-t border-blue-200">
-                  <div className="flex items-center justify-between text-sm text-blue-700">
-                    <span>✓ Selected time slot</span>
-                    <span>Continue to complete booking</span>
-                  </div>
-                </div>
-              )}
             </button>
           );
         })}
       </div>
 
       {loading && (
-        <div className="text-center py-4">
-          <div className="inline-flex items-center gap-2 text-sm text-gray-500">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            Checking availability...
-          </div>
+        <div className="flex items-center justify-center py-4">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-foreground/20"></div>
+          <span className="ml-2 text-sm text-muted-foreground">Checking availability...</span>
         </div>
       )}
     </div>

@@ -180,11 +180,44 @@ const MallorcanSailing = () => {
 
                   <form onSubmit={handleBookingSubmit} className="space-y-6">
                     {/* Date & Time Selection */}
-                    <div className="space-y-6">
+                    <div className="space-y-4">
+                      {/* People Selector */}
+                      <div className="border rounded-xl p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-sm">Huéspedes</div>
+                            <div className="text-xs text-muted-foreground">Agregar niños</div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => changePeople(-1)}
+                              className="w-8 h-8 rounded-full p-0"
+                              disabled={currentPeople <= 1}
+                            >
+                              -
+                            </Button>
+                            <span className="font-medium min-w-8 text-center">{currentPeople}</span>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => changePeople(1)}
+                              className="w-8 h-8 rounded-full p-0"
+                              disabled={currentPeople >= 12}
+                            >
+                              +
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+
                       <AirbnbStyleCalendar
                         selectedDate={selectedDate}
                         onDateSelect={handleDateSelect}
-                        className="mb-6"
+                        className="mb-4"
                       />
                       
                       <TimeSlotSelector
@@ -193,30 +226,8 @@ const MallorcanSailing = () => {
                         onTimeSelect={handleTimeSelect}
                         onPriceUpdate={handlePriceUpdate}
                         currentPeople={currentPeople}
-                        className="mb-6"
+                        className="mb-4"
                       />
-
-                      {/* People Selector */}
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">Number of People</Label>
-                        <div className="flex items-center justify-center gap-3 bg-gray-50 p-4 rounded-lg">
-                          <Button
-                            type="button"
-                            onClick={() => changePeople(-1)}
-                            className="w-10 h-10 rounded-full bg-zatara-blue hover:bg-zatara-blue-dark text-white p-0"
-                          >
-                            -
-                          </Button>
-                          <span className="text-xl font-semibold min-w-8 text-center">{currentPeople} {currentPeople === 1 ? 'guest' : 'guests'}</span>
-                          <Button
-                            type="button"
-                            onClick={() => changePeople(1)}
-                            className="w-10 h-10 rounded-full bg-zatara-blue hover:bg-zatara-blue-dark text-white p-0"
-                          >
-                            +
-                          </Button>
-                        </div>
-                      </div>
                     </div>
 
                     {/* Customer Information */}

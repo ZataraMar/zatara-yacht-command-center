@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, isAfter, startOfDay } from 'date-fns';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, startOfDay, getDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -110,132 +110,89 @@ export const AirbnbStyleCalendar: React.FC<CalendarProps> = ({
   const isSelectedDate = (date: Date) => selectedDate && isSameDay(date, selectedDate);
 
   return (
-    <div className={cn("bg-white rounded-xl border border-gray-200 p-6 shadow-lg", className)}>
+    <div className={cn("bg-white rounded-2xl border border-border overflow-hidden", className)}>
       {/* Calendar Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between p-6 border-b border-border">
         <button
           onClick={() => navigateMonth('prev')}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+          className="p-2 hover:bg-muted rounded-full transition-colors duration-200"
           disabled={loading}
         >
-          <ChevronLeft className="h-5 w-5 text-gray-600" />
+          <ChevronLeft className="h-4 w-4 text-muted-foreground" />
         </button>
         
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-base font-semibold">
           {format(currentMonth, 'MMMM yyyy')}
         </h2>
         
         <button
           onClick={() => navigateMonth('next')}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+          className="p-2 hover:bg-muted rounded-full transition-colors duration-200"
           disabled={loading}
         >
-          <ChevronRight className="h-5 w-5 text-gray-600" />
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </button>
       </div>
 
-      {/* Day Headers */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-          <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
-            {day}
-          </div>
-        ))}
-      </div>
+      <div className="p-6">
+        {/* Day Headers */}
+        <div className="grid grid-cols-7 mb-2">
+          {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
+            <div key={index} className="text-center text-xs font-medium text-muted-foreground py-2">
+              {day}
+            </div>
+          ))}
+        </div>
 
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1">
-        {/* Empty cells for the beginning of the month */}
-        {emptyCells.map(i => (
-          <div key={`empty-${i}`} className="h-12" />
-        ))}
-        
-        {/* Actual days */}
-        {days.map(day => {
-          const isBooked = isDateBooked(day);
-          const isPartiallyBooked = isDatePartiallyBooked(day);
-          const isPast = isPastDate(day);
-          const isSelected = isSelectedDate(day);
-          const isTodayDate = isToday(day);
-          const price = getDatePrice(day);
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-1">
+          {/* Empty cells for the beginning of the month */}
+          {emptyCells.map(i => (
+            <div key={`empty-${i}`} className="h-11" />
+          ))}
+          
+          {/* Actual days */}
+          {days.map(day => {
+            const isBooked = isDateBooked(day);
+            const isPartiallyBooked = isDatePartiallyBooked(day);
+            const isPast = isPastDate(day);
+            const isSelected = isSelectedDate(day);
+            const isTodayDate = isToday(day);
 
-          return (
-            <button
-              key={day.toISOString()}
-              onClick={() => !isPast && !isBooked && onDateSelect(day)}
-              disabled={isPast || isBooked || loading}
-              className={cn(
-                "relative h-12 flex flex-col items-center justify-center text-sm rounded-lg transition-all duration-200 group",
-                // Base styles
-                "hover:bg-gray-50 hover:scale-105",
-                // Past dates
-                isPast && "text-gray-300 cursor-not-allowed",
-                // Available dates
-                !isPast && !isBooked && !isSelected && "text-gray-900 hover:bg-blue-50 hover:text-blue-600",
-                // Selected date
-                isSelected && "bg-black text-white shadow-md",
-                // Today
-                isTodayDate && !isSelected && "ring-2 ring-blue-500 ring-opacity-50",
-                // Booked dates
-                isBooked && "bg-gray-100 text-gray-400 cursor-not-allowed line-through",
-                // Partially booked
-                isPartiallyBooked && "bg-yellow-50 text-yellow-800"
-              )}
-            >
-              <span className={cn(
-                "font-medium",
-                isSelected && "text-white",
-                isTodayDate && !isSelected && "font-bold"
-              )}>
+            return (
+              <button
+                key={day.toISOString()}
+                onClick={() => !isPast && !isBooked && onDateSelect(day)}
+                disabled={isPast || isBooked || loading}
+                className={cn(
+                  "relative h-11 w-11 mx-auto flex items-center justify-center text-sm rounded-full transition-all duration-200",
+                  // Base styles
+                  "hover:bg-muted",
+                  // Past dates
+                  isPast && "text-muted-foreground cursor-not-allowed opacity-50",
+                  // Available dates
+                  !isPast && !isBooked && !isSelected && "text-foreground hover:bg-muted",
+                  // Selected date
+                  isSelected && "bg-foreground text-background font-medium",
+                  // Today
+                  isTodayDate && !isSelected && "font-semibold text-foreground",
+                  // Booked dates
+                  isBooked && "text-muted-foreground cursor-not-allowed line-through opacity-50",
+                  // Partially booked
+                  isPartiallyBooked && "text-orange-600"
+                )}
+              >
                 {format(day, 'd')}
-              </span>
-              
-              {/* Price display */}
-              {price && !isPast && !isBooked && (
-                <span className={cn(
-                  "text-xs font-medium mt-0.5",
-                  isSelected ? "text-white" : "text-gray-600"
-                )}>
-                  €{price}
-                </span>
-              )}
-
-              {/* Availability indicator */}
-              {isPartiallyBooked && (
-                <div className="absolute top-1 right-1 w-2 h-2 bg-yellow-400 rounded-full" />
-              )}
-              
-              {/* Loading overlay */}
-              {loading && (
-                <div className="absolute inset-0 bg-gray-100 bg-opacity-50 rounded-lg animate-pulse" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Legend */}
-      <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-gray-600">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-black rounded"></div>
-          <span>Selected</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-yellow-50 border border-yellow-200 rounded"></div>
-          <span>Limited availability</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-gray-100 rounded"></div>
-          <span>Unavailable</span>
+                
+                {/* Availability indicator */}
+                {isPartiallyBooked && !isSelected && (
+                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-orange-400 rounded-full" />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
-
-      {/* Loading indicator */}
-      {loading && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-xl">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
-      )}
     </div>
   );
 };
