@@ -182,10 +182,6 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="time-filter" className="text-sm font-semibold text-zatara-navy flex items-center">
-              <Calendar className="h-4 w-4 mr-2" />
-              Time Range
-            </Label>
             <select
               id="time-filter"
               value={timeFilter}
