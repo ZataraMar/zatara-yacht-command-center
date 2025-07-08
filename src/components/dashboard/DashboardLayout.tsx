@@ -19,7 +19,8 @@ import {
   Database,
   Globe,
   Cog,
-  FileSearch
+  FileSearch,
+  CalendarCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,6 +50,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       { name: 'User Management', href: '/dashboard/users', icon: Shield, current: location.pathname === '/dashboard/users' },
       { name: 'Admin Settings', href: '/dashboard/admin-settings', icon: Cog, current: location.pathname === '/dashboard/admin-settings' },
       { name: 'Field Analysis', href: '/dashboard/field-analysis', icon: FileSearch, current: location.pathname === '/dashboard/field-analysis' },
+      { name: 'Calendar Sync', href: '/dashboard/calendar-sync', icon: CalendarCheck, current: location.pathname === '/dashboard/calendar-sync' },
       { name: 'Financials', href: '/dashboard/financials', icon: DollarSign, current: location.pathname === '/dashboard/financials' },
       { name: 'Guest Experience', href: '/dashboard/guests', icon: UserCheck, current: location.pathname === '/dashboard/guests' },
       { name: 'Operations Excellence', href: '/dashboard/operations-excellence', icon: Zap, current: location.pathname === '/dashboard/operations-excellence' },
