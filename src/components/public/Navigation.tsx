@@ -2,15 +2,30 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Menu, X } from 'lucide-react';
+import { MessageCircle, Menu, X, ChevronDown } from 'lucide-react';
 
 export const Navigation = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [charterDropdownOpen, setCharterDropdownOpen] = useState(false);
 
   const navLinks = [
-    { path: '/charter', label: 'Charter' },
+    { 
+      path: '/charter', 
+      label: 'Charter',
+      hasDropdown: true,
+      dropdownItems: [
+        {
+          label: 'Experiences',
+          items: [
+            { path: '/charter/experiences/mallorcan-sailing', label: 'Mallorcan Sailing' }
+          ]
+        },
+        { path: '/charter/private', label: 'Private Charters' },
+        { path: '/charter/shared', label: 'Shared Experiences' }
+      ]
+    },
     { path: '/club', label: 'Club' },
     { path: '/sales', label: 'Sales' },
     { path: '/management', label: 'Management' },
@@ -29,6 +44,13 @@ export const Navigation = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const isActiveLink = (path: string) => {
+    if (path === '/charter') {
+      return location.pathname.startsWith('/charter');
+    }
+    return location.pathname === path;
+  };
 
   return (
     <>
@@ -56,17 +78,72 @@ export const Navigation = () => {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-6">
               {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-lg font-medium transition-colors ${
-                    location.pathname === link.path
-                      ? 'text-zatara-blue font-semibold'
-                      : 'text-zatara-blue hover:text-zatara-blue-dark'
-                  }`}
-                >
-                  {link.label}
-                </Link>
+                <div key={link.path} className="relative">
+                  {link.hasDropdown ? (
+                    <div
+                      className="relative"
+                      onMouseEnter={() => setCharterDropdownOpen(true)}
+                      onMouseLeave={() => setCharterDropdownOpen(false)}
+                    >
+                      <button
+                        className={`text-lg font-medium transition-colors flex items-center gap-1 ${
+                          isActiveLink(link.path)
+                            ? 'text-zatara-blue font-semibold'
+                            : 'text-zatara-blue hover:text-zatara-blue-dark'
+                        }`}
+                      >
+                        {link.label}
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+                      
+                      {/* Dropdown Menu */}
+                      {charterDropdownOpen && (
+                        <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                          {link.dropdownItems?.map((item, index) => (
+                            <div key={index}>
+                              {item.items ? (
+                                // Experiences submenu
+                                <div className="px-4 py-2">
+                                  <div className="text-sm font-semibold text-gray-700 mb-2">{item.label}</div>
+                                  {item.items.map((subItem, subIndex) => (
+                                    <Link
+                                      key={subIndex}
+                                      to={subItem.path}
+                                      className="block px-2 py-1 text-sm text-zatara-blue hover:bg-zatara-blue-light rounded"
+                                      onClick={() => setCharterDropdownOpen(false)}
+                                    >
+                                      {subItem.label}
+                                    </Link>
+                                  ))}
+                                </div>
+                              ) : (
+                                // Regular dropdown item
+                                <Link
+                                  to={item.path}
+                                  className="block px-4 py-2 text-sm text-zatara-blue hover:bg-zatara-blue-light"
+                                  onClick={() => setCharterDropdownOpen(false)}
+                                >
+                                  {item.label}
+                                </Link>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={link.path}
+                      className={`text-lg font-medium transition-colors ${
+                        isActiveLink(link.path)
+                          ? 'text-zatara-blue font-semibold'
+                          : 'text-zatara-blue hover:text-zatara-blue-dark'
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
+                </div>
               ))}
               <Button 
                 variant="outline"
@@ -108,18 +185,64 @@ export const Navigation = () => {
             <div className="lg:hidden pb-4 border-t border-gray-200 mt-3 pt-4">
               <div className="flex flex-col space-y-3">
                 {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className={`text-base font-medium py-2 px-3 rounded transition-colors ${
-                      location.pathname === link.path
-                        ? 'bg-zatara-blue text-white'
-                        : 'text-zatara-blue hover:bg-zatara-blue-light'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
+                  <div key={link.path}>
+                    {link.hasDropdown ? (
+                      <div>
+                        <Link
+                          to={link.path}
+                          className={`text-base font-medium py-2 px-3 rounded transition-colors block ${
+                            isActiveLink(link.path)
+                              ? 'bg-zatara-blue text-white'
+                              : 'text-zatara-blue hover:bg-zatara-blue-light'
+                          }`}
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {link.label}
+                        </Link>
+                        <div className="ml-4 mt-2 space-y-1">
+                          {link.dropdownItems?.map((item, index) => (
+                            <div key={index}>
+                              {item.items ? (
+                                <div>
+                                  <div className="text-sm font-semibold text-gray-600 px-3 py-1">{item.label}</div>
+                                  {item.items.map((subItem, subIndex) => (
+                                    <Link
+                                      key={subIndex}
+                                      to={subItem.path}
+                                      className="block text-sm text-zatara-blue hover:bg-zatara-blue-light py-1 px-6 rounded"
+                                      onClick={() => setIsMenuOpen(false)}
+                                    >
+                                      {subItem.label}
+                                    </Link>
+                                  ))}
+                                </div>
+                              ) : (
+                                <Link
+                                  to={item.path}
+                                  className="block text-sm text-zatara-blue hover:bg-zatara-blue-light py-1 px-6 rounded"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  {item.label}
+                                </Link>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <Link
+                        to={link.path}
+                        className={`text-base font-medium py-2 px-3 rounded transition-colors ${
+                          isActiveLink(link.path)
+                            ? 'bg-zatara-blue text-white'
+                            : 'text-zatara-blue hover:bg-zatara-blue-light'
+                        }`}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                  </div>
                 ))}
                 <Button 
                   className="bg-zatara-blue hover:bg-zatara-blue-dark text-white mt-3"
@@ -177,18 +300,50 @@ export const Navigation = () => {
             <div className="max-w-7xl mx-auto px-4 py-4">
               <div className="flex flex-col space-y-2">
                 {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className={`text-base font-medium py-2 px-3 rounded transition-colors ${
-                      location.pathname === link.path
-                        ? 'bg-zatara-blue text-white'
-                        : 'text-zatara-blue hover:bg-zatara-blue-light'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
+                  <div key={link.path}>
+                    <Link
+                      to={link.path}
+                      className={`text-base font-medium py-2 px-3 rounded transition-colors block ${
+                        isActiveLink(link.path)
+                          ? 'bg-zatara-blue text-white'
+                          : 'text-zatara-blue hover:bg-zatara-blue-light'
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                    {link.hasDropdown && (
+                      <div className="ml-4 mt-1 space-y-1">
+                        {link.dropdownItems?.map((item, index) => (
+                          <div key={index}>
+                            {item.items ? (
+                              <div>
+                                <div className="text-sm font-semibold text-gray-600 px-3 py-1">{item.label}</div>
+                                {item.items.map((subItem, subIndex) => (
+                                  <Link
+                                    key={subIndex}
+                                    to={subItem.path}
+                                    className="block text-sm text-zatara-blue hover:bg-zatara-blue-light py-1 px-6 rounded"
+                                    onClick={() => setIsMenuOpen(false)}
+                                  >
+                                    {subItem.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            ) : (
+                              <Link
+                                to={item.path}
+                                className="block text-sm text-zatara-blue hover:bg-zatara-blue-light py-1 px-6 rounded"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                {item.label}
+                              </Link>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
                 <Button 
                   className="bg-zatara-blue hover:bg-zatara-blue-dark text-white mt-2"
