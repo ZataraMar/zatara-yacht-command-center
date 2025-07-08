@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Settings, Eye, EyeOff, RefreshCw, Shield, Mail, CreditCard, Smartphone, Cog, Building, Globe } from 'lucide-react';
+import { Settings, Eye, EyeOff, RefreshCw, Shield, Mail, CreditCard, Smartphone, Cog, Building, Globe, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SettingItem {
@@ -30,7 +30,7 @@ export const AdminSettings = () => {
     communications: { icon: Smartphone, label: 'Communications', color: 'text-purple-600' },
     automation: { icon: Cog, label: 'Automation & N8N', color: 'text-orange-600' },
     business: { icon: Building, label: 'Business Settings', color: 'text-gray-600' },
-    formatting: { icon: Globe, label: 'Date & Time Formatting', color: 'text-indigo-600' },
+    formatting: { icon: Clock, label: 'Date & Time Formatting', color: 'text-indigo-600' },
     integrations: { icon: Globe, label: 'Platform Integrations', color: 'text-teal-600' },
     platforms: { icon: Globe, label: 'Booking Platforms', color: 'text-indigo-600' },
     system: { icon: Settings, label: 'System Configuration', color: 'text-red-600' }

@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Eye, Download, Filter, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { formatDate, formatTime, formatCurrency } from '@/utils/formatters';
 
 interface DataDrillDownProps {
   dataSource: string;
@@ -112,10 +113,10 @@ export const DataDrillDown: React.FC<DataDrillDownProps> = ({
                   <TableCell>{record.guest_name || record.guest_full_name || 'N/A'}</TableCell>
                   <TableCell>{record.boat || 'N/A'}</TableCell>
                   <TableCell>
-                    {record.charter_date ? new Date(record.charter_date).toLocaleDateString() : 'N/A'}
+                    {formatDate(record.charter_date)}
                   </TableCell>
                   <TableCell>
-                    {record.charter_total ? `€${record.charter_total.toLocaleString()}` : 'N/A'}
+                    {formatCurrency(record.charter_total, 'internal')}
                   </TableCell>
                   <TableCell>
                     <Badge variant={record.status === 'confirmed' ? 'default' : 'secondary'}>
@@ -143,7 +144,7 @@ export const DataDrillDown: React.FC<DataDrillDownProps> = ({
                               <div className="border-b pb-2">
                                 <div>🎫 Locator: <strong>{selectedRecord.locator || '?'}</strong></div>
                                 <div>👤 Guest: <strong>{selectedRecord.guest_name || selectedRecord.guest_full_name || '?'}</strong></div>
-                                <div>📅 Date: <strong>{selectedRecord.charter_date ? new Date(selectedRecord.charter_date).toLocaleDateString('en-GB') : '?'}</strong></div>
+                                <div>📅 Date: <strong>{formatDate(selectedRecord.charter_date)}</strong></div>
                                 <div>⏰ Time: <strong>{selectedRecord.start_time || '?'} - {selectedRecord.end_time || '?'}</strong></div>
                                 <div>👥 Guests: <strong>{selectedRecord.total_guests || '?'}</strong></div>
                               </div>
@@ -151,12 +152,12 @@ export const DataDrillDown: React.FC<DataDrillDownProps> = ({
                               {/* Financial Status */}
                               <div className="border-b pb-2">
                                 <div className="font-semibold text-zatara-navy mb-1">💰 FINANCIAL STATUS</div>
-                                <div>💰 Total: <strong>€{selectedRecord.charter_total?.toLocaleString() || '0'}</strong></div>
+                                <div>💰 Total: <strong>{formatCurrency(selectedRecord.charter_total, 'internal')}</strong></div>
                                 <div className={selectedRecord.paid_amount > 0 ? 'text-green-600' : ''}>
-                                  💳 Paid: <strong>€{selectedRecord.paid_amount?.toLocaleString() || '0'}</strong>
+                                  💳 Paid: <strong>{formatCurrency(selectedRecord.paid_amount, 'internal')}</strong>
                                 </div>
                                 <div className={selectedRecord.outstanding_amount > 0 ? 'text-red-600' : ''}>
-                                  ⚠️ Outstanding: <strong>€{selectedRecord.outstanding_amount?.toLocaleString() || '0'}</strong>
+                                  ⚠️ Outstanding: <strong>{formatCurrency(selectedRecord.outstanding_amount, 'internal')}</strong>
                                 </div>
                                 <div>📜 Contract Signed?: <strong>{selectedRecord.contract_signed ? '✅ YES' : '❌ NO'}</strong></div>
                               </div>
