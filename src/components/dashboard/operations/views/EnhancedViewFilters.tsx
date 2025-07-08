@@ -165,13 +165,13 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
       </CardHeader>
       <CardContent className="space-y-6 pt-6">
         {/* Primary Controls Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="space-y-2">
+        <div className="grid grid-cols-4 gap-2">
+          <div>
             <select
               id="view-select"
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value)}
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
+              className="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
             >
               {availableViews.map((view) => (
                 <option key={view.view_name} value={view.view_name}>
@@ -181,12 +181,12 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div>
             <select
               id="time-filter"
               value={timeFilter}
               onChange={(e) => setTimeFilter(e.target.value)}
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
+              className="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -196,12 +196,12 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div>
             <select
               id="boat-filter"
               value={boatFilter}
               onChange={(e) => setBoatFilter(e.target.value)}
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
+              className="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
             >
               {boatOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -211,12 +211,12 @@ export const EnhancedViewFilters: React.FC<EnhancedViewFiltersProps> = ({
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div>
             <select
               id="status-filter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
+              className="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-zatara-blue focus:ring-2 focus:ring-zatara-blue/20 transition-all"
             >
               {statusOptions.map((option) => (
                 <option key={option.value} value={option.value}>
