@@ -116,69 +116,6 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
         </div>
       </div>
 
-      {/* Additional Filters Row */}
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-gray-500" />
-          <label className="text-sm font-medium">Filters:</label>
-        </div>
-
-        {/* Status Filter */}
-        {setStatusFilter && (
-          <div className="flex items-center space-x-2">
-            <Select value={statusFilter || 'all'} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent className="bg-white z-50">
-                {statusOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-
-        {/* Boat Filter */}
-        {setBoatFilter && (
-          <div className="flex items-center space-x-2">
-            <Ship className="h-4 w-4 text-gray-500" />
-            <Select value={boatFilter || 'all'} onValueChange={setBoatFilter}>
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Boat" />
-              </SelectTrigger>
-              <SelectContent className="bg-white z-50">
-                {boatOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-
-        {/* Source Filter */}
-        {setSourceFilter && (
-          <div className="flex items-center space-x-2">
-            <Select value={sourceFilter || 'all'} onValueChange={setSourceFilter}>
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Source" />
-              </SelectTrigger>
-              <SelectContent className="bg-white z-50">
-                {sourceOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-      </div>
-
       {/* Active Filters Display */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t">
