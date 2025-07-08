@@ -1,14 +1,76 @@
-// Stripe Configuration for Zatara Charter Payments
-// This handles payment processing for experience bookings
+import SettingsService, { SETTING_KEYS } from '@/services/SettingsService';
 
-export const STRIPE_CONFIG = {
-  // Get keys from environment variables (set in .env.local)
-  publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_test_key_here',
-  secretKey: import.meta.env.VITE_STRIPE_SECRET_KEY || 'sk_test_your_secret_key_here',
-  currency: 'EUR',
-  country: 'ES', // Spain for Mallorca operations
-  mode: import.meta.env.VITE_NODE_ENV === 'production' ? 'live' : 'test',
-};
+// Stripe Configuration for Zatara Charter Payments
+// Now reads from Supabase settings instead of environment variables
+export class StripeConfig {
+  private static settings: Record<string, string> = {};
+  private static initialized = false;
+
+  // Initialize Stripe configuration from Supabase
+  static async initialize(): Promise<void> {
+    if (this.initialized) return;
+
+    try {
+      this.settings = await SettingsService.getSettings([
+        SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_TEST,
+        SETTING_KEYS.STRIPE_SECRET_KEY_TEST,
+        SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_LIVE,
+        SETTING_KEYS.STRIPE_SECRET_KEY_LIVE,
+        SETTING_KEYS.STRIPE_WEBHOOK_SECRET,
+        SETTING_KEYS.PAYMENT_CURRENCY,
+        SETTING_KEYS.PAYMENT_COUNTRY,
+        SETTING_KEYS.ENVIRONMENT_MODE,
+      ]);
+
+      this.initialized = true;
+      console.log('Stripe configuration loaded from Supabase');
+    } catch (error) {
+      console.error('Failed to initialize Stripe configuration:', error);
+      // Fallback to environment variables if Supabase fails
+      this.settings = {
+        [SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_TEST]: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
+        [SETTING_KEYS.STRIPE_SECRET_KEY_TEST]: import.meta.env.VITE_STRIPE_SECRET_KEY || '',
+        [SETTING_KEYS.PAYMENT_CURRENCY]: 'EUR',
+        [SETTING_KEYS.PAYMENT_COUNTRY]: 'ES',
+        [SETTING_KEYS.ENVIRONMENT_MODE]: 'test',
+      };
+    }
+  }
+
+  // Get current configuration
+  static async getConfig() {
+    await this.initialize();
+    
+    const isLive = this.settings[SETTING_KEYS.ENVIRONMENT_MODE] === 'live';
+    
+    return {
+      publishableKey: isLive 
+        ? this.settings[SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_LIVE]
+        : this.settings[SETTING_KEYS.STRIPE_PUBLISHABLE_KEY_TEST],
+      secretKey: isLive 
+        ? this.settings[SETTING_KEYS.STRIPE_SECRET_KEY_LIVE]
+        : this.settings[SETTING_KEYS.STRIPE_SECRET_KEY_TEST],
+      webhookSecret: this.settings[SETTING_KEYS.STRIPE_WEBHOOK_SECRET],
+      currency: this.settings[SETTING_KEYS.PAYMENT_CURRENCY] || 'EUR',
+      country: this.settings[SETTING_KEYS.PAYMENT_COUNTRY] || 'ES',
+      mode: this.settings[SETTING_KEYS.ENVIRONMENT_MODE] || 'test',
+      isLive,
+    };
+  }
+
+  // Check if Stripe is properly configured
+  static async isConfigured(): Promise<boolean> {
+    const config = await this.getConfig();
+    return !!(config.publishableKey && config.secretKey);
+  }
+
+  // Force refresh settings from Supabase
+  static async refresh(): Promise<void> {
+    this.initialized = false;
+    SettingsService.clearCache();
+    await this.initialize();
+  }
+}
 
 // Stripe payment session data structure
 export interface StripePaymentData {
@@ -32,33 +94,37 @@ export interface StripePaymentData {
 export type PaymentStatus = 'pending' | 'processing' | 'succeeded' | 'failed' | 'canceled';
 
 // Stripe checkout session configuration
-export const createCheckoutSessionData = (
+export const createCheckoutSessionData = async (
   paymentData: StripePaymentData,
   successUrl: string,
   cancelUrl: string
-) => ({
-  payment_method_types: ['card'],
-  mode: 'payment',
-  amount: paymentData.amount,
-  currency: paymentData.currency,
-  description: paymentData.description,
-  customer_email: paymentData.customerEmail,
-  success_url: successUrl,
-  cancel_url: cancelUrl,
-  metadata: paymentData.metadata,
-  // Automatic tax calculation for Spain
-  automatic_tax: {
-    enabled: true,
-  },
-  // Invoice creation for business records
-  invoice_creation: {
-    enabled: true,
-    invoice_data: {
-      description: paymentData.description,
-      metadata: paymentData.metadata,
+) => {
+  const config = await StripeConfig.getConfig();
+  
+  return {
+    payment_method_types: ['card'],
+    mode: 'payment' as const,
+    amount: paymentData.amount,
+    currency: paymentData.currency,
+    description: paymentData.description,
+    customer_email: paymentData.customerEmail,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    metadata: paymentData.metadata,
+    // Automatic tax calculation for Spain
+    automatic_tax: {
+      enabled: true,
     },
-  },
-});
+    // Invoice creation for business records
+    invoice_creation: {
+      enabled: true,
+      invoice_data: {
+        description: paymentData.description,
+        metadata: paymentData.metadata,
+      },
+    },
+  };
+};
 
 // Utility functions for amount conversion
 export const eurosToCents = (euros: number): number => Math.round(euros * 100);
@@ -72,22 +138,19 @@ export const formatPrice = (amount: number, currency: string = 'EUR'): string =>
   }).format(amount);
 };
 
-// Check if Stripe is properly configured
-export const isStripeConfigured = (): boolean => {
-  const hasPublishableKey = STRIPE_CONFIG.publishableKey && 
-    !STRIPE_CONFIG.publishableKey.includes('your_test_key_here');
-  const hasSecretKey = STRIPE_CONFIG.secretKey && 
-    !STRIPE_CONFIG.secretKey.includes('your_secret_key_here');
+// Get current environment info
+export const getStripeEnvironment = async () => {
+  const config = await StripeConfig.getConfig();
+  const isConfigured = await StripeConfig.isConfigured();
   
-  return hasPublishableKey && hasSecretKey;
+  return {
+    mode: config.mode,
+    isConfigured,
+    publishableKeyExists: !!config.publishableKey,
+    environment: config.mode,
+    country: config.country,
+    currency: config.currency,
+  };
 };
 
-// Get current environment info
-export const getStripeEnvironment = () => ({
-  mode: STRIPE_CONFIG.mode,
-  isConfigured: isStripeConfigured(),
-  publishableKeyExists: !!STRIPE_CONFIG.publishableKey,
-  environment: import.meta.env.VITE_NODE_ENV || 'development'
-});
-
-export default STRIPE_CONFIG;
+export default StripeConfig;
