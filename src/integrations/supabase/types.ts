@@ -7,8 +7,111 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
+      admin_content: {
+        Row: {
+          cancellation_policy_text: string | null
+          cancellation_policy_title: string | null
+          created_at: string | null
+          experience_id: string
+          gallery_images: Json | null
+          hero_cta_text: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          important_info_text: string | null
+          important_info_title: string | null
+          includes_list: Json | null
+          includes_title: string | null
+          is_active: boolean | null
+          meeting_point_address: string | null
+          meeting_point_coordinates: unknown | null
+          meeting_point_description: string | null
+          meeting_point_title: string | null
+          meta_description: string | null
+          meta_title: string | null
+          overview_description: string | null
+          overview_title: string | null
+          trust_signals: Json | null
+          updated_at: string | null
+          video_url: string | null
+          weather_policy_text: string | null
+          weather_policy_title: string | null
+        }
+        Insert: {
+          cancellation_policy_text?: string | null
+          cancellation_policy_title?: string | null
+          created_at?: string | null
+          experience_id: string
+          gallery_images?: Json | null
+          hero_cta_text?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          important_info_text?: string | null
+          important_info_title?: string | null
+          includes_list?: Json | null
+          includes_title?: string | null
+          is_active?: boolean | null
+          meeting_point_address?: string | null
+          meeting_point_coordinates?: unknown | null
+          meeting_point_description?: string | null
+          meeting_point_title?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          overview_description?: string | null
+          overview_title?: string | null
+          trust_signals?: Json | null
+          updated_at?: string | null
+          video_url?: string | null
+          weather_policy_text?: string | null
+          weather_policy_title?: string | null
+        }
+        Update: {
+          cancellation_policy_text?: string | null
+          cancellation_policy_title?: string | null
+          created_at?: string | null
+          experience_id?: string
+          gallery_images?: Json | null
+          hero_cta_text?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          important_info_text?: string | null
+          important_info_title?: string | null
+          includes_list?: Json | null
+          includes_title?: string | null
+          is_active?: boolean | null
+          meeting_point_address?: string | null
+          meeting_point_coordinates?: unknown | null
+          meeting_point_description?: string | null
+          meeting_point_title?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          overview_description?: string | null
+          overview_title?: string | null
+          trust_signals?: Json | null
+          updated_at?: string | null
+          video_url?: string | null
+          weather_policy_text?: string | null
+          weather_policy_title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_content_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agency_profiles: {
         Row: {
           account_manager: string | null
@@ -108,6 +211,104 @@ export type Database = {
           total_revenue_ytd?: number | null
           updated_at?: string | null
           website_url?: string | null
+        }
+        Relationships: []
+      }
+      ai_conversation_history: {
+        Row: {
+          ai_response: string | null
+          business_context: Json | null
+          conversation_topic: string | null
+          created_at: string | null
+          created_files: string[] | null
+          id: string
+          message_type: string | null
+          persona_id: string | null
+          project_context: string | null
+          relevant_tables: string[] | null
+          session_id: string | null
+          tags: string[] | null
+          user_message: string | null
+        }
+        Insert: {
+          ai_response?: string | null
+          business_context?: Json | null
+          conversation_topic?: string | null
+          created_at?: string | null
+          created_files?: string[] | null
+          id?: string
+          message_type?: string | null
+          persona_id?: string | null
+          project_context?: string | null
+          relevant_tables?: string[] | null
+          session_id?: string | null
+          tags?: string[] | null
+          user_message?: string | null
+        }
+        Update: {
+          ai_response?: string | null
+          business_context?: Json | null
+          conversation_topic?: string | null
+          created_at?: string | null
+          created_files?: string[] | null
+          id?: string
+          message_type?: string | null
+          persona_id?: string | null
+          project_context?: string | null
+          relevant_tables?: string[] | null
+          session_id?: string | null
+          tags?: string[] | null
+          user_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversation_history_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "ai_personas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_personas: {
+        Row: {
+          active: boolean | null
+          avatar_color: string | null
+          created_at: string | null
+          description: string | null
+          display_name: string
+          expertise_areas: string[] | null
+          id: string
+          key_metrics: Json | null
+          persona_name: string
+          relevant_tables: string[] | null
+          system_prompt: string
+        }
+        Insert: {
+          active?: boolean | null
+          avatar_color?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name: string
+          expertise_areas?: string[] | null
+          id?: string
+          key_metrics?: Json | null
+          persona_name: string
+          relevant_tables?: string[] | null
+          system_prompt: string
+        }
+        Update: {
+          active?: boolean | null
+          avatar_color?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name?: string
+          expertise_areas?: string[] | null
+          id?: string
+          key_metrics?: Json | null
+          persona_name?: string
+          relevant_tables?: string[] | null
+          system_prompt?: string
         }
         Relationships: []
       }
@@ -296,6 +497,38 @@ export type Database = {
           validation_status?: string | null
         }
         Relationships: []
+      }
+      auth_tokens: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auth_tokens_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       automated_triggers: {
         Row: {
@@ -929,6 +1162,81 @@ export type Database = {
           start_date?: string | null
           total_guests?: number | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      brand_assets: {
+        Row: {
+          asset_type: string
+          created_at: string
+          description: string | null
+          file_path: string
+          file_size: number | null
+          file_url: string | null
+          id: string
+          mime_type: string | null
+          name: string
+          updated_at: string
+          usage_context: string | null
+        }
+        Insert: {
+          asset_type: string
+          created_at?: string
+          description?: string | null
+          file_path: string
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          mime_type?: string | null
+          name: string
+          updated_at?: string
+          usage_context?: string | null
+        }
+        Update: {
+          asset_type?: string
+          created_at?: string
+          description?: string | null
+          file_path?: string
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          mime_type?: string | null
+          name?: string
+          updated_at?: string
+          usage_context?: string | null
+        }
+        Relationships: []
+      }
+      brand_guidelines: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+          usage_notes: string | null
+          value: Json
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+          usage_notes?: string | null
+          value: Json
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+          usage_notes?: string | null
+          value?: Json
         }
         Relationships: []
       }
@@ -2117,6 +2425,41 @@ export type Database = {
           variables_used?: string | null
         }
         Relationships: []
+      }
+      communications: {
+        Row: {
+          author: string
+          created_at: string | null
+          id: string
+          message: string
+          task_id: string
+          type: string | null
+        }
+        Insert: {
+          author: string
+          created_at?: string | null
+          id?: string
+          message: string
+          task_id: string
+          type?: string | null
+        }
+        Update: {
+          author?: string
+          created_at?: string | null
+          id?: string
+          message?: string
+          task_id?: string
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communications_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       comparative_analytics: {
         Row: {
@@ -3316,6 +3659,72 @@ export type Database = {
           },
         ]
       }
+      experiences: {
+        Row: {
+          cancellation_policy: string | null
+          created_at: string | null
+          description: string | null
+          duration_minutes: number | null
+          features: Json | null
+          gallery_images: Json | null
+          hero_image_url: string | null
+          id: string
+          includes: Json | null
+          is_active: boolean | null
+          max_capacity: number | null
+          meeting_point: string | null
+          name: string
+          pricing: Json
+          short_description: string | null
+          slug: string
+          time_slots: Json
+          updated_at: string | null
+          weather_policy: string | null
+        }
+        Insert: {
+          cancellation_policy?: string | null
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          features?: Json | null
+          gallery_images?: Json | null
+          hero_image_url?: string | null
+          id?: string
+          includes?: Json | null
+          is_active?: boolean | null
+          max_capacity?: number | null
+          meeting_point?: string | null
+          name: string
+          pricing?: Json
+          short_description?: string | null
+          slug: string
+          time_slots?: Json
+          updated_at?: string | null
+          weather_policy?: string | null
+        }
+        Update: {
+          cancellation_policy?: string | null
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          features?: Json | null
+          gallery_images?: Json | null
+          hero_image_url?: string | null
+          id?: string
+          includes?: Json | null
+          is_active?: boolean | null
+          max_capacity?: number | null
+          meeting_point?: string | null
+          name?: string
+          pricing?: Json
+          short_description?: string | null
+          slug?: string
+          time_slots?: Json
+          updated_at?: string | null
+          weather_policy?: string | null
+        }
+        Relationships: []
+      }
       guardiennage_schedules: {
         Row: {
           actual_duration_hours: number | null
@@ -3687,6 +4096,83 @@ export type Database = {
             columns: ["yacht_sale_id"]
             isOneToOne: false
             referencedRelation: "yacht_inventory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      landing_page_bookings: {
+        Row: {
+          booking_date: string
+          booking_reference: string
+          created_at: string | null
+          currency: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          experience_id: string
+          id: string
+          number_of_people: number
+          payment_reference: string | null
+          payment_status: string | null
+          price_per_person: number
+          source: string | null
+          special_requests: string | null
+          status: string | null
+          time_period: string
+          time_slot: string
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          booking_date: string
+          booking_reference: string
+          created_at?: string | null
+          currency?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          experience_id: string
+          id?: string
+          number_of_people: number
+          payment_reference?: string | null
+          payment_status?: string | null
+          price_per_person: number
+          source?: string | null
+          special_requests?: string | null
+          status?: string | null
+          time_period: string
+          time_slot: string
+          total_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          booking_date?: string
+          booking_reference?: string
+          created_at?: string | null
+          currency?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          experience_id?: string
+          id?: string
+          number_of_people?: number
+          payment_reference?: string | null
+          payment_status?: string | null
+          price_per_person?: number
+          source?: string | null
+          special_requests?: string | null
+          status?: string | null
+          time_period?: string
+          time_slot?: string
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landing_page_bookings_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
             referencedColumns: ["id"]
           },
         ]
@@ -4200,6 +4686,50 @@ export type Database = {
         }
         Relationships: []
       }
+      media: {
+        Row: {
+          author: string
+          created_at: string | null
+          id: string
+          mime_type: string | null
+          name: string
+          size_bytes: number | null
+          task_id: string
+          type: string
+          url: string
+        }
+        Insert: {
+          author: string
+          created_at?: string | null
+          id?: string
+          mime_type?: string | null
+          name: string
+          size_bytes?: number | null
+          task_id: string
+          type: string
+          url: string
+        }
+        Update: {
+          author?: string
+          created_at?: string | null
+          id?: string
+          mime_type?: string | null
+          name?: string
+          size_bytes?: number | null
+          task_id?: string
+          type?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_field_mapping: {
         Row: {
           column_name: string
@@ -4540,6 +5070,36 @@ export type Database = {
         }
         Relationships: []
       }
+      people: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       performance_metrics: {
         Row: {
           action_items: string[] | null
@@ -4786,6 +5346,174 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string | null
           whatsapp_enabled?: boolean
+        }
+        Relationships: []
+      }
+      project_artifacts: {
+        Row: {
+          artifact_content: string | null
+          artifact_name: string
+          artifact_type: string
+          content_type: string | null
+          created_date: string | null
+          description: string | null
+          github_path: string | null
+          id: string
+          is_latest_version: boolean | null
+          lovable_url: string | null
+          project_category: string | null
+          version_number: number | null
+        }
+        Insert: {
+          artifact_content?: string | null
+          artifact_name: string
+          artifact_type: string
+          content_type?: string | null
+          created_date?: string | null
+          description?: string | null
+          github_path?: string | null
+          id?: string
+          is_latest_version?: boolean | null
+          lovable_url?: string | null
+          project_category?: string | null
+          version_number?: number | null
+        }
+        Update: {
+          artifact_content?: string | null
+          artifact_name?: string
+          artifact_type?: string
+          content_type?: string | null
+          created_date?: string | null
+          description?: string | null
+          github_path?: string | null
+          id?: string
+          is_latest_version?: boolean | null
+          lovable_url?: string | null
+          project_category?: string | null
+          version_number?: number | null
+        }
+        Relationships: []
+      }
+      project_assets: {
+        Row: {
+          asset_type: string
+          chat_session: string | null
+          description: string | null
+          file_size: number | null
+          filename: string
+          id: string
+          mime_type: string | null
+          project_category: string
+          storage_url: string | null
+          upload_date: string | null
+        }
+        Insert: {
+          asset_type: string
+          chat_session?: string | null
+          description?: string | null
+          file_size?: number | null
+          filename: string
+          id?: string
+          mime_type?: string | null
+          project_category: string
+          storage_url?: string | null
+          upload_date?: string | null
+        }
+        Update: {
+          asset_type?: string
+          chat_session?: string | null
+          description?: string | null
+          file_size?: number | null
+          filename?: string
+          id?: string
+          mime_type?: string | null
+          project_category?: string
+          storage_url?: string | null
+          upload_date?: string | null
+        }
+        Relationships: []
+      }
+      project_contexts: {
+        Row: {
+          active_integrations: string[] | null
+          business_objectives: Json | null
+          current_status: string | null
+          id: string
+          key_decisions: Json | null
+          last_updated: string | null
+          project_name: string
+          technical_requirements: Json | null
+        }
+        Insert: {
+          active_integrations?: string[] | null
+          business_objectives?: Json | null
+          current_status?: string | null
+          id?: string
+          key_decisions?: Json | null
+          last_updated?: string | null
+          project_name: string
+          technical_requirements?: Json | null
+        }
+        Update: {
+          active_integrations?: string[] | null
+          business_objectives?: Json | null
+          current_status?: string | null
+          id?: string
+          key_decisions?: Json | null
+          last_updated?: string | null
+          project_name?: string
+          technical_requirements?: Json | null
+        }
+        Relationships: []
+      }
+      project_tasks: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string | null
+          deliverables: Json | null
+          dependencies: string[] | null
+          estimated_time_hours: number | null
+          id: string
+          notes: string | null
+          priority: string | null
+          project_name: string
+          task_description: string | null
+          task_status: string | null
+          task_title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          deliverables?: Json | null
+          dependencies?: string[] | null
+          estimated_time_hours?: number | null
+          id?: string
+          notes?: string | null
+          priority?: string | null
+          project_name?: string
+          task_description?: string | null
+          task_status?: string | null
+          task_title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          deliverables?: Json | null
+          dependencies?: string[] | null
+          estimated_time_hours?: number | null
+          id?: string
+          notes?: string | null
+          priority?: string | null
+          project_name?: string
+          task_description?: string | null
+          task_status?: string | null
+          task_title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -5968,6 +6696,98 @@ export type Database = {
           },
         ]
       }
+      session_problems: {
+        Row: {
+          attempted_solution: string | null
+          claude_response_type: string | null
+          error_message: string | null
+          id: number
+          impact_level: string | null
+          lessons_learned: string | null
+          mcp_server_involved: string | null
+          problem_description: string
+          problem_type: string
+          protocol_updates_needed: string | null
+          resolution_notes: string | null
+          resolution_status: string | null
+          session_date: string | null
+          user_request: string | null
+        }
+        Insert: {
+          attempted_solution?: string | null
+          claude_response_type?: string | null
+          error_message?: string | null
+          id?: number
+          impact_level?: string | null
+          lessons_learned?: string | null
+          mcp_server_involved?: string | null
+          problem_description: string
+          problem_type: string
+          protocol_updates_needed?: string | null
+          resolution_notes?: string | null
+          resolution_status?: string | null
+          session_date?: string | null
+          user_request?: string | null
+        }
+        Update: {
+          attempted_solution?: string | null
+          claude_response_type?: string | null
+          error_message?: string | null
+          id?: number
+          impact_level?: string | null
+          lessons_learned?: string | null
+          mcp_server_involved?: string | null
+          problem_description?: string
+          problem_type?: string
+          protocol_updates_needed?: string | null
+          resolution_notes?: string | null
+          resolution_status?: string | null
+          session_date?: string | null
+          user_request?: string | null
+        }
+        Relationships: []
+      }
+      subtasks: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          status: string
+          task_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          status: string
+          task_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          status?: string
+          task_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subtasks_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       system_backups: {
         Row: {
           auto_delete: boolean | null
@@ -6234,6 +7054,68 @@ export type Database = {
           },
         ]
       }
+      tasks: {
+        Row: {
+          assigned_to: string | null
+          boat: string
+          calendar_event_id: string | null
+          calendar_type: string | null
+          category: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          notes: string | null
+          priority: string
+          scheduled_date: string | null
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          boat: string
+          calendar_event_id?: string | null
+          calendar_type?: string | null
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          priority: string
+          scheduled_date?: string | null
+          status: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          boat?: string
+          calendar_event_id?: string | null
+          calendar_type?: string | null
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          priority?: string
+          scheduled_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_activity_logs: {
         Row: {
           access_method: string | null
@@ -6390,6 +7272,39 @@ export type Database = {
           permissions?: Json | null
           role_name?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          password_hash: string | null
+          role: string
+          updated_at: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          password_hash?: string | null
+          role: string
+          updated_at?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          password_hash?: string | null
+          role?: string
+          updated_at?: string | null
+          username?: string
         }
         Relationships: []
       }
@@ -7053,6 +7968,42 @@ export type Database = {
         }
         Relationships: []
       }
+      current_tasks: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          estimated_time_hours: number | null
+          id: string | null
+          priority: string | null
+          sort_order: number | null
+          task_description: string | null
+          task_status: string | null
+          task_title: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          estimated_time_hours?: number | null
+          id?: string | null
+          priority?: string | null
+          sort_order?: never
+          task_description?: string | null
+          task_status?: string | null
+          task_title?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          estimated_time_hours?: number | null
+          id?: string | null
+          priority?: string | null
+          sort_order?: never
+          task_description?: string | null
+          task_status?: string | null
+          task_title?: string | null
+        }
+        Relationships: []
+      }
       customer_360_view: {
         Row: {
           acquisition_date: string | null
@@ -7473,6 +8424,16 @@ export type Database = {
           is_required: boolean
         }[]
       }
+      get_next_tasks: {
+        Args: { limit_count?: number }
+        Returns: {
+          task_id: string
+          title: string
+          description: string
+          priority: string
+          estimated_hours: number
+        }[]
+      }
       get_operations_input_view: {
         Args: { input_mode?: string; user_role?: string }
         Returns: {
@@ -7504,6 +8465,25 @@ export type Database = {
           supplier_orders: string
           next_48hrs_prep: string
           urgent_notes: string
+        }[]
+      }
+      get_persona_context: {
+        Args: { p_persona_name: string; p_limit?: number }
+        Returns: {
+          persona_info: Json
+          recent_conversations: Json
+          relevant_metrics: Json
+        }[]
+      }
+      get_relevant_context: {
+        Args: { p_project?: string; p_limit?: number }
+        Returns: {
+          conversation_id: string
+          project: string
+          user_msg: string
+          ai_response: string
+          context_data: Json
+          relevance_date: string
         }[]
       }
       get_whatsapp_templates: {
@@ -7617,21 +8597,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -7649,14 +8633,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -7672,14 +8658,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -7695,14 +8683,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -7710,14 +8700,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
