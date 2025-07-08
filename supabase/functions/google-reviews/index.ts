@@ -26,8 +26,10 @@ serve(async (req) => {
 
     // Get Google Places API key from environment
     const apiKey = Deno.env.get('GOOGLE_PLACES_API_KEY')
+    console.log('API Key available:', !!apiKey)
     
     if (!apiKey) {
+      console.error('Google Places API key not found in environment')
       return new Response(
         JSON.stringify({ error: 'Google Places API key not configured' }),
         { 
@@ -39,17 +41,23 @@ serve(async (req) => {
 
     // Fetch place details including reviews
     const placesUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,reviews,user_ratings_total&key=${apiKey}`
+    console.log('Making request to Google Places API for placeId:', placeId)
     
     const response = await fetch(placesUrl)
+    console.log('Google API response status:', response.status)
     
     if (!response.ok) {
-      throw new Error(`Google Places API error: ${response.status}`)
+      const errorText = await response.text()
+      console.error('Google Places API error:', response.status, errorText)
+      throw new Error(`Google Places API error: ${response.status} - ${errorText}`)
     }
     
     const data = await response.json()
+    console.log('Google API response status:', data.status)
     
     if (data.status !== 'OK') {
-      throw new Error(`Google Places API status: ${data.status}`)
+      console.error('Google Places API returned error status:', data.status, data.error_message)
+      throw new Error(`Google Places API status: ${data.status} - ${data.error_message || 'Unknown error'}`)
     }
 
     return new Response(
