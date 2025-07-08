@@ -180,8 +180,8 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         total_amount: bookingData.totalAmount,
         currency: 'EUR',
         source: 'mallorcan_sailing_stripe',
-        status: 'payment_pending',
-        payment_status: 'pending'
+        status: 'pending', // Fixed: Use valid status value
+        payment_status: 'pending' // This is valid according to constraint
       };
 
       addDebugLog('Saving booking to database...', 'info');
@@ -195,7 +195,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         addDebugLog(`Session error: ${JSON.stringify(sessionError)}`, 'error');
       }
 
-      // Try using service role for anonymous bookings
+      // Save booking to database
       const { data: savedBooking, error: bookingError } = await supabase
         .from('landing_page_bookings')
         .insert([bookingRecord])
@@ -204,31 +204,10 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
       if (bookingError) {
         addDebugLog(`Booking save error: ${JSON.stringify(bookingError)}`, 'error');
-        addDebugLog('Attempting to bypass RLS with alternative approach...', 'info');
-        
-        // Try alternative: Call Edge Function to save booking
-        try {
-          const saveResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/save-booking`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ booking: bookingRecord }),
-          });
-
-          if (saveResponse.ok) {
-            const saveResult = await saveResponse.json();
-            addDebugLog('Booking saved via Edge Function bypass', 'success');
-          } else {
-            throw new Error('Edge Function save also failed');
-          }
-        } catch (edgeFuncError) {
-          addDebugLog(`Edge Function save error: ${edgeFuncError}`, 'error');
-          throw new Error('Failed to save booking: ' + bookingError.message);
-        }
-      } else {
-        addDebugLog(`Booking saved successfully: ${savedBooking.id}`, 'success');
+        throw new Error('Failed to save booking: ' + bookingError.message);
       }
+
+      addDebugLog(`Booking saved successfully: ${savedBooking.id}`, 'success');
 
       // Prepare Stripe payment data
       const stripePaymentData: StripePaymentData = {
@@ -248,7 +227,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         }
       };
 
-      addDebugLog(`Stripe payment data: ${JSON.stringify(stripePaymentData, null, 2)}`);
+      addDebugLog(`Stripe payment data prepared (amount: €${bookingData.totalAmount} = ${stripePaymentData.amount} cents)`);
 
       if (stripeConfigured) {
         addDebugLog('Creating REAL Stripe checkout session...');
