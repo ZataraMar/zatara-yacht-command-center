@@ -1038,6 +1038,130 @@ export type Database = {
         }
         Relationships: []
       }
+      boat_images: {
+        Row: {
+          boat_id: number | null
+          created_at: string | null
+          display_order: number | null
+          file_size: number | null
+          id: string
+          image_category: string | null
+          image_description: string | null
+          image_title: string | null
+          image_url: string
+          is_primary: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          boat_id?: number | null
+          created_at?: string | null
+          display_order?: number | null
+          file_size?: number | null
+          id?: string
+          image_category?: string | null
+          image_description?: string | null
+          image_title?: string | null
+          image_url: string
+          is_primary?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          boat_id?: number | null
+          created_at?: string | null
+          display_order?: number | null
+          file_size?: number | null
+          id?: string
+          image_category?: string | null
+          image_description?: string | null
+          image_title?: string | null
+          image_url?: string
+          is_primary?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boat_images_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      boat_pricing: {
+        Row: {
+          advance_booking_discount: number | null
+          base_price: number
+          boat_id: number | null
+          cancellation_policy: string | null
+          charter_type: string
+          created_at: string | null
+          currency: string | null
+          deposit_percentage: number | null
+          duration_hours: number
+          id: string
+          is_active: boolean | null
+          last_minute_surcharge: number | null
+          max_guests: number | null
+          min_guests: number | null
+          price_per_extra_guest: number | null
+          season: string | null
+          updated_at: string | null
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          advance_booking_discount?: number | null
+          base_price: number
+          boat_id?: number | null
+          cancellation_policy?: string | null
+          charter_type: string
+          created_at?: string | null
+          currency?: string | null
+          deposit_percentage?: number | null
+          duration_hours: number
+          id?: string
+          is_active?: boolean | null
+          last_minute_surcharge?: number | null
+          max_guests?: number | null
+          min_guests?: number | null
+          price_per_extra_guest?: number | null
+          season?: string | null
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          advance_booking_discount?: number | null
+          base_price?: number
+          boat_id?: number | null
+          cancellation_policy?: string | null
+          charter_type?: string
+          created_at?: string | null
+          currency?: string | null
+          deposit_percentage?: number | null
+          duration_hours?: number
+          id?: string
+          is_active?: boolean | null
+          last_minute_surcharge?: number | null
+          max_guests?: number | null
+          min_guests?: number | null
+          price_per_extra_guest?: number | null
+          season?: string | null
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boat_pricing_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       boat_registry: {
         Row: {
           advance_booking_days: number | null
@@ -1193,6 +1317,53 @@ export type Database = {
           zatara_commission_percentage?: number | null
         }
         Relationships: []
+      }
+      boat_specifications: {
+        Row: {
+          boat_id: number | null
+          category: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_featured: boolean | null
+          spec_name: string
+          spec_unit: string | null
+          spec_value: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          boat_id?: number | null
+          category: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_featured?: boolean | null
+          spec_name: string
+          spec_unit?: string | null
+          spec_value?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          boat_id?: number | null
+          category?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_featured?: boolean | null
+          spec_name?: string
+          spec_unit?: string | null
+          spec_value?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boat_specifications_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boat_registry"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       booking_conflicts: {
         Row: {

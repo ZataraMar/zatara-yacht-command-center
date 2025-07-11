@@ -4,7 +4,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, user-agent",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400",
 };
 
 serve(async (req) => {
@@ -15,6 +17,16 @@ serve(async (req) => {
 
   try {
     console.log("[STRIPE-CHECKOUT] Function started");
+    
+    // Log device information for debugging
+    const userAgent = req.headers.get("user-agent") || "unknown";
+    const origin = req.headers.get("origin") || "unknown";
+    console.log("[STRIPE-CHECKOUT] User-Agent:", userAgent);
+    console.log("[STRIPE-CHECKOUT] Origin:", origin);
+    
+    // Detect mobile devices
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    console.log("[STRIPE-CHECKOUT] Is Mobile:", isMobile);
 
     // Get request data - handle both direct calls and supabase.functions.invoke()
     const requestData = await req.json();
@@ -64,10 +76,10 @@ serve(async (req) => {
     });
     console.log("[STRIPE-CHECKOUT] Stripe initialized");
 
-    // Create checkout session
-    const session = await stripe.checkout.sessions.create({
+    // Create checkout session with mobile-optimized settings
+    const sessionConfig = {
       payment_method_types: ['card'],
-      mode: 'payment',
+      mode: 'payment' as const,
       line_items: [
         {
           price_data: {
@@ -81,17 +93,39 @@ serve(async (req) => {
         },
       ],
       customer_email: customer_email,
-      metadata: payment_data.metadata,
+      metadata: {
+        ...payment_data.metadata,
+        user_agent: userAgent,
+        is_mobile: isMobile.toString(),
+        origin: origin,
+      },
       success_url: success_url,
       cancel_url: cancel_url,
-    });
+      // Mobile-specific optimizations
+      ...(isMobile && {
+        billing_address_collection: 'auto',
+        shipping_address_collection: null,
+      }),
+    };
+    
+    console.log("[STRIPE-CHECKOUT] Creating session with config:", JSON.stringify(sessionConfig, null, 2));
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     console.log("[STRIPE-CHECKOUT] Session created:", session.id);
+    console.log("[STRIPE-CHECKOUT] Session URL length:", session.url?.length || 0);
 
-    return new Response(JSON.stringify({ 
+    // Enhanced response with debugging info
+    const response = { 
       url: session.url,
-      session_id: session.id 
-    }), {
+      session_id: session.id,
+      debug: {
+        is_mobile: isMobile,
+        user_agent: userAgent.substring(0, 100),
+        url_length: session.url?.length || 0,
+      }
+    };
+
+    return new Response(JSON.stringify(response), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });

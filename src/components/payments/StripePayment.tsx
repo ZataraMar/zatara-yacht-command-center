@@ -213,13 +213,20 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
             throw new Error('No data returned from Edge Function');
           }
 
+          // Log debug information from edge function
+          if (data.debug) {
+            addDebugLog(`Device: ${data.debug.is_mobile ? 'Mobile' : 'Desktop'}`);
+            addDebugLog(`URL length: ${data.debug.url_length} chars`);
+          }
+
           addDebugLog(`Checkout session created successfully`, 'success');
 
           if (data?.url) {
-            addDebugLog(`Opening Stripe checkout in new window...`, 'success');
+            addDebugLog(`Redirecting to Stripe checkout...`, 'success');
             
-            // Open Stripe checkout in a new window to avoid iframe restrictions
-            window.open(data.url, '_blank');
+            // Use window.location.href for better mobile compatibility
+            // This avoids popup blockers and works across all devices
+            window.location.href = data.url;
             
           } else {
             addDebugLog(`No URL in response: ${JSON.stringify(data)}`, 'error');
