@@ -20,7 +20,15 @@ import {
   Globe,
   Cog,
   FileSearch,
-  CalendarCheck
+  CalendarCheck,
+  ChevronDown,
+  ChevronRight,
+  Wrench,
+  Ship,
+  Handshake,
+  Users2,
+  Briefcase,
+  Crown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,6 +42,14 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    operations: true,
+    fleet: false,
+    revenue: false,
+    customer: false,
+    system: false,
+    public: false
+  });
   const { profile } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,28 +57,108 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const userRole = profile?.role || '';
   const isOwnerUser = isOwner(userRole);
 
-  const navigation = [
-    { name: 'Overview', href: '/dashboard', icon: BarChart3, current: location.pathname === '/dashboard' },
-    ...(isOwnerUser ? [
-      { name: 'Operations', href: '/dashboard/operations', icon: Anchor, current: location.pathname === '/dashboard/operations' },
-      { name: 'Fleet Management', href: '/dashboard/fleet', icon: Target, current: location.pathname === '/dashboard/fleet' },
-      { name: 'Team', href: '/dashboard/team', icon: Users, current: location.pathname === '/dashboard/team' },
-      { name: 'User Management', href: '/dashboard/users', icon: Shield, current: location.pathname === '/dashboard/users' },
-      { name: 'Admin Settings', href: '/dashboard/admin-settings', icon: Cog, current: location.pathname === '/dashboard/admin-settings' },
-      { name: 'Field Analysis', href: '/dashboard/field-analysis', icon: FileSearch, current: location.pathname === '/dashboard/field-analysis' },
-      { name: 'Calendar Sync', href: '/dashboard/calendar-sync', icon: CalendarCheck, current: location.pathname === '/dashboard/calendar-sync' },
-      { name: 'Financials', href: '/dashboard/financials', icon: DollarSign, current: location.pathname === '/dashboard/financials' },
-      { name: 'Guest Experience', href: '/dashboard/guests', icon: UserCheck, current: location.pathname === '/dashboard/guests' },
-      { name: 'Operations Excellence', href: '/dashboard/operations-excellence', icon: Zap, current: location.pathname === '/dashboard/operations-excellence' },
-      { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3, current: location.pathname === '/dashboard/analytics' },
-      { name: 'Automation', href: '/dashboard/automation', icon: MessageSquare, current: location.pathname === '/dashboard/automation' },
-      { name: 'Landing Pages', href: '/dashboard/landing-pages', icon: Globe, current: location.pathname === '/dashboard/landing-pages' },
-      { name: 'Phase 2 Management', href: '/dashboard/phase2', icon: Database, current: location.pathname === '/dashboard/phase2' },
-    ] : [
-      { name: 'My Bookings', href: '/dashboard/bookings', icon: Calendar, current: location.pathname === '/dashboard/bookings' },
-    ]),
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  const navigationSections = [
+    {
+      id: 'operations',
+      name: '🚤 Core Operations',
+      color: 'text-[#00A3E4]',
+      bgColor: 'bg-[#00A3E4]',
+      items: [
+        { name: 'Dashboard Overview', href: '/dashboard', icon: BarChart3, current: location.pathname === '/dashboard' },
+        { name: 'Live Operations', href: '/dashboard/operations', icon: Anchor, current: location.pathname === '/dashboard/operations' },
+        { name: 'Bookings Management', href: '/dashboard/bookings-mgmt', icon: Calendar, current: location.pathname === '/dashboard/bookings-mgmt' },
+        { name: 'CRM Dashboard', href: '/dashboard/crm', icon: UserCheck, current: location.pathname === '/dashboard/crm' },
+      ]
+    },
+    {
+      id: 'fleet',
+      name: '⚓ Fleet & Crew',
+      color: 'text-[#00A3E4]',
+      bgColor: 'bg-[#00A3E4]',
+      items: [
+        { name: 'Fleet Overview', href: '/dashboard/fleet', icon: Ship, current: location.pathname === '/dashboard/fleet' },
+        { name: 'Boat Content', href: '/dashboard/boat-content', icon: Target, current: location.pathname === '/dashboard/boat-content' },
+        { name: 'Skipper & Crew', href: '/dashboard/crew', icon: Users2, current: location.pathname === '/dashboard/crew' },
+        { name: 'Maintenance & Works', href: '/dashboard/maintenance', icon: Wrench, current: location.pathname === '/dashboard/maintenance' },
+        { name: 'Boats For Sale', href: '/dashboard/brokerage', icon: Crown, current: location.pathname === '/dashboard/brokerage' },
+      ]
+    },
+    {
+      id: 'revenue',
+      name: '💰 Revenue Management',
+      color: 'text-[#CCCC33]',
+      bgColor: 'bg-[#CCCC33]',
+      items: [
+        { name: 'Pricing & Discounts', href: '/dashboard/pricing', icon: DollarSign, current: location.pathname === '/dashboard/pricing' },
+        { name: 'Extras Management', href: '/dashboard/extras', icon: Zap, current: location.pathname === '/dashboard/extras' },
+        { name: 'Financial Overview', href: '/dashboard/financials', icon: BarChart3, current: location.pathname === '/dashboard/financials' },
+        { name: 'Sales Partners', href: '/dashboard/partners', icon: Handshake, current: location.pathname === '/dashboard/partners' },
+      ]
+    },
+    {
+      id: 'customer',
+      name: '👥 Customer & Team',
+      color: 'text-[#D4AF37]',
+      bgColor: 'bg-[#D4AF37]',
+      items: [
+        { name: 'Guest Experience', href: '/dashboard/guests', icon: UserCheck, current: location.pathname === '/dashboard/guests' },
+        { name: 'Boat Club Management', href: '/dashboard/boat-club', icon: Users, current: location.pathname === '/dashboard/boat-club' },
+        { name: 'Team Management', href: '/dashboard/team', icon: Users, current: location.pathname === '/dashboard/team' },
+        { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3, current: location.pathname === '/dashboard/analytics' },
+      ]
+    },
+    {
+      id: 'system',
+      name: '⚙️ System & Admin',
+      color: 'text-[#333333]',
+      bgColor: 'bg-[#333333]',
+      items: [
+        { name: 'Project Management', href: '/dashboard/projects', icon: Briefcase, current: location.pathname === '/dashboard/projects' },
+        { name: 'User Management', href: '/dashboard/users', icon: Shield, current: location.pathname === '/dashboard/users' },
+        { name: 'Admin Settings', href: '/dashboard/admin-settings', icon: Cog, current: location.pathname === '/dashboard/admin-settings' },
+        { name: 'Field Analysis', href: '/dashboard/field-analysis', icon: FileSearch, current: location.pathname === '/dashboard/field-analysis' },
+        { name: 'Automation', href: '/dashboard/automation', icon: MessageSquare, current: location.pathname === '/dashboard/automation' },
+      ]
+    },
+    {
+      id: 'public',
+      name: '🌐 Public & Marketing',
+      color: 'text-[#66D9EF]',
+      bgColor: 'bg-[#66D9EF]',
+      items: [
+        { name: 'Landing Pages', href: '/dashboard/landing-pages', icon: Globe, current: location.pathname === '/dashboard/landing-pages' },
+        { name: 'Calendar Sync', href: '/dashboard/calendar-sync', icon: CalendarCheck, current: location.pathname === '/dashboard/calendar-sync' },
+        { name: 'Operations Excellence', href: '/dashboard/operations-excellence', icon: Zap, current: location.pathname === '/dashboard/operations-excellence' },
+      ]
+    }
+  ];
+
+  const clientNavigation = [
+    { name: 'My Bookings', href: '/dashboard/bookings', icon: Calendar, current: location.pathname === '/dashboard/bookings' },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings, current: location.pathname === '/dashboard/settings' },
   ];
+
+  const getCurrentPageName = () => {
+    if (!isOwnerUser) {
+      const clientItem = clientNavigation.find(item => item.current);
+      return clientItem?.name || 'Dashboard';
+    }
+    
+    for (const section of navigationSections) {
+      const activeItem = section.items.find(item => item.current);
+      if (activeItem) {
+        return activeItem.name;
+      }
+    }
+    return 'Dashboard';
+  };
 
   const handleSignOut = async () => {
     await secureSignOut();
@@ -90,22 +186,60 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
           
           <div className="mt-5 flex-1 h-0 overflow-y-auto">
-            <nav className="px-2 space-y-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`${
-                    item.current
-                      ? 'bg-zatara-blue text-white'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  } group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <item.icon className="mr-4 h-6 w-6" />
-                  {item.name}
-                </Link>
-              ))}
+            <nav className="px-2 space-y-2">
+              {isOwnerUser ? (
+                navigationSections.map((section) => (
+                  <div key={section.id} className="space-y-1">
+                    <button
+                      onClick={() => toggleSection(section.id)}
+                      className={`w-full flex items-center justify-between px-2 py-2 text-sm font-medium rounded-md transition-colors ${section.color} hover:bg-gray-50`}
+                      style={{ fontFamily: 'Tw Cen MT, sans-serif' }}
+                    >
+                      <span className="text-xs font-semibold uppercase tracking-wide">{section.name}</span>
+                      {expandedSections[section.id] ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
+                    {expandedSections[section.id] && (
+                      <div className="ml-2 space-y-1 border-l-2 border-gray-200 pl-2">
+                        {section.items.map((item) => (
+                          <Link
+                            key={item.name}
+                            to={item.href}
+                            className={`${
+                              item.current
+                                ? 'bg-[#00A3E4] text-white'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                            } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors`}
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <item.icon className="mr-3 h-4 w-4" />
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                clientNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`${
+                      item.current
+                        ? 'bg-[#00A3E4] text-white'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    } group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors`}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <item.icon className="mr-4 h-6 w-6" />
+                    {item.name}
+                  </Link>
+                ))
+              )}
             </nav>
           </div>
         </div>
@@ -120,21 +254,58 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </div>
             
             <div className="mt-5 flex-grow flex flex-col">
-              <nav className="flex-1 px-2 space-y-1 bg-white">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`${
-                      item.current
-                        ? 'bg-zatara-blue text-white'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors`}
-                  >
-                    <item.icon className="mr-3 h-5 w-5" />
-                    {item.name}
-                  </Link>
-                ))}
+              <nav className="flex-1 px-2 space-y-2 bg-white">
+                {isOwnerUser ? (
+                  navigationSections.map((section) => (
+                    <div key={section.id} className="space-y-1">
+                      <button
+                        onClick={() => toggleSection(section.id)}
+                        className={`w-full flex items-center justify-between px-2 py-2 text-sm font-medium rounded-md transition-colors ${section.color} hover:bg-gray-50`}
+                        style={{ fontFamily: 'Tw Cen MT, sans-serif' }}
+                      >
+                        <span className="text-xs font-semibold uppercase tracking-wide">{section.name}</span>
+                        {expandedSections[section.id] ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                      </button>
+                      {expandedSections[section.id] && (
+                        <div className="ml-2 space-y-1 border-l-2 border-gray-200 pl-2">
+                          {section.items.map((item) => (
+                            <Link
+                              key={item.name}
+                              to={item.href}
+                              className={`${
+                                item.current
+                                  ? 'bg-[#00A3E4] text-white'
+                                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                              } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors`}
+                            >
+                              <item.icon className="mr-3 h-4 w-4" />
+                              {item.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  clientNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`${
+                        item.current
+                          ? 'bg-[#00A3E4] text-white'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors`}
+                    >
+                      <item.icon className="mr-3 h-5 w-5" />
+                      {item.name}
+                    </Link>
+                  ))
+                )}
               </nav>
             </div>
           </div>
@@ -154,8 +325,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           
           <div className="flex-1 px-4 flex justify-between items-center">
             <div className="flex-1 flex">
-              <h1 className="text-2xl font-semibold text-zatara-navy">
-                {navigation.find(nav => nav.current)?.name || 'Dashboard'}
+              <h1 className="text-2xl font-semibold text-zatara-navy" style={{ fontFamily: 'Cosmoball, cursive' }}>
+                {getCurrentPageName()}
               </h1>
             </div>
             
