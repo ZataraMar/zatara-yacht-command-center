@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// Fix: Ensure navigation variables are correctly named
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Bell, 
