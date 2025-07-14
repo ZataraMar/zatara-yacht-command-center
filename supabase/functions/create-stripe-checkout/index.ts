@@ -35,12 +35,18 @@ serve(async (req) => {
     // Extract data from either direct call or invoke call format
     const { payment_data, success_url, cancel_url, customer_email } = requestData;
     
-    // Enhanced input validation
+    // Enhanced input validation with detailed logging
+    console.log("[STRIPE-CHECKOUT] Validating payment_data:", payment_data);
+    
     if (!payment_data || typeof payment_data !== 'object') {
+      console.error("[STRIPE-CHECKOUT] payment_data validation failed - not an object");
       throw new Error("Invalid payment_data: must be an object");
     }
     
+    console.log("[STRIPE-CHECKOUT] payment_data.amount:", payment_data.amount, "type:", typeof payment_data.amount);
+    
     if (!payment_data.amount || typeof payment_data.amount !== 'number' || payment_data.amount <= 0) {
+      console.error("[STRIPE-CHECKOUT] amount validation failed - amount:", payment_data.amount);
       throw new Error("Invalid amount: must be a positive number");
     }
     
