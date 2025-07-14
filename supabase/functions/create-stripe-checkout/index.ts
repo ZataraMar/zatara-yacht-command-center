@@ -148,9 +148,47 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error("[STRIPE-CHECKOUT] Error:", error.message);
+    // Enhanced error handling with detailed logging
+    console.error("[STRIPE-CHECKOUT] ERROR OCCURRED:");
+    console.error("[STRIPE-CHECKOUT] Error type:", error.constructor.name);
+    console.error("[STRIPE-CHECKOUT] Error message:", error.message);
+    console.error("[STRIPE-CHECKOUT] Error stack:", error.stack);
+    
+    // Log specific error details based on error type
+    if (error.type && error.type.includes('stripe')) {
+      console.error("[STRIPE-CHECKOUT] Stripe specific error - Type:", error.type);
+      console.error("[STRIPE-CHECKOUT] Stripe specific error - Code:", error.code);
+      console.error("[STRIPE-CHECKOUT] Stripe specific error - Decline code:", error.decline_code);
+      console.error("[STRIPE-CHECKOUT] Stripe specific error - Param:", error.param);
+    }
+    
+    // Determine error category for better debugging
+    let errorCategory = "unknown";
+    let userFriendlyMessage = "Payment processing failed. Please try again.";
+    
+    if (error.message.includes("Supabase")) {
+      errorCategory = "database";
+      userFriendlyMessage = "Configuration error. Please contact support.";
+    } else if (error.message.includes("Stripe")) {
+      errorCategory = "stripe_api";
+      userFriendlyMessage = "Payment service error. Please try again.";
+    } else if (error.message.includes("Invalid")) {
+      errorCategory = "validation";
+      userFriendlyMessage = "Invalid payment information. Please check your details.";
+    } else if (error.name === "TypeError") {
+      errorCategory = "type_error";
+      userFriendlyMessage = "System error. Please contact support.";
+    }
+    
+    console.error("[STRIPE-CHECKOUT] Error category:", errorCategory);
+    
     return new Response(JSON.stringify({ 
-      error: error.message 
+      error: userFriendlyMessage,
+      debug: {
+        category: errorCategory,
+        technical_message: error.message,
+        timestamp: new Date().toISOString()
+      }
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
