@@ -28,11 +28,26 @@ serve(async (req) => {
     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
     console.log("[STRIPE-CHECKOUT] Is Mobile:", isMobile);
 
-    // Get request data - handle both direct calls and supabase.functions.invoke()
-    const requestData = await req.json();
-    console.log("[STRIPE-CHECKOUT] Raw request:", JSON.stringify(requestData));
+    // Get request data - handle different browser serialization methods
+    let requestData;
+    const contentType = req.headers.get("content-type") || "";
     
-    // Extract data from either direct call or invoke call format
+    if (contentType.includes("application/json")) {
+      requestData = await req.json();
+    } else {
+      // Fallback for browsers that send different content types
+      const text = await req.text();
+      try {
+        requestData = JSON.parse(text);
+      } catch {
+        throw new Error("Invalid request format - unable to parse data");
+      }
+    }
+    
+    console.log("[STRIPE-CHECKOUT] Raw request:", JSON.stringify(requestData));
+    console.log("[STRIPE-CHECKOUT] Content-Type:", contentType);
+    
+    // Extract data with fallback for different browser formats
     const { payment_data, success_url, cancel_url, customer_email } = requestData;
     
     // Enhanced input validation with detailed logging

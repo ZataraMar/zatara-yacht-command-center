@@ -187,18 +187,38 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           }
         };
 
+        // Browser-compatible data format - serialize carefully
         const requestData = {
-          payment_data: stripePaymentData,
+          payment_data: {
+            amount: eurosToCents(bookingData.totalAmount),
+            currency: 'EUR',
+            description: `Mallorcan Sailing Experience - ${bookingData.timePeriodLabel} for ${bookingData.numberOfPeople} people`,
+            customerEmail: bookingData.customerEmail,
+            customerName: bookingData.customerName,
+            bookingReference: bookingData.bookingReference,
+            metadata: {
+              experience: 'mallorcan-sailing',
+              bookingDate: bookingData.bookingDate,
+              timeSlot: bookingData.timeSlot,
+              numberOfPeople: String(bookingData.numberOfPeople),
+              upgradeIncluded: String(bookingData.hasUpgrade),
+              bookingId: bookingData.bookingReference
+            }
+          },
           success_url: `${window.location.origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: window.location.href,
-          customer_email: stripePaymentData.customerEmail,
+          customer_email: bookingData.customerEmail,
         };
 
-        addDebugLog(`Calling Edge Function...`);
+        addDebugLog(`Calling Edge Function with browser-compatible format...`);
+        addDebugLog(`Request data size: ${JSON.stringify(requestData).length} chars`);
 
         try {
           const { data, error } = await supabase.functions.invoke('create-stripe-checkout', {
-            body: requestData,
+            body: JSON.stringify(requestData),
+            headers: {
+              'Content-Type': 'application/json',
+            }
           });
 
           addDebugLog(`Edge Function response received`);
@@ -224,9 +244,13 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           if (data?.url) {
             addDebugLog(`Redirecting to Stripe checkout...`, 'success');
             
-            // Use window.location.href for better mobile compatibility
-            // This avoids popup blockers and works across all devices
-            window.location.href = data.url;
+            // Cross-browser compatible redirect
+            try {
+              window.location.href = data.url;
+            } catch (redirectError) {
+              // Fallback for browsers with strict security
+              window.open(data.url, '_self');
+            }
             
           } else {
             addDebugLog(`No URL in response: ${JSON.stringify(data)}`, 'error');
