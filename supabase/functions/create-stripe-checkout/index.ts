@@ -62,14 +62,31 @@ serve(async (req) => {
     
     console.log("[STRIPE-CHECKOUT] Input validation passed");
 
-    // Initialize Stripe
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    console.log("[STRIPE-CHECKOUT] Stripe key check:", stripeKey ? 'Found' : 'Missing');
+    // Initialize Supabase client to read Stripe key from database
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
-    if (!stripeKey) {
-      console.error("[STRIPE-CHECKOUT] STRIPE_SECRET_KEY environment variable not found");
-      throw new Error("Stripe secret key not configured. Please set STRIPE_SECRET_KEY in edge function secrets.");
+    if (!supabaseUrl || !supabaseServiceRoleKey) {
+      throw new Error("Supabase configuration missing");
     }
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+    console.log("[STRIPE-CHECKOUT] Supabase client initialized");
+
+    // Get Stripe secret key from database
+    const { data: stripeKeyData, error: stripeKeyError } = await supabase
+      .from('admin_settings')
+      .select('setting_value')
+      .eq('setting_key', 'stripe_secret_key')
+      .single();
+    
+    if (stripeKeyError || !stripeKeyData?.setting_value) {
+      console.error("[STRIPE-CHECKOUT] Failed to retrieve Stripe secret key from database:", stripeKeyError);
+      throw new Error("Stripe secret key not configured in database. Please set stripe_secret_key in admin settings.");
+    }
+    
+    const stripeKey = stripeKeyData.setting_value;
+    console.log("[STRIPE-CHECKOUT] Stripe key retrieved from database successfully");
 
     const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
