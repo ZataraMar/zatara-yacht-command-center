@@ -10247,6 +10247,16 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      log_security_event: {
+        Args: {
+          p_action_type: string
+          p_table_affected?: string
+          p_record_id?: string
+          p_old_values?: Json
+          p_new_values?: Json
+        }
+        Returns: undefined
+      }
       mark_andronautic_data_as_real: {
         Args: Record<PropertyKey, never>
         Returns: number
