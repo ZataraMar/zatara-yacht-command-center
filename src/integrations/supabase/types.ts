@@ -3459,6 +3459,13 @@ export type Database = {
             foreignKeyName: "customer_communications_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "enhanced_booking_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "operations_dashboard"
             referencedColumns: ["locator"]
           },
@@ -4550,6 +4557,13 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "charter_reconciliation_view"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "enhanced_booking_dashboard"
             referencedColumns: ["locator"]
           },
           {
@@ -6285,6 +6299,13 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "charter_reconciliation_view"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "enhanced_booking_dashboard"
             referencedColumns: ["locator"]
           },
           {
@@ -8984,6 +9005,13 @@ export type Database = {
             foreignKeyName: "whatsapp_messages_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "enhanced_booking_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "operations_dashboard"
             referencedColumns: ["locator"]
           },
@@ -9921,6 +9949,13 @@ export type Database = {
             foreignKeyName: "customer_communications_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "enhanced_booking_dashboard"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "operations_dashboard"
             referencedColumns: ["locator"]
           },
@@ -10232,6 +10267,69 @@ export type Database = {
           latest_record: string | null
           record_count: number | null
           table_name: string | null
+        }
+        Relationships: []
+      }
+      enhanced_booking_dashboard: {
+        Row: {
+          boat: string | null
+          booking_source: string | null
+          booking_status: string | null
+          charter_date: string | null
+          charter_total: number | null
+          confirmation_sent: boolean | null
+          contract_signed: boolean | null
+          guest_email: string | null
+          guest_name: string | null
+          guest_phone: string | null
+          locator: string | null
+          outstanding_amount: number | null
+          paid_amount: number | null
+          preparation_status: string | null
+          total_guests: number | null
+        }
+        Insert: {
+          boat?: string | null
+          booking_source?: string | null
+          booking_status?: string | null
+          charter_date?: never
+          charter_total?: number | null
+          confirmation_sent?: boolean | null
+          contract_signed?: boolean | null
+          guest_email?: string | null
+          guest_name?: never
+          guest_phone?: string | null
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          preparation_status?: never
+          total_guests?: number | null
+        }
+        Update: {
+          boat?: string | null
+          booking_source?: string | null
+          booking_status?: string | null
+          charter_date?: never
+          charter_total?: number | null
+          confirmation_sent?: boolean | null
+          contract_signed?: boolean | null
+          guest_email?: string | null
+          guest_name?: never
+          guest_phone?: string | null
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          preparation_status?: never
+          total_guests?: number | null
+        }
+        Relationships: []
+      }
+      financial_dashboard: {
+        Row: {
+          calculation_date: string | null
+          metric_name: string | null
+          metric_unit: string | null
+          metric_value: number | null
         }
         Relationships: []
       }
