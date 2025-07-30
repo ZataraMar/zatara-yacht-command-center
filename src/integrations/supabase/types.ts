@@ -9199,7 +9199,6 @@ export type Database = {
           field_type: string | null
           id: number | null
           is_mapped: boolean | null
-          mapping_status: string | null
           supabase_field: string | null
           transformation_rule: string | null
           updated_at: string | null
@@ -9211,7 +9210,6 @@ export type Database = {
           field_type?: string | null
           id?: number | null
           is_mapped?: boolean | null
-          mapping_status?: never
           supabase_field?: string | null
           transformation_rule?: string | null
           updated_at?: string | null
@@ -9223,7 +9221,6 @@ export type Database = {
           field_type?: string | null
           id?: number | null
           is_mapped?: boolean | null
-          mapping_status?: never
           supabase_field?: string | null
           transformation_rule?: string | null
           updated_at?: string | null
