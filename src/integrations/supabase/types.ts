@@ -9327,43 +9327,67 @@ export type Database = {
       }
       business_view_finance: {
         Row: {
-          balance_due: number | null
           boat: string | null
           booking_source: string | null
           charter_date: string | null
+          charter_notes: string | null
           charter_total: number | null
-          guest_full_name: string | null
+          cleared_for_departure: boolean | null
+          crew_required: string | null
+          end_time: string | null
+          equipment_required: string | null
+          fnb_details: string | null
+          gps_coordinates: string | null
+          guest_name: string | null
           locator: string | null
           outstanding_amount: number | null
-          payment_status: string | null
-          payments_received: number | null
-          total_paid: number | null
+          paid_amount: number | null
+          pre_departure_checks: boolean | null
+          start_time: string | null
+          status: string | null
+          total_guests: number | null
         }
         Insert: {
-          balance_due?: never
           boat?: string | null
           booking_source?: string | null
           charter_date?: never
+          charter_notes?: string | null
           charter_total?: number | null
-          guest_full_name?: never
+          cleared_for_departure?: never
+          crew_required?: never
+          end_time?: string | null
+          equipment_required?: never
+          fnb_details?: never
+          gps_coordinates?: never
+          guest_name?: never
           locator?: string | null
           outstanding_amount?: number | null
-          payment_status?: never
-          payments_received?: never
-          total_paid?: number | null
+          paid_amount?: number | null
+          pre_departure_checks?: never
+          start_time?: string | null
+          status?: string | null
+          total_guests?: number | null
         }
         Update: {
-          balance_due?: never
           boat?: string | null
           booking_source?: string | null
           charter_date?: never
+          charter_notes?: string | null
           charter_total?: number | null
-          guest_full_name?: never
+          cleared_for_departure?: never
+          crew_required?: never
+          end_time?: string | null
+          equipment_required?: never
+          fnb_details?: never
+          gps_coordinates?: never
+          guest_name?: never
           locator?: string | null
           outstanding_amount?: number | null
-          payment_status?: never
-          payments_received?: never
-          total_paid?: number | null
+          paid_amount?: number | null
+          pre_departure_checks?: never
+          start_time?: string | null
+          status?: string | null
+          total_guests?: number | null
         }
         Relationships: []
       }
