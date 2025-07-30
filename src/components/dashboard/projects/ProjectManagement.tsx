@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ProjectOverview } from '../project/ProjectOverview';
 import { 
   Briefcase, 
   Calendar, 
@@ -178,12 +179,20 @@ export const ProjectManagement = () => {
         </Card>
       </div>
 
+      {/* Project Overview Component */}
+      <ProjectOverview />
+
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="tasks">Tasks</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="overview">
+          <ProjectOverview />
+        </TabsContent>
 
         <TabsContent value="projects" className="space-y-4">
           <Card>
