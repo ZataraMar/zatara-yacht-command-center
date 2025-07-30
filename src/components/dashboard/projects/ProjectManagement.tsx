@@ -1,6 +1,6 @@
 import React from 'react';
-import { LiveProjectDashboard } from '../project/LiveProjectDashboard';
+import { EnhancedTaskManagement } from '../EnhancedTaskManagement';
 
 export const ProjectManagement = () => {
-  return <LiveProjectDashboard />;
+  return <EnhancedTaskManagement />;
 };

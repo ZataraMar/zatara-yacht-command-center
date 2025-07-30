@@ -16,6 +16,7 @@ import { FieldAnalysisDashboard } from '@/components/dashboard/admin/FieldAnalys
 import { CompactCalendarSync } from '@/components/calendar/CompactCalendarSync';
 import { Phase2Dashboard } from '@/components/dashboard/Phase2Dashboard';
 import { LandingPagesManagement } from '@/components/dashboard/LandingPagesManagement';
+import { ZataraCommandCenter } from '@/components/dashboard/ZataraCommandCenter';
 import { AccessControlRoute } from './AccessControlRoute';
 import { ClientDashboard } from './ClientDashboard';
 import { UserSettings } from './UserSettings';
@@ -153,6 +154,16 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
         element={
           <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
             <AdvancedReporting />
+          </AccessControlRoute>
+        } 
+      />
+      
+      {/* Zatara Command Center - Owner only */}
+      <Route 
+        path="/zatara-command" 
+        element={
+          <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
+            <ZataraCommandCenter />
           </AccessControlRoute>
         } 
       />

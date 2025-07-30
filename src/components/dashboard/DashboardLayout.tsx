@@ -29,7 +29,8 @@ import {
   Handshake,
   Users2,
   Briefcase,
-  Crown
+  Crown,
+  Brain
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -121,6 +122,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       color: 'text-[#333333]',
       bgColor: 'bg-[#333333]',
       items: [
+        { name: 'Zatara Command Center', href: '/dashboard/zatara-command', icon: Brain, current: location.pathname === '/dashboard/zatara-command' },
         { name: 'Project Management', href: '/dashboard/projects', icon: Briefcase, current: location.pathname === '/dashboard/projects' },
         { name: 'User Management', href: '/dashboard/users', icon: Shield, current: location.pathname === '/dashboard/users' },
         { name: 'Admin Settings', href: '/dashboard/admin-settings', icon: Cog, current: location.pathname === '/dashboard/admin-settings' },
