@@ -3431,6 +3431,13 @@ export type Database = {
             foreignKeyName: "customer_communications_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "charter_reconciliation_view"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "operations_dashboard"
             referencedColumns: ["locator"]
           },
@@ -4431,6 +4438,13 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "digital_contracts_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "charter_reconciliation_view"
             referencedColumns: ["locator"]
           },
           {
@@ -6138,6 +6152,13 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "business_view_zatara_skipper"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "operations_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
+            referencedRelation: "charter_reconciliation_view"
             referencedColumns: ["locator"]
           },
           {
@@ -8746,6 +8767,13 @@ export type Database = {
             foreignKeyName: "whatsapp_messages_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "charter_reconciliation_view"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "operations_dashboard"
             referencedColumns: ["locator"]
           },
@@ -9574,6 +9602,45 @@ export type Database = {
         }
         Relationships: []
       }
+      charter_reconciliation_view: {
+        Row: {
+          balance_due: number | null
+          boat: string | null
+          booking_source: string | null
+          charter_date: string | null
+          charter_total: number | null
+          guest_full_name: string | null
+          locator: string | null
+          outstanding_amount: number | null
+          paid_amount: number | null
+          payment_status: string | null
+        }
+        Insert: {
+          balance_due?: never
+          boat?: string | null
+          booking_source?: string | null
+          charter_date?: never
+          charter_total?: number | null
+          guest_full_name?: never
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          payment_status?: never
+        }
+        Update: {
+          balance_due?: never
+          boat?: string | null
+          booking_source?: string | null
+          charter_date?: never
+          charter_total?: number | null
+          guest_full_name?: never
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          payment_status?: never
+        }
+        Relationships: []
+      }
       communication_dashboard: {
         Row: {
           booking_source: string | null
@@ -9637,6 +9704,13 @@ export type Database = {
             foreignKeyName: "customer_communications_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
+            referencedRelation: "charter_reconciliation_view"
+            referencedColumns: ["locator"]
+          },
+          {
+            foreignKeyName: "customer_communications_locator_fkey"
+            columns: ["locator"]
+            isOneToOne: false
             referencedRelation: "operations_dashboard"
             referencedColumns: ["locator"]
           },
@@ -9664,6 +9738,15 @@ export type Database = {
           mapping_status: string | null
           priority_order: number | null
           supabase_field: string | null
+        }
+        Relationships: []
+      }
+      comprehensive_analytics_dashboard: {
+        Row: {
+          average_value: number | null
+          metric_category: string | null
+          total_count: number | null
+          total_value: number | null
         }
         Relationships: []
       }
