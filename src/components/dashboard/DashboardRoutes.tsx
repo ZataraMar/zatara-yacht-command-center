@@ -196,7 +196,7 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
       <Route path="/brokerage" element={<AccessControlRoute accessCheck={isOwner} userRole={userRole}><YachtBrokerage /></AccessControlRoute>} />
       <Route path="/partners" element={<AccessControlRoute accessCheck={isOwner} userRole={userRole}><SalesPartners /></AccessControlRoute>} />
       <Route path="/boat-club" element={<AccessControlRoute accessCheck={isOwner} userRole={userRole}><BoatClubManagement /></AccessControlRoute>} />
-      <Route path="/projects" element={<AccessControlRoute accessCheck={isOwner} userRole={userRole}><ProjectManagement /></AccessControlRoute>} />
+      <Route path="/projects" element={<ProjectManagement />} />
       
       {/* Settings - Available to all authenticated users */}
       <Route path="/settings" element={<UserSettings userRole={userRole} profile={profile} />} />
