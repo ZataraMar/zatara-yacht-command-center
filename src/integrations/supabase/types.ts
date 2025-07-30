@@ -9235,7 +9235,7 @@ export type Database = {
           account_manager: string | null
           agency_name: string | null
           agency_type: string | null
-          avg_booking_value_2024: number | null
+          avg_booking_value: number | null
           booking_growth: number | null
           bookings_2024: number | null
           commission_paid_2024: number | null
@@ -9286,6 +9286,42 @@ export type Database = {
           paid_amount: number | null
           preparation_status: string | null
           total_guests: number | null
+        }
+        Insert: {
+          boat?: string | null
+          booking_source?: string | null
+          booking_status?: string | null
+          charter_date?: never
+          charter_overview_sent?: never
+          charter_total?: number | null
+          client_messaging_status?: never
+          contract_signed?: boolean | null
+          guest_email?: string | null
+          guest_name?: never
+          guest_phone?: string | null
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          preparation_status?: never
+          total_guests?: number | null
+        }
+        Update: {
+          boat?: string | null
+          booking_source?: string | null
+          booking_status?: string | null
+          charter_date?: never
+          charter_overview_sent?: never
+          charter_total?: number | null
+          client_messaging_status?: never
+          contract_signed?: boolean | null
+          guest_email?: string | null
+          guest_name?: never
+          guest_phone?: string | null
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          preparation_status?: never
+          total_guests?: number | null
         }
         Relationships: []
       }
