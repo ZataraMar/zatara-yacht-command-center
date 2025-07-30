@@ -3431,13 +3431,6 @@ export type Database = {
             foreignKeyName: "customer_communications_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
-            referencedRelation: "calendar_availability"
-            referencedColumns: ["locator"]
-          },
-          {
-            foreignKeyName: "customer_communications_locator_fkey"
-            columns: ["locator"]
-            isOneToOne: false
             referencedRelation: "operations_dashboard"
             referencedColumns: ["locator"]
           },
@@ -4438,13 +4431,6 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "business_view_zatara_skipper"
-            referencedColumns: ["locator"]
-          },
-          {
-            foreignKeyName: "digital_contracts_locator_fkey"
-            columns: ["locator"]
-            isOneToOne: false
-            referencedRelation: "calendar_availability"
             referencedColumns: ["locator"]
           },
           {
@@ -6152,13 +6138,6 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "business_view_zatara_skipper"
-            referencedColumns: ["locator"]
-          },
-          {
-            foreignKeyName: "operations_locator_fkey"
-            columns: ["locator"]
-            isOneToOne: false
-            referencedRelation: "calendar_availability"
             referencedColumns: ["locator"]
           },
           {
@@ -8767,13 +8746,6 @@ export type Database = {
             foreignKeyName: "whatsapp_messages_locator_fkey"
             columns: ["locator"]
             isOneToOne: false
-            referencedRelation: "calendar_availability"
-            referencedColumns: ["locator"]
-          },
-          {
-            foreignKeyName: "whatsapp_messages_locator_fkey"
-            columns: ["locator"]
-            isOneToOne: false
             referencedRelation: "operations_dashboard"
             referencedColumns: ["locator"]
           },
@@ -9510,6 +9482,7 @@ export type Database = {
       }
       business_view_zatara_skipper: {
         Row: {
+          boat: string | null
           booking_status: string | null
           charter_date: string | null
           charter_notes: string | null
@@ -9525,18 +9498,69 @@ export type Database = {
           start_time: string | null
           total_guests: number | null
         }
+        Insert: {
+          boat?: string | null
+          booking_status?: string | null
+          charter_date?: never
+          charter_notes?: string | null
+          cleared_for_departure?: never
+          end_time?: string | null
+          equipment_required?: never
+          fnb_details?: never
+          gps_coordinates?: never
+          guest_full_name?: never
+          guest_phone?: string | null
+          locator?: string | null
+          pre_departure_checks?: never
+          start_time?: string | null
+          total_guests?: number | null
+        }
+        Update: {
+          boat?: string | null
+          booking_status?: string | null
+          charter_date?: never
+          charter_notes?: string | null
+          cleared_for_departure?: never
+          end_time?: string | null
+          equipment_required?: never
+          fnb_details?: never
+          gps_coordinates?: never
+          guest_full_name?: never
+          guest_phone?: string | null
+          locator?: string | null
+          pre_departure_checks?: never
+          start_time?: string | null
+          total_guests?: number | null
+        }
         Relationships: []
       }
       calendar_availability: {
         Row: {
-          availability_date: string | null
+          availability_status: string | null
+          blocking_reason: string | null
           boat_name: string | null
-          guest_name: string | null
-          locator: string | null
-          reason: string | null
-          reason_type: string | null
-          status: string | null
-          total_guests: number | null
+          calendar_date: string | null
+          end_time: string | null
+          source: string | null
+          start_time: string | null
+        }
+        Insert: {
+          availability_status?: string | null
+          blocking_reason?: never
+          boat_name?: string | null
+          calendar_date?: string | null
+          end_time?: string | null
+          source?: never
+          start_time?: string | null
+        }
+        Update: {
+          availability_status?: string | null
+          blocking_reason?: never
+          boat_name?: string | null
+          calendar_date?: string | null
+          end_time?: string | null
+          source?: never
+          start_time?: string | null
         }
         Relationships: []
       }
@@ -9607,13 +9631,6 @@ export type Database = {
             columns: ["locator"]
             isOneToOne: false
             referencedRelation: "business_view_zatara_skipper"
-            referencedColumns: ["locator"]
-          },
-          {
-            foreignKeyName: "customer_communications_locator_fkey"
-            columns: ["locator"]
-            isOneToOne: false
-            referencedRelation: "calendar_availability"
             referencedColumns: ["locator"]
           },
           {
