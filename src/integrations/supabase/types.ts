@@ -9830,6 +9830,14 @@ export type Database = {
         }
         Relationships: []
       }
+      security_summary: {
+        Row: {
+          expired_tokens: number | null
+          table_name: string | null
+          total_records: number | null
+        }
+        Relationships: []
+      }
       service_dashboard: {
         Row: {
           active_contracts: number | null
