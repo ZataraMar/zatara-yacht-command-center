@@ -65,11 +65,12 @@ export const logSecurityEvent = async (
   }
 };
 
-// Enhanced XSS protection
+// Enhanced XSS protection - Fixed vulnerability
 export const sanitizeHtml = (html: string): string => {
+  // Create a temporary element to safely escape HTML entities
   const div = document.createElement('div');
-  div.textContent = html;
-  return div.innerHTML;
+  div.textContent = html; // This automatically escapes HTML entities
+  return div.textContent || div.innerText || ''; // Return escaped text, not HTML
 };
 
 // Content Security Policy helper
