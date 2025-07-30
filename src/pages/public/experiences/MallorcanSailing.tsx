@@ -13,7 +13,7 @@ import { AirbnbStyleCalendar } from '@/components/calendar/AirbnbStyleCalendar';
 import { TimeSlotSelector } from '@/components/calendar/TimeSlotSelector';
 import StripePayment from '@/components/payments/StripePayment';
 import { useTranslation } from '@/contexts/TranslationContext';
-import GoogleMap from '@/components/maps/GoogleMap';
+import SecureGoogleMap from '@/components/maps/SecureGoogleMap';
 import { GoogleReviews } from '@/components/reviews/GoogleReviews';
 const MallorcanSailing = () => {
   const [currentPeople, setCurrentPeople] = useState(2);
@@ -39,8 +39,6 @@ const MallorcanSailing = () => {
     t
   } = useTranslation();
 
-  // Google Maps API key
-  const GOOGLE_MAPS_API_KEY = 'AIzaSyChMkFLGf2_7hD5sScSpzChajwq1nH1IoU';
 
   // Naviera Balear marina coordinates
   const mapCenter = {
@@ -524,7 +522,7 @@ const MallorcanSailing = () => {
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-foreground mb-3">Pickup Location</h3>
                 <div className="mb-4">
-                  <GoogleMap apiKey={GOOGLE_MAPS_API_KEY} center={mapCenter} zoom={15} markers={mapMarkers} className="w-full h-40 rounded-lg border border-border" />
+                  <SecureGoogleMap center={mapCenter} zoom={15} markers={mapMarkers} className="w-full h-40 rounded-lg border border-border" />
                 </div>
                 <div className="bg-muted rounded-lg p-4">
                   <p className="text-sm text-muted-foreground mb-2">
@@ -540,7 +538,7 @@ const MallorcanSailing = () => {
               <div>
                 <h3 className="text-lg font-medium text-foreground mb-3">Sailing Route</h3>
                 <div className="mb-4">
-                  <GoogleMap apiKey={GOOGLE_MAPS_API_KEY} center={mapCenter} zoom={12} polyline={sailingRoute} markers={[{
+                  <SecureGoogleMap center={mapCenter} zoom={12} polyline={sailingRoute} markers={[{
                 position: sailingRoute[0],
                 title: 'Start: Port de Palma'
               }, {
