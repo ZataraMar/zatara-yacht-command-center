@@ -10,11 +10,10 @@ interface AccountTypeFieldProps {
   onInputChange: (field: string, value: string) => void;
 }
 
+// Only allow client roles for self-signup (security fix)
 const accountTypes = [
   { value: 'charter_clients', label: 'Charter Client' },
-  { value: 'boat_club_clients', label: 'Boat Club Member' },
-  { value: 'agency', label: 'Agency' },
-  { value: 'team', label: 'Team Member' }
+  { value: 'boat_club_clients', label: 'Boat Club Member' }
 ];
 
 export const AccountTypeField: React.FC<AccountTypeFieldProps> = ({
