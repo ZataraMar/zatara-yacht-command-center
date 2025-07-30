@@ -2714,6 +2714,13 @@ export type Database = {
             foreignKeyName: "client_budgets_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_analytics_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_budgets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customer_service_usage"
             referencedColumns: ["customer_id"]
           },
@@ -3539,6 +3546,13 @@ export type Database = {
             foreignKeyName: "customer_communications_log_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_analytics_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_communications_log_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customer_service_usage"
             referencedColumns: ["customer_id"]
           },
@@ -3627,6 +3641,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_history_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_analytics_view"
             referencedColumns: ["id"]
           },
           {
@@ -3748,6 +3769,13 @@ export type Database = {
             foreignKeyName: "customer_preferences_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_analytics_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_preferences_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customer_service_usage"
             referencedColumns: ["customer_id"]
           },
@@ -3845,6 +3873,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_analytics_view"
             referencedColumns: ["id"]
           },
           {
@@ -5616,6 +5651,13 @@ export type Database = {
             foreignKeyName: "maintenance_requests_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_analytics_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customer_service_usage"
             referencedColumns: ["customer_id"]
           },
@@ -7282,6 +7324,13 @@ export type Database = {
             foreignKeyName: "service_contracts_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_analytics_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_contracts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customer_service_usage"
             referencedColumns: ["customer_id"]
           },
@@ -7385,6 +7434,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_analytics_view"
             referencedColumns: ["id"]
           },
           {
@@ -7771,6 +7827,13 @@ export type Database = {
             foreignKeyName: "service_requests_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_analytics_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customer_service_usage"
             referencedColumns: ["customer_id"]
           },
@@ -7857,6 +7920,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customer_360_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_analytics_view"
             referencedColumns: ["id"]
           },
           {
@@ -9838,6 +9908,51 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_analytics_view: {
+        Row: {
+          acquisition_source: string | null
+          customer_key: string | null
+          customer_lifetime_value: number | null
+          email_primary: string | null
+          first_name: string | null
+          full_name: string | null
+          id: number | null
+          last_booking_date: string | null
+          last_name: string | null
+          phone_primary: string | null
+          total_bookings: number | null
+          total_spent: number | null
+        }
+        Insert: {
+          acquisition_source?: string | null
+          customer_key?: string | null
+          customer_lifetime_value?: number | null
+          email_primary?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          id?: number | null
+          last_booking_date?: string | null
+          last_name?: string | null
+          phone_primary?: string | null
+          total_bookings?: number | null
+          total_spent?: number | null
+        }
+        Update: {
+          acquisition_source?: string | null
+          customer_key?: string | null
+          customer_lifetime_value?: number | null
+          email_primary?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          id?: number | null
+          last_booking_date?: string | null
+          last_name?: string | null
+          phone_primary?: string | null
+          total_bookings?: number | null
+          total_spent?: number | null
+        }
+        Relationships: []
+      }
       customer_dashboard_view: {
         Row: {
           completed_bookings: number | null
@@ -9853,6 +9968,14 @@ export type Database = {
           total_outstanding: number | null
           total_spent: number | null
           upcoming_bookings: number | null
+        }
+        Relationships: []
+      }
+      customer_insights_dashboard: {
+        Row: {
+          metric_name: string | null
+          metric_unit: string | null
+          metric_value: number | null
         }
         Relationships: []
       }
