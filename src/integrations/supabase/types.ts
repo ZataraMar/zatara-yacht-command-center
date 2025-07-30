@@ -9392,26 +9392,71 @@ export type Database = {
         Row: {
           boat: string | null
           booking_source: string | null
-          booking_status: string | null
           charter_date: string | null
+          charter_notes: string | null
           charter_total: number | null
-          cleaning: string | null
-          crew: string | null
+          cleared_for_departure: boolean | null
+          crew_required: string | null
           end_time: string | null
-          equipment: string | null
-          extras_categories: string | null
-          extras_total: number | null
-          fnb_items: string | null
-          fuel: string | null
-          guest_full_name: string | null
+          equipment_required: string | null
+          fnb_details: string | null
+          gps_coordinates: string | null
+          guest_name: string | null
           locator: string | null
+          outstanding_amount: number | null
+          paid_amount: number | null
+          pre_departure_checks: boolean | null
           start_time: string | null
-          supplier_needs: string | null
+          status: string | null
+          total_guests: number | null
+        }
+        Insert: {
+          boat?: string | null
+          booking_source?: string | null
+          charter_date?: never
+          charter_notes?: string | null
+          charter_total?: number | null
+          cleared_for_departure?: never
+          crew_required?: never
+          end_time?: string | null
+          equipment_required?: never
+          fnb_details?: never
+          gps_coordinates?: never
+          guest_name?: never
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          pre_departure_checks?: never
+          start_time?: string | null
+          status?: string | null
+          total_guests?: number | null
+        }
+        Update: {
+          boat?: string | null
+          booking_source?: string | null
+          charter_date?: never
+          charter_notes?: string | null
+          charter_total?: number | null
+          cleared_for_departure?: never
+          crew_required?: never
+          end_time?: string | null
+          equipment_required?: never
+          fnb_details?: never
+          gps_coordinates?: never
+          guest_name?: never
+          locator?: string | null
+          outstanding_amount?: number | null
+          paid_amount?: number | null
+          pre_departure_checks?: never
+          start_time?: string | null
+          status?: string | null
+          total_guests?: number | null
         }
         Relationships: []
       }
       business_view_puravida_skipper: {
         Row: {
+          boat: string | null
           booking_status: string | null
           charter_date: string | null
           charter_notes: string | null
@@ -9426,6 +9471,40 @@ export type Database = {
           pre_departure_checks: boolean | null
           start_time: string | null
           total_guests: number | null
+        }
+        Insert: {
+          boat?: string | null
+          booking_status?: string | null
+          charter_date?: never
+          charter_notes?: string | null
+          cleared_for_departure?: never
+          end_time?: string | null
+          equipment_required?: never
+          fnb_details?: never
+          gps_coordinates?: never
+          guest_full_name?: never
+          guest_phone?: string | null
+          locator?: string | null
+          pre_departure_checks?: never
+          start_time?: string | null
+          total_guests?: number | null
+        }
+        Update: {
+          boat?: string | null
+          booking_status?: string | null
+          charter_date?: never
+          charter_notes?: string | null
+          cleared_for_departure?: never
+          end_time?: string | null
+          equipment_required?: never
+          fnb_details?: never
+          gps_coordinates?: never
+          guest_full_name?: never
+          guest_phone?: string | null
+          locator?: string | null
+          pre_departure_checks?: never
+          start_time?: string | null
+          total_guests?: number | null
         }
         Relationships: []
       }
