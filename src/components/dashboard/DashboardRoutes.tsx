@@ -27,6 +27,7 @@ import { SalesPartners } from './partners/SalesPartners';
 import { BoatClubManagement } from './boat-club/BoatClubManagement';
 import { ProjectManagement } from './projects/ProjectManagement';
 import { DatabaseSchemaManager } from './admin/DatabaseSchemaManager';
+import { AccessControlMatrix } from './admin/AccessControlMatrix';
 import { isOwner, canAccessOperations, canAccessFinancials, canManageFleet } from '@/utils/authSecurity';
 
 interface DashboardRoutesProps {
@@ -115,6 +116,16 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
         element={
           <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
             <DatabaseSchemaManager />
+          </AccessControlRoute>
+        } 
+      />
+      
+      {/* Access Control Matrix - Owner only */}
+      <Route 
+        path="/access-control" 
+        element={
+          <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
+            <AccessControlMatrix />
           </AccessControlRoute>
         } 
       />

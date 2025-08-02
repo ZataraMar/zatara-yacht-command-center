@@ -19,6 +19,7 @@ import Management from "./pages/public/Management";
 import Guides from "./pages/public/Guides";
 import TestBookingIframe from "./pages/public/TestBookingIframe";
 import MallorcanSailing from "./pages/public/experiences/MallorcanSailing";
+import AccessControlDemo from "./pages/AccessControlDemo";
 import { ClientAuth } from "./components/client/ClientAuth";
 import { CustomerPortal } from "./components/client/CustomerPortal";
 
@@ -70,6 +71,9 @@ const App = () => (
                 <Dashboard />
               </SecureProtectedRoute>
             } />
+            
+            {/* Access Control Demo - Protected by Enhanced Access Control */}
+            <Route path="/demo/access-control" element={<AccessControlDemo />} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />

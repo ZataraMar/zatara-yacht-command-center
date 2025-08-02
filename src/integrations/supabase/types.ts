@@ -6646,6 +6646,42 @@ export type Database = {
           },
         ]
       }
+      page_role_permissions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_allowed: boolean
+          page_name: string
+          page_path: string
+          permission_type: string
+          role_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_allowed?: boolean
+          page_name: string
+          page_path: string
+          permission_type?: string
+          role_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_allowed?: boolean
+          page_name?: string
+          page_path?: string
+          permission_type?: string
+          role_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       partner_companies: {
         Row: {
           address: string | null
@@ -6883,6 +6919,75 @@ export type Database = {
           updated_at?: string | null
           variance_amount?: number | null
           variance_percentage?: number | null
+        }
+        Relationships: []
+      }
+      permission_audit_log: {
+        Row: {
+          change_reason: string | null
+          changed_by: string | null
+          created_at: string
+          id: string
+          new_value: boolean
+          old_value: boolean | null
+          page_path: string
+          permission_type: string
+          role_name: string
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_value: boolean
+          old_value?: boolean | null
+          page_path: string
+          permission_type: string
+          role_name: string
+        }
+        Update: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_value?: boolean
+          old_value?: boolean | null
+          page_path?: string
+          permission_type?: string
+          role_name?: string
+        }
+        Relationships: []
+      }
+      permission_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          role_permissions: Json
+          template_description: string | null
+          template_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          role_permissions?: Json
+          template_description?: string | null
+          template_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          role_permissions?: Json
+          template_description?: string | null
+          template_name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -11439,6 +11544,19 @@ export type Database = {
           variables: Json
         }[]
       }
+      grant_page_permission: {
+        Args: {
+          page_path: string
+          page_name: string
+          role_name: string
+          permission_type?: string
+        }
+        Returns: undefined
+      }
+      has_page_permission: {
+        Args: { user_role: string; page_path: string; permission_type?: string }
+        Returns: boolean
+      }
       identify_test_data: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -11484,6 +11602,10 @@ export type Database = {
           table_cleaned: string
           records_removed: number
         }[]
+      }
+      revoke_page_permission: {
+        Args: { page_path: string; role_name: string; permission_type?: string }
+        Returns: undefined
       }
       run_daily_security_audit: {
         Args: Record<PropertyKey, never>
