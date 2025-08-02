@@ -8,6 +8,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Settings, Eye, EyeOff, RefreshCw, Shield, Mail, CreditCard, Smartphone, Cog, Building, Globe, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { UserManagement } from './UserManagement';
+import { SystemHealthMonitor } from './SystemHealthMonitor';
+import { AccessControlMatrix } from './AccessControlMatrix';
+import { DashboardBuilder } from './DashboardBuilder';
+import { DatabaseSchemaManager } from './DatabaseSchemaManager';
+import { FieldAnalysisDashboard } from './FieldAnalysisDashboard';
+import { EnhancedFieldMapping } from './EnhancedFieldMapping';
+import { SystemActivityLogger } from './SystemActivityLogger';
 
 interface SettingItem {
   setting_key: string;
@@ -163,21 +171,55 @@ export const AdminSettings = () => {
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">🔧 Admin Settings</h1>
-        <p className="text-gray-600">Manage API keys, integrations, and system configuration for Zatara Charters</p>
-        <div className="mt-3 flex gap-2">
-          <Badge variant="outline">
-            {settings.length} total settings
-          </Badge>
-          <Badge variant="outline">
-            {availableCategories.length} categories
-          </Badge>
-          <Badge variant="secondary" className="text-red-700 bg-red-100">
-            🔴 LIVE Stripe Keys Active
-          </Badge>
-        </div>
+        <p className="text-gray-600">Comprehensive admin panel for Zatara Charter Management System</p>
       </div>
 
-      <Tabs defaultValue={availableCategories[0]} className="w-full">
+      <Tabs defaultValue="users" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-8">
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="system">Health</TabsTrigger>
+          <TabsTrigger value="permissions">Permissions</TabsTrigger>
+          <TabsTrigger value="builder">Builder</TabsTrigger>
+          <TabsTrigger value="schema">Schema</TabsTrigger>
+          <TabsTrigger value="field-analysis">Fields</TabsTrigger>
+          <TabsTrigger value="field-mapping">Mapping</TabsTrigger>
+          <TabsTrigger value="activity">Activity</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="users">
+          <UserManagement />
+        </TabsContent>
+
+        <TabsContent value="system">
+          <SystemHealthMonitor />
+        </TabsContent>
+
+        <TabsContent value="permissions">
+          <AccessControlMatrix />
+        </TabsContent>
+
+        <TabsContent value="builder">
+          <DashboardBuilder />
+        </TabsContent>
+
+        <TabsContent value="schema">
+          <DatabaseSchemaManager />
+        </TabsContent>
+
+        <TabsContent value="field-analysis">
+          <FieldAnalysisDashboard />
+        </TabsContent>
+
+        <TabsContent value="field-mapping">
+          <EnhancedFieldMapping />
+        </TabsContent>
+
+        <TabsContent value="activity">
+          <SystemActivityLogger />
+        </TabsContent>
+      </Tabs>
+
+      <Tabs defaultValue={availableCategories[0]} className="w-full mt-8">
         <TabsList className="grid w-full gap-1 mb-6 h-auto p-1" style={{
           gridTemplateColumns: `repeat(${Math.min(availableCategories.length, 4)}, 1fr)`
         }}>
