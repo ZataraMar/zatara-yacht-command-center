@@ -6451,6 +6451,201 @@ export type Database = {
           },
         ]
       }
+      page_database_dependencies: {
+        Row: {
+          created_at: string | null
+          dependency_type: string | null
+          id: string
+          is_critical: boolean | null
+          page_id: string | null
+          table_name: string
+          updated_at: string | null
+          usage_context: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dependency_type?: string | null
+          id?: string
+          is_critical?: boolean | null
+          page_id?: string | null
+          table_name: string
+          updated_at?: string | null
+          usage_context?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dependency_type?: string | null
+          id?: string
+          is_critical?: boolean | null
+          page_id?: string | null
+          table_name?: string
+          updated_at?: string | null
+          usage_context?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_database_dependencies_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "web_pages_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      page_development_status: {
+        Row: {
+          assigned_developer: string | null
+          completion_percentage: number | null
+          created_at: string | null
+          development_status: string | null
+          id: string
+          last_updated_by: string | null
+          milestone_target: string | null
+          page_id: string | null
+          priority_level: string | null
+          status_notes: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_developer?: string | null
+          completion_percentage?: number | null
+          created_at?: string | null
+          development_status?: string | null
+          id?: string
+          last_updated_by?: string | null
+          milestone_target?: string | null
+          page_id?: string | null
+          priority_level?: string | null
+          status_notes?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_developer?: string | null
+          completion_percentage?: number | null
+          created_at?: string | null
+          development_status?: string | null
+          id?: string
+          last_updated_by?: string | null
+          milestone_target?: string | null
+          page_id?: string | null
+          priority_level?: string | null
+          status_notes?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_development_status_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: true
+            referencedRelation: "web_pages_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      page_performance_metrics: {
+        Row: {
+          accessibility_score: number | null
+          bundle_size_kb: number | null
+          component_count: number | null
+          created_at: string | null
+          database_queries_count: number | null
+          error_count: number | null
+          id: string
+          load_time_ms: number | null
+          metric_date: string | null
+          page_id: string | null
+          performance_score: number | null
+          updated_at: string | null
+          user_engagement_score: number | null
+        }
+        Insert: {
+          accessibility_score?: number | null
+          bundle_size_kb?: number | null
+          component_count?: number | null
+          created_at?: string | null
+          database_queries_count?: number | null
+          error_count?: number | null
+          id?: string
+          load_time_ms?: number | null
+          metric_date?: string | null
+          page_id?: string | null
+          performance_score?: number | null
+          updated_at?: string | null
+          user_engagement_score?: number | null
+        }
+        Update: {
+          accessibility_score?: number | null
+          bundle_size_kb?: number | null
+          component_count?: number | null
+          created_at?: string | null
+          database_queries_count?: number | null
+          error_count?: number | null
+          id?: string
+          load_time_ms?: number | null
+          metric_date?: string | null
+          page_id?: string | null
+          performance_score?: number | null
+          updated_at?: string | null
+          user_engagement_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_performance_metrics_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "web_pages_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      page_relationships: {
+        Row: {
+          child_page_id: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          parent_page_id: string | null
+          relationship_context: string | null
+          relationship_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          child_page_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          parent_page_id?: string | null
+          relationship_context?: string | null
+          relationship_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          child_page_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          parent_page_id?: string | null
+          relationship_context?: string | null
+          relationship_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_relationships_child_page_id_fkey"
+            columns: ["child_page_id"]
+            isOneToOne: false
+            referencedRelation: "web_pages_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_relationships_parent_page_id_fkey"
+            columns: ["parent_page_id"]
+            isOneToOne: false
+            referencedRelation: "web_pages_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_companies: {
         Row: {
           address: string | null
@@ -9139,6 +9334,60 @@ export type Database = {
           user_roles?: string[] | null
           view_name?: string
           view_type?: string
+        }
+        Relationships: []
+      }
+      web_pages_registry: {
+        Row: {
+          access_roles: string[] | null
+          component_file_path: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          is_public: boolean | null
+          last_modified: string | null
+          page_description: string | null
+          page_name: string
+          page_order: number | null
+          page_path: string
+          page_type: string | null
+          parent_page_id: string | null
+          requires_auth: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          access_roles?: string[] | null
+          component_file_path?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_public?: boolean | null
+          last_modified?: string | null
+          page_description?: string | null
+          page_name: string
+          page_order?: number | null
+          page_path: string
+          page_type?: string | null
+          parent_page_id?: string | null
+          requires_auth?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          access_roles?: string[] | null
+          component_file_path?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_public?: boolean | null
+          last_modified?: string | null
+          page_description?: string | null
+          page_name?: string
+          page_order?: number | null
+          page_path?: string
+          page_type?: string | null
+          parent_page_id?: string | null
+          requires_auth?: boolean | null
+          updated_at?: string | null
         }
         Relationships: []
       }
