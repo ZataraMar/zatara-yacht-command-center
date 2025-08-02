@@ -2634,6 +2634,60 @@ export type Database = {
         }
         Relationships: []
       }
+      cleanup_recommendations: {
+        Row: {
+          approved_by: string | null
+          cleanup_sql: string | null
+          created_at: string | null
+          dependencies_count: number | null
+          estimated_savings: string | null
+          executed_at: string | null
+          id: string
+          priority: string | null
+          recommendation_description: string
+          recommendation_type: string
+          reviewed_by: string | null
+          risk_level: string | null
+          rollback_plan: string | null
+          status: string | null
+          table_name: string
+        }
+        Insert: {
+          approved_by?: string | null
+          cleanup_sql?: string | null
+          created_at?: string | null
+          dependencies_count?: number | null
+          estimated_savings?: string | null
+          executed_at?: string | null
+          id?: string
+          priority?: string | null
+          recommendation_description: string
+          recommendation_type: string
+          reviewed_by?: string | null
+          risk_level?: string | null
+          rollback_plan?: string | null
+          status?: string | null
+          table_name: string
+        }
+        Update: {
+          approved_by?: string | null
+          cleanup_sql?: string | null
+          created_at?: string | null
+          dependencies_count?: number | null
+          estimated_savings?: string | null
+          executed_at?: string | null
+          id?: string
+          priority?: string | null
+          recommendation_description?: string
+          recommendation_type?: string
+          reviewed_by?: string | null
+          risk_level?: string | null
+          rollback_plan?: string | null
+          status?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
       client_budgets: {
         Row: {
           alert_sent: boolean | null
@@ -4451,6 +4505,72 @@ export type Database = {
           updated_at?: string | null
           validation_rule?: Json
           validation_type?: string
+        }
+        Relationships: []
+      }
+      database_schema_registry: {
+        Row: {
+          business_function: string | null
+          business_purpose: string | null
+          cleanup_eligible: boolean | null
+          created_at: string | null
+          criticality_level: string | null
+          data_classification: string | null
+          documentation_url: string | null
+          id: string
+          is_active: boolean | null
+          last_accessed: string | null
+          last_modified: string | null
+          migration_notes: string | null
+          object_name: string
+          object_type: string
+          owner_team: string | null
+          record_count: number | null
+          schema_name: string
+          size_bytes: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          business_function?: string | null
+          business_purpose?: string | null
+          cleanup_eligible?: boolean | null
+          created_at?: string | null
+          criticality_level?: string | null
+          data_classification?: string | null
+          documentation_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_accessed?: string | null
+          last_modified?: string | null
+          migration_notes?: string | null
+          object_name: string
+          object_type: string
+          owner_team?: string | null
+          record_count?: number | null
+          schema_name?: string
+          size_bytes?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          business_function?: string | null
+          business_purpose?: string | null
+          cleanup_eligible?: boolean | null
+          created_at?: string | null
+          criticality_level?: string | null
+          data_classification?: string | null
+          documentation_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_accessed?: string | null
+          last_modified?: string | null
+          migration_notes?: string | null
+          object_name?: string
+          object_type?: string
+          owner_team?: string | null
+          record_count?: number | null
+          schema_name?: string
+          size_bytes?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -6996,6 +7116,51 @@ export type Database = {
           },
         ]
       }
+      schema_change_log: {
+        Row: {
+          business_justification: string | null
+          change_approved_by: string | null
+          change_description: string
+          change_type: string
+          executed_at: string | null
+          executed_by: string | null
+          id: string
+          impact_assessment: Json | null
+          object_name: string
+          object_type: string
+          rollback_sql: string | null
+          sql_statement: string | null
+        }
+        Insert: {
+          business_justification?: string | null
+          change_approved_by?: string | null
+          change_description: string
+          change_type: string
+          executed_at?: string | null
+          executed_by?: string | null
+          id?: string
+          impact_assessment?: Json | null
+          object_name: string
+          object_type: string
+          rollback_sql?: string | null
+          sql_statement?: string | null
+        }
+        Update: {
+          business_justification?: string | null
+          change_approved_by?: string | null
+          change_description?: string
+          change_type?: string
+          executed_at?: string | null
+          executed_by?: string | null
+          id?: string
+          impact_assessment?: Json | null
+          object_name?: string
+          object_type?: string
+          rollback_sql?: string | null
+          sql_statement?: string | null
+        }
+        Relationships: []
+      }
       seasonal_performance: {
         Row: {
           actual_average_charter_value: number | null
@@ -8406,6 +8571,87 @@ export type Database = {
           tables_included?: string[] | null
           verification_date?: string | null
           verification_status?: string | null
+        }
+        Relationships: []
+      }
+      table_relationships: {
+        Row: {
+          constraint_name: string | null
+          created_at: string | null
+          dependency_strength: string | null
+          id: string
+          relationship_description: string | null
+          relationship_type: string
+          source_table: string
+          target_table: string
+        }
+        Insert: {
+          constraint_name?: string | null
+          created_at?: string | null
+          dependency_strength?: string | null
+          id?: string
+          relationship_description?: string | null
+          relationship_type: string
+          source_table: string
+          target_table: string
+        }
+        Update: {
+          constraint_name?: string | null
+          created_at?: string | null
+          dependency_strength?: string | null
+          id?: string
+          relationship_description?: string | null
+          relationship_type?: string
+          source_table?: string
+          target_table?: string
+        }
+        Relationships: []
+      }
+      table_usage_analytics: {
+        Row: {
+          analysis_date: string | null
+          avg_query_duration_ms: number | null
+          created_at: string | null
+          growth_trend: string | null
+          id: string
+          last_query_time: string | null
+          monthly_query_count: number | null
+          most_common_operations: Json | null
+          peak_usage_hours: Json | null
+          performance_score: number | null
+          query_count: number | null
+          recommendation: string | null
+          table_name: string
+        }
+        Insert: {
+          analysis_date?: string | null
+          avg_query_duration_ms?: number | null
+          created_at?: string | null
+          growth_trend?: string | null
+          id?: string
+          last_query_time?: string | null
+          monthly_query_count?: number | null
+          most_common_operations?: Json | null
+          peak_usage_hours?: Json | null
+          performance_score?: number | null
+          query_count?: number | null
+          recommendation?: string | null
+          table_name: string
+        }
+        Update: {
+          analysis_date?: string | null
+          avg_query_duration_ms?: number | null
+          created_at?: string | null
+          growth_trend?: string | null
+          id?: string
+          last_query_time?: string | null
+          monthly_query_count?: number | null
+          most_common_operations?: Json | null
+          peak_usage_hours?: Json | null
+          performance_score?: number | null
+          query_count?: number | null
+          recommendation?: string | null
+          table_name?: string
         }
         Relationships: []
       }
@@ -10604,6 +10850,17 @@ export type Database = {
         }
         Returns: number
       }
+      analyze_current_schema: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          table_name: string
+          record_count: number
+          size_estimate: string
+          has_data: boolean
+          has_indexes: boolean
+          has_foreign_keys: boolean
+        }[]
+      }
       assign_optimal_crew: {
         Args: {
           booking_locator_param: string
@@ -10914,6 +11171,14 @@ export type Database = {
           ai_response: string
           context_data: Json
           relevance_date: string
+        }[]
+      }
+      get_table_dependencies: {
+        Args: { target_table_name: string }
+        Returns: {
+          dependent_table: string
+          constraint_name: string
+          dependency_type: string
         }[]
       }
       get_whatsapp_templates: {

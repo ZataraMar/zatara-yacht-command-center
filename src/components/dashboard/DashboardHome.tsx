@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, DollarSign, Users, Anchor, AlertTriangle, CheckCircle2, Settings, Database } from 'lucide-react';
+import { Calendar, DollarSign, Users, Anchor, AlertTriangle, CheckCircle2, Settings, Database, FileText } from 'lucide-react';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useFinancialData } from '@/hooks/useFinancialData';
 import { DataAuditReport } from './admin/DataAuditReport';
@@ -54,10 +54,11 @@ export const DashboardHome = () => {
       )}
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           <TabsTrigger value="audit">Data Audit</TabsTrigger>
+          <TabsTrigger value="management">Management</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -196,6 +197,84 @@ export const DashboardHome = () => {
 
         <TabsContent value="audit" className="space-y-6">
           <DataAuditReport />
+        </TabsContent>
+
+        <TabsContent value="management" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Database className="h-5 w-5" />
+                  <span>Database Schema Manager</span>
+                </CardTitle>
+                <CardDescription>
+                  Manage and optimize your database structure
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-4">
+                  View table relationships, analyze usage patterns, and get cleanup recommendations
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/dashboard/database-schema'} 
+                  className="w-full"
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Open Schema Manager
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Settings className="h-5 w-5" />
+                  <span>System Overview</span>
+                </CardTitle>
+                <CardDescription>
+                  Monitor system health and performance
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-4">
+                  Check system status, view performance metrics, and monitor integrations
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/dashboard/system-overview'} 
+                  className="w-full"
+                  variant="outline"
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  View System Health
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  <span>Data Analytics</span>
+                </CardTitle>
+                <CardDescription>
+                  Advanced reporting and business intelligence
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-4">
+                  Generate reports, analyze trends, and track business metrics
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/dashboard/analytics'} 
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Calendar className="h-4 w-4 mr-2" />
+                  View Analytics
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

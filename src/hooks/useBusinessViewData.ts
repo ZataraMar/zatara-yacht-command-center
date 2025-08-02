@@ -40,7 +40,16 @@ export const useBusinessViewData = (timeFilter: string, boatFilter: string) => {
       ]);
 
       setOperationsData(operationsResult || []);
-      setFinanceData(financeResult.data || []);
+      // Transform finance data to match FinanceViewRow interface
+      const transformedFinanceData: FinanceViewRow[] = (financeResult.data || []).map(item => ({
+        ...item,
+        guest_full_name: item.guest_name || '',
+        payments_received: item.paid_amount || 0,
+        total_paid: item.paid_amount || 0,
+        balance_due: item.outstanding_amount || 0,
+        payment_status: item.outstanding_amount > 0 ? 'pending' : 'paid'
+      }));
+      setFinanceData(transformedFinanceData);
       
       // Transform zatara data to include boat field
       const transformedZataraData: SkipperViewRow[] = (zataraResult.data || []).map(item => ({

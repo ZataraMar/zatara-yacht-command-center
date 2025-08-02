@@ -26,6 +26,7 @@ import { YachtBrokerage } from './brokerage/YachtBrokerage';
 import { SalesPartners } from './partners/SalesPartners';
 import { BoatClubManagement } from './boat-club/BoatClubManagement';
 import { ProjectManagement } from './projects/ProjectManagement';
+import { DatabaseSchemaManager } from './admin/DatabaseSchemaManager';
 import { isOwner, canAccessOperations, canAccessFinancials, canManageFleet } from '@/utils/authSecurity';
 
 interface DashboardRoutesProps {
@@ -104,6 +105,16 @@ export const DashboardRoutes = ({ userRole, profile }: DashboardRoutesProps) => 
         element={
           <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
             <FieldAnalysisDashboard />
+          </AccessControlRoute>
+        } 
+      />
+      
+      {/* Database Schema Manager - Owner only */}
+      <Route 
+        path="/database-schema" 
+        element={
+          <AccessControlRoute accessCheck={isOwner} userRole={userRole}>
+            <DatabaseSchemaManager />
           </AccessControlRoute>
         } 
       />
