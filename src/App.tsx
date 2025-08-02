@@ -8,6 +8,9 @@ import { SecureAuthProvider } from "@/contexts/SecureAuthContext";
 import { TranslationProvider } from "@/contexts/TranslationContext";
 import { SecureProtectedRoute } from "@/components/auth/SecureProtectedRoute";
 import { OfflineIndicator } from "@/components/common/OfflineIndicator";
+import { MobileNavigation } from "@/components/mobile/MobileNavigation";
+import { useCapacitor } from "@/hooks/useCapacitor";
+import { useOfflineStorage } from "@/hooks/useOfflineStorage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -34,6 +37,54 @@ const queryClient = new QueryClient({
   },
 });
 
+const AppContent = () => {
+  const { isNative, networkStatus } = useCapacitor();
+  const { isOnline } = useOfflineStorage();
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Homepage />} />
+        <Route path="/charter" element={<Charter />} />
+        
+        {/* Charter Experience Routes */}
+        <Route path="/charter/experiences/mallorcan-sailing" element={<MallorcanSailing />} />
+        
+        <Route path="/boat-club" element={<BoatClub />} />
+        <Route path="/sales" element={<Sales />} />
+        <Route path="/management" element={<Management />} />
+        <Route path="/guides" element={<Guides />} />
+        
+        {/* Hidden test page - obscure URL */}
+        <Route path="/test-booking-iframe-zatara-75212" element={<TestBookingIframe />} />
+        
+        {/* Authentication Route */}
+        <Route path="/auth" element={<Auth />} />
+        
+        {/* Client Authentication & Portal Routes */}
+        <Route path="/client-login" element={<ClientAuth />} />
+        <Route path="/customer-portal" element={<CustomerPortal />} />
+        
+        {/* Protected Dashboard Routes */}
+        <Route path="/dashboard/*" element={
+          <SecureProtectedRoute>
+            <Dashboard />
+          </SecureProtectedRoute>
+        } />
+        
+        {/* Access Control Demo - Protected by Enhanced Access Control */}
+        <Route path="/demo/access-control" element={<AccessControlDemo />} />
+        
+        {/* Catch-all route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <OfflineIndicator />
+      {isNative && <MobileNavigation />}
+    </BrowserRouter>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TranslationProvider>
@@ -41,47 +92,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <SecureAuthProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Homepage />} />
-            <Route path="/charter" element={<Charter />} />
-            
-            {/* Charter Experience Routes */}
-            <Route path="/charter/experiences/mallorcan-sailing" element={<MallorcanSailing />} />
-            
-            <Route path="/boat-club" element={<BoatClub />} />
-            <Route path="/sales" element={<Sales />} />
-            <Route path="/management" element={<Management />} />
-            <Route path="/guides" element={<Guides />} />
-            
-            {/* Hidden test page - obscure URL */}
-            <Route path="/test-booking-iframe-zatara-75212" element={<TestBookingIframe />} />
-            
-            {/* Authentication Route */}
-            <Route path="/auth" element={<Auth />} />
-            
-            {/* Client Authentication & Portal Routes */}
-            <Route path="/client-login" element={<ClientAuth />} />
-            <Route path="/customer-portal" element={<CustomerPortal />} />
-            
-            {/* Protected Dashboard Routes */}
-            <Route path="/dashboard/*" element={
-              <SecureProtectedRoute>
-                <Dashboard />
-              </SecureProtectedRoute>
-            } />
-            
-            {/* Access Control Demo - Protected by Enhanced Access Control */}
-            <Route path="/demo/access-control" element={<AccessControlDemo />} />
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <OfflineIndicator />
-        </BrowserRouter>
-      </SecureAuthProvider>
-    </TooltipProvider>
+          <AppContent />
+        </SecureAuthProvider>
+      </TooltipProvider>
     </TranslationProvider>
   </QueryClientProvider>
 );
