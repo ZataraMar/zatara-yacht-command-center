@@ -11227,11 +11227,7 @@ export type Database = {
       }
       auto_migrate_andronautic_data: {
         Args: Record<PropertyKey, never>
-        Returns: {
-          bookings_migrated: number
-          customers_created: number
-          operations_created: number
-        }[]
+        Returns: Json
       }
       calculate_customer_lifetime_value: {
         Args: { customer_id_param: number }
